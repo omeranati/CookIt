@@ -19,6 +19,10 @@ public class Recipe {
         this.preparation = preparation;
     }
 
+    public String getName() {
+        return name;
+    }
+
     public String toString() {
         String recipePrint = "";
         recipePrint +=  /* System.lineSeparator() + uploader.getFullName() + ": " + name + System.lineSeparator() +

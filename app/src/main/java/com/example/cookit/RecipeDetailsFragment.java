@@ -1,10 +1,7 @@
 package com.example.cookit;
 
 import android.app.DialogFragment;
-import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
-import android.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -44,18 +41,20 @@ public class RecipeDetailsFragment extends DialogFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_recipe_details,container,false);
+        View view = inflater.inflate(R.layout.fragment_recipe_details, container, false);
         //TextView title = view.findViewById(R.id.);
         //title.setText(studentId);
 
-        User a = new User("omer anati","omer4554@gmail.com","lala123");
-        String[]ingredients = {"1kg Chicken", "2cups Canola oil", "1tbsp Salt"};
-        String[]preparation = {"Defrost chicken","Sprinkle salt","Heat oil to 180°C", "Deep fry chicken until golden brown"};
-        Recipe b = new Recipe("Fried Chicken",a,"picture",ingredients,preparation);
+        User a = new User("Omer Anati", "omer4554@gmail.com", "lala123");
+        String[] ingredients = {"1kg Chicken", "2cups Canola oil", "1tbsp Salt"};
+        String[] preparation = {"Defrost chicken", "Sprinkle salt", "Heat oil to 180°C", "Deep fry chicken until golden brown"};
+        Recipe b = new Recipe("Fried Chicken", a, "picture", ingredients, preparation);
 
 
-        TextView T = view.findViewById(R.id.recipeName);
+        TextView T = view.findViewById(R.id.Owner);
         T.setText(a.getFullName());
+        TextView L = view.findViewById(R.id.recipe);
+        L.setText(b.getName());
         TextView F = view.findViewById(R.id.recipeDirections);
         F.setText(b.toString());
 
