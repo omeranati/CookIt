@@ -1,10 +1,15 @@
 package com.example.cookit;
 
 import android.app.DialogFragment;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
+import android.media.Image;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 
@@ -50,13 +55,25 @@ public class RecipeDetailsFragment extends DialogFragment {
         String[] preparation = {"Defrost chicken", "Sprinkle salt", "Heat oil to 180°C", "Deep fry chicken until golden brown"};
         Recipe b = new Recipe("Fried Chicken", a, "picture", ingredients, preparation);
 
+        ImageView imageView2 = view.findViewById(R.id.imageView2);
+        Bitmap omerProfilePicture = BitmapFactory.decodeResource(getContext().getResources(),R.drawable.omer);
+        omerProfilePicture = ImageHelper.getRoundedCornerBitmap(omerProfilePicture,omerProfilePicture.getHeight()/2);
+        imageView2.setImageBitmap(omerProfilePicture);
 
-        TextView T = view.findViewById(R.id.Owner);
-        T.setText(a.getFullName());
-        TextView L = view.findViewById(R.id.recipe);
-        L.setText(b.getName());
-        TextView F = view.findViewById(R.id.recipeDirections);
-        F.setText(b.toString());
+        //SquareImageView imageView3 = view.findViewById(R.id.imageView3);
+        ImageView imageView3 = view.findViewById(R.id.imageView3);
+        Bitmap chickenBitmap = BitmapFactory.decodeResource(getContext().getResources(),R.drawable.chicken);
+        chickenBitmap = ImageHelper.getRoundedCornerBitmap(chickenBitmap,chickenBitmap.getHeight()/35);
+        imageView3.setImageBitmap(chickenBitmap);
+
+        TextView Owner = view.findViewById(R.id.Owner);
+        Owner.setText(a.getFullName());
+
+        TextView recipe = view.findViewById(R.id.recipe);
+        recipe.setText(b.getName());
+
+        TextView recipeDirections = view.findViewById(R.id.recipeDirections);
+        recipeDirections.setText(b.toString());
 
         return view;
     }
