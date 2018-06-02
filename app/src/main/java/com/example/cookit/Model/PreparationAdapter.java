@@ -26,8 +26,8 @@ public class PreparationAdapter extends RecyclerView.Adapter<PreparationAdapter.
     @Override
     public void onBindViewHolder(PreparationAdapter.ViewHolder holder, int position) {
         if (position < prepareStages.size()) {
-            holder.serialNum.setText(String.valueOf(position + 1));
-            holder.prep.setText(prepareStages.get(position));
+            holder.serialNumTextView.setText(String.valueOf(position + 1));
+            holder.prepEditText.setText(prepareStages.get(position));
         }
     }
 
@@ -38,13 +38,21 @@ public class PreparationAdapter extends RecyclerView.Adapter<PreparationAdapter.
 
     class ViewHolder extends RecyclerView.ViewHolder {
 
-        final TextView serialNum;
-        final EditText prep;
+        final TextView serialNumTextView;
+        final EditText prepEditText;
 
         public ViewHolder(View itemView) {
             super(itemView);
-            serialNum = itemView.findViewById(R.id.serialNunTextView);
-            prep = itemView.findViewById(R.id.preparationEditText);
+            serialNumTextView = itemView.findViewById(R.id.serialNunTextView);
+            prepEditText = itemView.findViewById(R.id.preparationEditText);
+
+            prepEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+                @Override
+                public void onFocusChange(View view, boolean hasFocus) {
+                    if(!hasFocus)
+                        prepareStages.set(getLayoutPosition(),prepEditText.getText().toString());
+                }
+            });
         }
     }
 }

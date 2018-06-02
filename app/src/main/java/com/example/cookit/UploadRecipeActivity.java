@@ -18,17 +18,8 @@ public class UploadRecipeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_upload_recipe);
 
-        ingredientsAdapter = new IngredientAdapter();
-        RecyclerView ingredientsRV = ((RecyclerView) findViewById(R.id.ingredientsRecyclerView));
-        ingredientsRV.setLayoutManager(new LinearLayoutManager(this));
-        ingredientsRV.setAdapter(ingredientsAdapter);
-        addNewIngredient(null);
-
-        prepareStagesAdapter = new PreparationAdapter();
-        RecyclerView preparationRV = ((RecyclerView) findViewById(R.id.preparationRecyclerView));
-        preparationRV.setLayoutManager(new LinearLayoutManager(this));
-        preparationRV.setAdapter(prepareStagesAdapter);
-        prepareStagesAdapter.prepareStages.add("");
+        initIngredientsRecyclerView();
+        initPreparationRecyclerView();
     }
 
     public void addNewIngredient(View view) {
@@ -40,5 +31,21 @@ public class UploadRecipeActivity extends AppCompatActivity {
     public void addNewPrepareStage(View view) {
         prepareStagesAdapter.prepareStages.add("");
         prepareStagesAdapter.notifyDataSetChanged();
+    }
+
+    private void initPreparationRecyclerView() {
+        prepareStagesAdapter = new PreparationAdapter();
+        RecyclerView preparationRV = ((RecyclerView) findViewById(R.id.preparationRecyclerView));
+        preparationRV.setLayoutManager(new LinearLayoutManager(this));
+        preparationRV.setAdapter(prepareStagesAdapter);
+        prepareStagesAdapter.prepareStages.add("");
+    }
+
+    private void initIngredientsRecyclerView() {
+        ingredientsAdapter = new IngredientAdapter();
+        RecyclerView ingredientsRV = ((RecyclerView) findViewById(R.id.ingredientsRecyclerView));
+        ingredientsRV.setLayoutManager(new LinearLayoutManager(this));
+        ingredientsRV.setAdapter(ingredientsAdapter);
+        addNewIngredient(null);
     }
 }
