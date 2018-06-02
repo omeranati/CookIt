@@ -1,10 +1,12 @@
 package com.example.cookit;
 
+import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 
 import com.google.firebase.*;
 import com.google.firebase.database.DatabaseReference;
@@ -28,5 +30,10 @@ public class FeedActivity extends AppCompatActivity {
         tran.add(R.id.fragmentt,frag);
         tran.commit();
 
+    }
+
+    public void uploadRecipe(View view) {
+        Intent intent = new Intent(this, UploadRecipeActivity.class);
+        startActivity(intent);
     }
 }
