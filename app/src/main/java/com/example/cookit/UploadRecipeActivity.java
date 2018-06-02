@@ -7,26 +7,38 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
 import com.example.cookit.Model.IngredientAdapter;
+import com.example.cookit.Model.PreparationAdapter;
 
 public class UploadRecipeActivity extends AppCompatActivity {
-    private IngredientAdapter adapter;
+    private IngredientAdapter ingredientsAdapter;
+    private PreparationAdapter prepareStagesAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_upload_recipe);
 
-        adapter = new IngredientAdapter();
-
-        RecyclerView rv = ((RecyclerView) findViewById(R.id.my_recycler_view));
-        rv.setLayoutManager(new LinearLayoutManager(this));
-        rv.setAdapter(adapter);
+        ingredientsAdapter = new IngredientAdapter();
+        RecyclerView ingredientsRV = ((RecyclerView) findViewById(R.id.ingredientsRecyclerView));
+        ingredientsRV.setLayoutManager(new LinearLayoutManager(this));
+        ingredientsRV.setAdapter(ingredientsAdapter);
         addNewIngredient(null);
+
+        prepareStagesAdapter = new PreparationAdapter();
+        RecyclerView preparationRV = ((RecyclerView) findViewById(R.id.preparationRecyclerView));
+        preparationRV.setLayoutManager(new LinearLayoutManager(this));
+        preparationRV.setAdapter(prepareStagesAdapter);
+        prepareStagesAdapter.prepareStages.add("");
     }
 
     public void addNewIngredient(View view) {
-        adapter.quantities.add("");
-        adapter.descriptions.add("");
-        adapter.notifyDataSetChanged();
+        ingredientsAdapter.quantities.add("");
+        ingredientsAdapter.descriptions.add("");
+        ingredientsAdapter.notifyDataSetChanged();
+    }
+
+    public void addNewPrepareStage(View view) {
+        prepareStagesAdapter.prepareStages.add("");
+        prepareStagesAdapter.notifyDataSetChanged();
     }
 }

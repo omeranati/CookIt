@@ -19,13 +19,13 @@ public class IngredientAdapter extends RecyclerView.Adapter<IngredientAdapter.Vi
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.ingridient_list_item, parent, false);
-        ViewHolder vh = new ViewHolder(v);
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.ingredient_list_item, parent, false);
+        IngredientAdapter.ViewHolder vh = new IngredientAdapter.ViewHolder(v);
         return vh;
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
+    public void onBindViewHolder(IngredientAdapter.ViewHolder holder, int position) {
         if (position >= quantities.size())
             return;
         holder.quantityEditText.setText(quantities.get(position), TextView.BufferType.EDITABLE);

@@ -20,7 +20,8 @@
             android:layout_height="wrap_content"
             android:ems="10"
             android:hint="@string/quantity"
-            android:inputType="textPersonName" />
+            android:inputType="textPersonName"
+            android:nextFocusForward="@+id/descriptionEditText"/>
 
     </android.support.design.widget.TextInputLayout>
 
