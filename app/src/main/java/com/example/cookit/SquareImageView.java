@@ -8,6 +8,24 @@ import android.widget.ImageView;
 
 public class SquareImageView extends ImageView {
 
+    private int bitmapWidth;
+    private int bitmapHeight;
+
+    @Override
+    public void setImageBitmap(Bitmap bm) {
+        super.setImageBitmap(bm);
+        this.bitmapWidth = bm.getWidth();
+        this.bitmapHeight = bm.getHeight();
+    }
+
+    public int getBitmapWidth() {
+        return bitmapWidth;
+    }
+
+    public int getBitmapHeight() {
+        return bitmapHeight;
+    }
+
     public SquareImageView(Context context) {
         super(context);
     }
@@ -26,7 +44,26 @@ public class SquareImageView extends ImageView {
 
         int width = getMeasuredWidth();
 
-        setMeasuredDimension(width, width);
-    }
+        // If the picture is tall and thin, blocking it into the square
+        // thats has the screen's width as it's length and width.
+        if (this.getBitmapWidth() <= this.getBitmapHeight()) {
+            setMeasuredDimension(width, width);
+        }
+        // The picture is fat and short
+        else
+        {
+            this.setMeasuredDimension(width, (int)((double)(this.getBitmapHeight() * width / this.getBitmapWidth())));
 
+            // Stretching the picture if it is too small.
+            if (this.getBitmapWidth() < width) {
+                this.setScaleType(ScaleType.FIT_XY);
+                this.setMeasuredDimension(width,this.getBitmapHeight() * width / this.getBitmapWidth());
+
+            }
+        }
+
+
+
+
+    }
 }
