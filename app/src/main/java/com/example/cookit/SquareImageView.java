@@ -1,6 +1,8 @@
 package com.example.cookit;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.util.AttributeSet;
 import android.widget.ImageView;
 
@@ -23,6 +25,7 @@ public class SquareImageView extends ImageView {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
 
         int width = getMeasuredWidth();
+
         setMeasuredDimension(width, width);
     }
 

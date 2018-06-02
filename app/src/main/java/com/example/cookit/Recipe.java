@@ -23,7 +23,9 @@ public class Recipe {
         return name;
     }
 
-    public String toString() {
+    public User getUploader() { return uploader; }
+
+    public String getPreperation() {
         String recipePrint = "";
         recipePrint +=  /* System.lineSeparator() + uploader.getFullName() + ": " + name + System.lineSeparator() +
                 picture + System.lineSeparator() +*/
