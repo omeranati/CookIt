@@ -54,11 +54,9 @@ public class SquareImageView extends ImageView {
         {
             this.setMeasuredDimension(width, (int)((double)(this.getBitmapHeight() * width / this.getBitmapWidth())));
 
-            // Stretching the picture if it is too small.
+            // Smaller than the screen - neeed to stretch it.
             if (this.getBitmapWidth() < width) {
                 this.setScaleType(ScaleType.FIT_XY);
-                this.setMeasuredDimension(width,this.getBitmapHeight() * width / this.getBitmapWidth());
-
             }
         }
 

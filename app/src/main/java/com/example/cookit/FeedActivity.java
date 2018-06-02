@@ -27,7 +27,7 @@ public class FeedActivity extends AppCompatActivity {
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         RecipeDetailsFragment newRecipeDetailsFragment = new RecipeDetailsFragment();
-        fragmentTransaction.replace(R.id.main_container,newRecipeDetailsFragment);
+        fragmentTransaction.replace(R.id.feed_layout,newRecipeDetailsFragment);
         fragmentTransaction.addToBackStack("");
         fragmentTransaction.commit();
 

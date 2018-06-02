@@ -2,15 +2,15 @@
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/frameLayout2"
+    android:id="@+id/recipeDetailsLayout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     tools:context=".RecipeDetailsFragment">
 
 
     <!-- TODO: Update blank fragment layout -->
 
-    <!-- <ScrollView
+     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/cardview_light_background"
@@ -18,7 +18,7 @@
 
             <android.support.constraint.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">-->
+                android:layout_height="wrap_content">
 
     <TextView
         android:id="@+id/ownerName"
@@ -48,7 +48,7 @@
 
     <TextView
         android:id="@+id/recipeDirections"
-        android:layout_width="352dp"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
         android:layout_marginStart="16dp"
@@ -119,6 +119,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/recipeName" />
 
-    <!-- </android.support.constraint.ConstraintLayout>
-    </ScrollView>-->
+     </android.support.constraint.ConstraintLayout>
+    </ScrollView>
 </android.support.constraint.ConstraintLayout>
