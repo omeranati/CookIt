@@ -1,10 +1,9 @@
 package com.example.cookit;
 
-import android.app.DialogFragment;
+import android.net.Uri;
+import android.support.v4.app.DialogFragment;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.Drawable;
-import android.media.Image;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,29 +11,27 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+
 
 public class RecipeDetailsFragment extends DialogFragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "recipeId";
-    String recipeId;
 
-
-    // private OnFragmentInteractionListener mListener;
+    private Recipe recipe;
+    /*private static final String NAME = "NAME";
+    private static final String RECIPE_NAME = "RECIPE_NAME";
+    private static final String OWNER_PROFILE_PIC = "OWNER_PROFILE_PIC";
+    private static final String FOOD_PIC = "OWNER_PROFILE_PIC";
+    private static final String INSTRUCTIONS = "INSTRUCTIONS";*/
 
     public RecipeDetailsFragment() {
-        // Required empty public constructor
     }
 
-    // TODO: Rename and change types and number of parameters
-   /* public static RecipeDetailsFragment newInstance(String param1, String param2) {
+    public static RecipeDetailsFragment newInstance() {
         RecipeDetailsFragment fragment = new RecipeDetailsFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
         fragment.setArguments(args);
         return fragment;
-    }*/
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -47,46 +44,66 @@ public class RecipeDetailsFragment extends DialogFragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_recipe_details, container, false);
-        //TextView title = view.findViewById(R.id.);
-        //title.setText(studentId);
 
-        User a = new User("Omer Anati", "omer4554@gmail.com", "lala123");
-        String[] ingredients = {"1kg Chicken", "2cups Canola oil", "1tbsp Salt"};
-        String[] preparation = {"Defrost chicken", "Sprinkle salt", "Heat oil to 180°C", "Deep fry chicken until golden brown"};
-        Recipe b = new Recipe("Fried Chicken", a, "picture", ingredients, preparation);
+        // Creating User and Recipe for testing the fragment.
+        User omerUser = new User("Omer Anati", "omer4554@gmail.com", "lala123");
+        ArrayList<Ingredient> ingredients = new ArrayList<Ingredient>() {{
+            add(new Ingredient("1 kg", "Chicken"));
+            add(new Ingredient("2 cups", "Canola oil"));
+            add(new Ingredient("1 tbsp", "Salt"));
+        }};
+        ArrayList<String> preparation = new ArrayList<String>() {{
+            add("Defrost chicken");
+            add("Sprinkle salt");
+            add("Heat oil to 180°C");
+            add("Deep fry chicken until golden brown");
+        }};
+        Recipe friedChickenRecipe = new Recipe("Fried Chicken", omerUser, "picture", ingredients, preparation);
 
-        ImageView imageView2 = view.findViewById(R.id.imageView2);
+        this.recipe = friedChickenRecipe;
+
+        // Displaying profile picture.
+        ImageView ownerProfilePicture = view.findViewById(R.id.ownerProfilePicture);
         Bitmap omerProfilePicture = BitmapFactory.decodeResource(getContext().getResources(),R.drawable.omer);
         omerProfilePicture = ImageHelper.getRoundedCornerBitmap(omerProfilePicture,omerProfilePicture.getHeight()/2);
-        imageView2.setImageBitmap(omerProfilePicture);
+        ownerProfilePicture.setImageBitmap(omerProfilePicture);
 
-        //SquareImageView imageView3 = view.findViewById(R.id.imageView3);
-        ImageView imageView3 = view.findViewById(R.id.imageView3);
+        // Displaying food picture.
+        ImageView RecipePicture = view.findViewById(R.id.recipePicture);
         Bitmap chickenBitmap = BitmapFactory.decodeResource(getContext().getResources(),R.drawable.chicken);
-        chickenBitmap = ImageHelper.getRoundedCornerBitmap(chickenBitmap,chickenBitmap.getHeight()/35);
-        imageView3.setImageBitmap(chickenBitmap);
 
-        TextView Owner = view.findViewById(R.id.Owner);
-        Owner.setText(a.getFullName());
+        if (chickenBitmap.getHeight() > chickenBitmap.getWidth()) {
+            chickenBitmap = ImageHelper.getRoundedCornerBitmap(chickenBitmap, chickenBitmap.getHeight() / 35);
+        }
+        else {
+            chickenBitmap = ImageHelper.getRoundedCornerBitmap(chickenBitmap, chickenBitmap.getWidth() / 35);
+        }
+        
+        RecipePicture.setImageBitmap(chickenBitmap);
 
-        TextView recipe = view.findViewById(R.id.recipe);
-        recipe.setText(b.getName());
 
+        // Owner name
+        TextView ownerName = view.findViewById(R.id.ownerName);
+        ownerName.setText(omerUser.getFullName());
+
+        // Recipe name
+        TextView recipeName = view.findViewById(R.id.recipeName);
+        recipeName.setText(friedChickenRecipe.getName());
+
+        // Recipe directions
         TextView recipeDirections = view.findViewById(R.id.recipeDirections);
-        recipeDirections.setText(b.toString());
+        recipeDirections.setText(friedChickenRecipe.getPreperationString());
+
+        /*
+        // Used to bring back saved instance
+        if (savedInstanceState != null) {
+        }*/
 
         return view;
     }
 
-   /* // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
-    }
-
-    @Override
-    public void onAttach(Context context) {
+    //@Override
+   /* public void onAttach(Context context) {
         super.onAttach(context);
         if (context instanceof OnFragmentInteractionListener) {
             mListener = (OnFragmentInteractionListener) context;
@@ -94,26 +111,30 @@ public class RecipeDetailsFragment extends DialogFragment {
             throw new RuntimeException(context.toString()
                     + " must implement OnFragmentInteractionListener");
         }
-    }
+    }*/
 
-    @Override
-    public void onDetach() {
+   // @Override
+    /*public void onDetach() {
         super.onDetach();
         mListener = null;
+    }*/
+
+   @Override
+   public void onDestroyView(){
+       super.onDestroyView();
+   }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        /*outState.putString(NAME, this.recipe.getUploader().getFullName());
+        outState.putString(RECIPE_NAME, this.recipe.getName());
+        outState.putString(INSTRUCTIONS, this.recipe.toString());
+        outState.putString(OWNER_PROFILE_PIC, "omer");
+        outState.putString(FOOD_PIC,"chicken");*/
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-    /*public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
+    public interface OnFragmentInteractionListener {
         void onFragmentInteraction(Uri uri);
-    }*/
+    }
 }

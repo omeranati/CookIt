@@ -2,7 +2,8 @@ package com.example.cookit;
 
 import android.content.Intent;
 import android.support.v4.app.Fragment;
-import android.app.FragmentTransaction;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -14,7 +15,7 @@ import com.google.firebase.database.FirebaseDatabase;
 
 public class FeedActivity extends AppCompatActivity {
 
-    private DatabaseReference mDatabase;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,10 +26,12 @@ public class FeedActivity extends AppCompatActivity {
 
 
        // Log.d("TAG",b.toString());
-        RecipeDetailsFragment frag = new RecipeDetailsFragment();
-        FragmentTransaction tran = getFragmentManager().beginTransaction();
-        tran.add(R.id.fragmentt,frag);
-        tran.commit();
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        RecipeDetailsFragment newRecipeDetailsFragment = new RecipeDetailsFragment();
+        fragmentTransaction.replace(R.id.main_container,newRecipeDetailsFragment);
+        fragmentTransaction.addToBackStack("");
+        fragmentTransaction.commit();
 
     }
 
