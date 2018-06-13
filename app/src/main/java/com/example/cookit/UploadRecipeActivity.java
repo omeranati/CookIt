@@ -7,9 +7,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
-import com.example.cookit.Model.IngredientAdapter;
-import com.example.cookit.Model.PreparationAdapter;
-
 public class UploadRecipeActivity extends AppCompatActivity {
     private IngredientAdapter ingredientsAdapter;
     private PreparationAdapter prepareStagesAdapter;

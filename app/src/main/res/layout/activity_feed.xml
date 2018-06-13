@@ -15,10 +15,10 @@
         android:layout_marginEnd="16dp"
         android:clickable="true"
         android:onClick="uploadRecipe"
-        app:backgroundTint="@color/cardview_light_background"
+        app:backgroundTint="@android:color/holo_blue_dark"
         app:fabSize="mini"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:srcCompat="@drawable/huge_plus" />
+        app:srcCompat="@android:drawable/ic_menu_add" />
 
 </android.support.constraint.ConstraintLayout>
