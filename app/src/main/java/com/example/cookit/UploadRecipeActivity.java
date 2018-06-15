@@ -56,21 +56,24 @@ public class UploadRecipeActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent imageReturnedIntent) {
         super.onActivityResult(requestCode, resultCode, imageReturnedIntent);
-        ImageButton imageButton = findViewById(R.id.uploadImageButton);
+        SquareImageView imageView = findViewById(R.id.uploadImageButton);
         switch(requestCode) {
             case CAMERA_DIALOG_INDEX:
                 if(resultCode == RESULT_OK){
-                    imageButton.setImageBitmap((Bitmap) imageReturnedIntent.getExtras().get("data"));
+                    imageView.setImageBitmap((Bitmap) imageReturnedIntent.getExtras().get("data"));
                 }
 
                 break;
             case GALLERY_DIALOG_INDEX:
                 if(resultCode == RESULT_OK){
                     Uri selectedImage = imageReturnedIntent.getData();
-                    imageButton.setImageURI(selectedImage);
+                    imageView.setImageURI(selectedImage);
                 }
                 break;
         }
+        imageView.requestLayout();
+        imageView.invalidate();
+                //measure(imageView.getWidth(), imageView.getHeight());
     }
 
     public void addNewIngredient(View view) {

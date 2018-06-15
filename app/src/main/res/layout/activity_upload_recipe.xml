@@ -17,7 +17,7 @@
         android:focusableInTouchMode="true"
         android:orientation="vertical">
 
-        <ImageButton
+        <com.example.cookit.SquareImageView
             android:id="@+id/uploadImageButton"
             android:layout_width="200dp"
             android:layout_height="200dp"
@@ -25,10 +25,11 @@
             android:layout_marginTop="16dp"
             android:background="@android:color/transparent"
             android:onClick="addPhoto"
+            android:scaleType="fitXY"
+            android:src="@drawable/upload_image"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/upload_image" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <android.support.design.widget.TextInputLayout
             android:id="@+id/nameTextView"
