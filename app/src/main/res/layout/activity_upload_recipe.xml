@@ -19,14 +19,14 @@
 
         <com.example.cookit.SquareImageView
             android:id="@+id/uploadImageButton"
-            android:layout_width="200dp"
-            android:layout_height="200dp"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
             android:layout_gravity="center"
             android:layout_marginTop="16dp"
             android:background="@android:color/transparent"
             android:onClick="addPhoto"
             android:scaleType="fitXY"
-            android:src="@drawable/upload_image"
+            android:src="@drawable/add_photo"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -56,6 +56,7 @@
             android:layout_marginTop="16dp"
             android:text="@string/ingredients"
             android:textSize="18sp"
+            android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/nameTextView" />
 
@@ -76,9 +77,9 @@
             android:id="@+id/addIngredientButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/colorPrimary"
+            android:background="@android:color/transparent"
             android:onClick="addNewIngredient"
-            app:srcCompat="@android:drawable/ic_menu_add" />
+            app:srcCompat="@drawable/black_circle_plus" />
 
         <TextView
             android:id="@+id/preparationTextView"
@@ -87,6 +88,7 @@
             android:layout_marginTop="16dp"
             android:text="@string/preparation"
             android:textSize="18sp"
+            android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/addIngredientButton" />
 
@@ -107,9 +109,9 @@
             android:id="@+id/addPrepButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/colorPrimary"
+            android:background="@android:color/transparent"
             android:onClick="addNewPrepareStage"
-            app:srcCompat="@android:drawable/ic_menu_add" />
+            app:srcCompat="@drawable/black_circle_plus"/>
 
         <Button
             android:id="@+id/uploadButton"
@@ -117,9 +119,10 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginTop="25dp"
-            android:background="@android:color/holo_blue_light"
+            android:background="@color/colorPrimary"
             android:onClick="uploadRecipe"
             android:text="@string/upload"
+            android:textColor="@android:color/background_light"
             app:layout_constraintTop_toBottomOf="@+id/addPrepButton" />
 
     </LinearLayout>
