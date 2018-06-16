@@ -7,6 +7,17 @@
     android:id="@+id/main_container"
     tools:context="com.example.cookit.FeedActivity">
 
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/feed_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/toolbar_height"
+        android:background="@color/colorPrimary"
+        android:elevation="@dimen/toolbar_elevation"
+        android:theme="@style/Theme.AppCompat.Light"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+        tools:titleTextColor="@android:color/background_light"
+        app:title="CookIt"/>
+
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/uploadRecipeButton"
         android:layout_width="wrap_content"
@@ -19,6 +30,7 @@
         app:fabSize="normal"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:srcCompat="@drawable/white_plus" />
+        app:srcCompat="@drawable/white_plus"
+        android:focusable="true" />
 
 </android.support.constraint.ConstraintLayout>

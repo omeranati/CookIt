@@ -11,6 +11,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 
 public class UploadRecipeActivity extends AppCompatActivity {
@@ -25,8 +28,29 @@ public class UploadRecipeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_upload_recipe);
 
+        Toolbar toolbar = findViewById(R.id.upload_toolbar);
+        setSupportActionBar(toolbar);
+        toolbar.setTitleTextColor(0xFFFFFFFF);
+
         initIngredientsRecyclerView();
         initPreparationRecyclerView();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.upload_activity_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_send:
+                return getAndValidateInputRecipe();
+        }
+
+        return false;
     }
 
     public void addPhoto(View view) {
@@ -71,7 +95,6 @@ public class UploadRecipeActivity extends AppCompatActivity {
         }
         imageView.requestLayout();
         imageView.invalidate();
-                //measure(imageView.getWidth(), imageView.getHeight());
     }
 
     public void addNewIngredient(View view) {
@@ -83,13 +106,6 @@ public class UploadRecipeActivity extends AppCompatActivity {
     public void addNewPrepareStage(View view) {
         prepareStagesAdapter.prepareStages.add("");
         prepareStagesAdapter.notifyDataSetChanged();
-    }
-
-    public void uploadRecipe(View view) {
-        //DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
-        //mDatabase.child(getRecipeName()).setValue("First recipe send!!");
-        getAndValidateInputRecipe();
-
     }
 
     private void initPreparationRecyclerView() {

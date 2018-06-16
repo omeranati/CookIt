@@ -6,6 +6,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 
@@ -24,6 +25,9 @@ public class FeedActivity extends AppCompatActivity {
        // mDatabase = FirebaseDatabase.getInstance().getReference();
        // mDatabase.child("test").setValue("Hi omer");
 
+        Toolbar toolbar = findViewById(R.id.feed_toolbar);
+        setSupportActionBar(toolbar);
+        toolbar.setTitleTextColor(0xFFFFFFFF);
 
        // Log.d("TAG",b.toString());
         FragmentManager fragmentManager = getSupportFragmentManager();
