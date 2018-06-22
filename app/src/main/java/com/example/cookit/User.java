@@ -1,15 +1,20 @@
 package com.example.cookit;
 
-public class User {
-    private String fullName;
-    private String email;
-    private String password;
+import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.PrimaryKey;
+import android.support.annotation.NonNull;
 
-    public User(String fullName, String email, String password)
+@Entity
+public class User {
+    @PrimaryKey
+    @NonNull
+    private String email;
+    private String fullName;
+
+    public User(String fullName, String email)
     {
         this.fullName = fullName;
         this.email    = email;
-        this.password = password;
     }
 
     public String getFullName()
@@ -30,10 +35,5 @@ public class User {
     public void setEmail(String password)
     {
         this.email = email;
-    }
-
-    public void setPassword(String password)
-    {
-        this.password = password;
     }
 }
