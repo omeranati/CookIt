@@ -7,7 +7,8 @@ import android.arch.lifecycle.MutableLiveData;
 
 public class Model {
     private static Model instance = new Model();
-    ModelFirebase modelFirebase;
+    private ModelFirebase modelFirebase;
+    private RecipesLiveData recipesLiveData = new RecipesLiveData();
 
     private Model() {
         modelFirebase = new ModelFirebase();
@@ -17,12 +18,19 @@ public class Model {
         return instance;
     }
 
+    public RecipesLiveData getAllRecipes(){
+        return recipesLiveData;
+    }
+
     public void cancelGetAllRecipes() {
         modelFirebase.cancelGetAllRecipes();
     }
 
-    class RecipesLiveData extends MutableLiveData<List<Recipe>> {
+    public class RecipesLiveData extends MutableLiveData<List<Recipe>> {
 
+        private RecipesLiveData(){
+            this.onActive();
+        }
         @Override
         protected void onActive() {
             super.onActive();
