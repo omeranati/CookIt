@@ -7,6 +7,7 @@ import android.util.Log;
 import com.google.firebase.*;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -36,6 +37,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+
 public class FeedActivity extends AppCompatActivity {
     private DatabaseReference mDatabase;
     private RecipeCardAdapter recipeCardAdapter;
@@ -44,18 +46,15 @@ public class FeedActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_feed);
-       // mDatabase = FirebaseDatabase.getInstance().getReference();
-       // mDatabase.child("test").setValue("Hi omer");
-
-       // Log.d("TAG",b.toString());
+        // mDatabase = FirebaseDatabase.getInstance().getReference();
+        // mDatabase.child("test").setValue("Hi omer");
+        // Log.d("TAG",b.toString());
         //FragmentManager fragmentManager = getSupportFragmentManager();
         //FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        RecipeDetailsFragment newRecipeDetailsFragment = new RecipeDetailsFragment();
-        RecipeCardFragment newRecipeCardFragment = new RecipeCardFragment();
-      //  fragmentTransaction.replace(R.id.feed_layout,newRecipeDetailsFragment);
-       // fragmentTransaction.replace(R.id.feed_layout,newRecipeCardFragment);
+        //fragmentTransaction.replace(R.id.feed_layout,newRecipeDetailsFragment);
+        //fragmentTransaction.replace(R.id.feed_layout,newRecipeCardFragment);
         //fragmentTransaction.addToBackStack("");
-         //fragmentTransaction.commit();
+        //fragmentTransaction.commit();
         initRecipesRecyclerView();
 
         User omerUser = new User("Omer Anati", "omer4554@gmail.com", "lala123");
@@ -74,9 +73,8 @@ public class FeedActivity extends AppCompatActivity {
 
     private void initRecipesRecyclerView() {
         recipeCardAdapter = new RecipeCardAdapter();
-        RecyclerView recipeRV = ((RecyclerView)findViewById(R.id.recipesRecyclerView));
+        RecyclerView recipeRV = ((RecyclerView) findViewById(R.id.recipesRecyclerView));
         recipeRV.setLayoutManager(new LinearLayoutManager(this));
         recipeRV.setAdapter(recipeCardAdapter);
-        //recipeCardAdapter.recipes.add(new Recipe());
     }
 }
