@@ -1,10 +1,20 @@
 package com.example.cookit;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
+import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.PrimaryKey;
+import android.arch.persistence.room.TypeConverter;
+import android.support.annotation.NonNull;
+
+@Entity
 public class Recipe {
+    @PrimaryKey
+    @NonNull
+    private String id;
     private String name;
-    private User   uploader;
+    private String uploaderEmail;
     private String picture;
     private ArrayList<Ingredient> ingredients;
     private ArrayList<String> preparation;
@@ -15,12 +25,12 @@ public class Recipe {
     }
 
     public Recipe(String name,
-                  User uploader,
+                  String uploaderEmail,
                   String picture,
                   ArrayList<Ingredient> ingredients,
                   ArrayList<String> preparation) {
         this.name = name;
-        this.uploader = uploader;
+        this.uploaderEmail = uploaderEmail;
         this.picture = picture;
         this.ingredients = ingredients;
         this.preparation = preparation;
@@ -45,6 +55,23 @@ public class Recipe {
         return (recipePrint);
     }
 
+    @NonNull
+    public String getId() {
+        return id;
+    }
+
+    public void setId(@NonNull String id) {
+        this.id = id;
+    }
+
+    public String getUploaderEmail() {
+        return uploaderEmail;
+    }
+
+    public void setUploaderEmail(String uploaderEmail) {
+        this.uploaderEmail = uploaderEmail;
+    }
+
     public String getName() {
         return name;
     }
@@ -53,10 +80,10 @@ public class Recipe {
         this.name = name;
     }
 
-    public User getUploader() { return uploader; }
+    public String getUploader() { return uploaderEmail; }
 
-    public void setUploader(User uploader) {
-        this.uploader = uploader;
+    public void setUploader(String uploaderEmail) {
+        this.uploaderEmail = uploaderEmail;
     }
 
     public String getPicture() {

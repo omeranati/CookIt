@@ -46,7 +46,7 @@ public class RecipeDetailsFragment extends DialogFragment {
         View view = inflater.inflate(R.layout.fragment_recipe_details, container, false);
 
         // Creating User and Recipe for testing the fragment.
-        User omerUser = new User("Omer Anati", "omer4554@gmail.com", "lala123");
+        User omerUser = new User("Omer Anati", "omer4554@gmail.com");
         ArrayList<Ingredient> ingredients = new ArrayList<Ingredient>() {{
             add(new Ingredient("1 kg", "Chicken"));
             add(new Ingredient("2 cups", "Canola oil"));
@@ -58,7 +58,7 @@ public class RecipeDetailsFragment extends DialogFragment {
             add("Heat oil to 180°C");
             add("Deep fry chicken until golden brown");
         }};
-        Recipe friedChickenRecipe = new Recipe("Fried Chicken", omerUser, "picture", ingredients, preparation);
+        Recipe friedChickenRecipe = new Recipe("Fried Chicken", omerUser.getEmail(), "picture", ingredients, preparation);
 
         this.recipe = friedChickenRecipe;
 

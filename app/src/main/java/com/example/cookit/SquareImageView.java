@@ -58,12 +58,7 @@ public class SquareImageView extends ImageView {
             if (this.getBitmapWidth() < width) {
                 this.setScaleType(ScaleType.FIT_XY);
                 this.setMeasuredDimension(width,this.getBitmapHeight() * width / this.getBitmapWidth());
-
             }
         }
-
-
-
-
     }
 }

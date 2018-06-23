@@ -18,6 +18,17 @@
         tools:titleTextColor="@android:color/background_light"
         app:title="CookIt"/>
 
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recipesRecyclerView"
+        android:layout_width="match_parent"
+        android:clickable="true"
+        android:foreground="?android:attr/selectableItemBackground"
+        android:scrollbars="vertical"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:listitem="@layout/layout_recipe_card">
+    </android.support.v7.widget.RecyclerView>
+
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/uploadRecipeButton"
         android:layout_width="wrap_content"

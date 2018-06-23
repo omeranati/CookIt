@@ -16,6 +16,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.example.cookit.Adapters.IngredientAdapter;
+import com.example.cookit.Adapters.PreparationAdapter;
+
 public class UploadRecipeActivity extends AppCompatActivity {
     private static final int CAMERA_DIALOG_INDEX = 0;
     private static final int GALLERY_DIALOG_INDEX = 1;
