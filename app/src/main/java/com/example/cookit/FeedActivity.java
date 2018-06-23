@@ -1,55 +1,17 @@
 package com.example.cookit;
 
-import android.arch.lifecycle.Lifecycle;
-import android.arch.lifecycle.LifecycleOwner;
 import android.arch.lifecycle.Observer;
 import android.content.Intent;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.app.FragmentTransaction;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 
+import com.example.cookit.Adapters.RecipeCardAdapter;
 import com.example.cookit.Model.Model;
-import com.example.cookit.Model.RecipeAsyncDao;
-import com.google.firebase.*;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import java.util.ArrayList;
 import java.util.List;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.net.Uri;
-import android.provider.MediaStore;
-import android.support.design.widget.TextInputLayout;
-
-import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.app.AppCompatActivity;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.graphics.Bitmap;
-import android.net.Uri;
-import android.provider.MediaStore;
-import android.support.design.widget.TextInputLayout;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
 
 public class FeedActivity extends AppCompatActivity {
     private DatabaseReference mDatabase;
@@ -59,40 +21,22 @@ public class FeedActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_feed);
-        // mDatabase = FirebaseDatabase.getInstance().getReference();
-        // mDatabase.child("test").setValue("Hi omer");
-        // Log.d("TAG",b.toString());
-        //FragmentManager fragmentManager = getSupportFragmentManager();
-        //FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        //fragmentTransaction.replace(R.id.feed_layout,newRecipeDetailsFragment);
-        //fragmentTransaction.replace(R.id.feed_layout,newRecipeCardFragment);
-        //fragmentTransaction.addToBackStack("");
-        //fragmentTransaction.commit();
         initRecipesRecyclerView();
 
-        User omerUser = new User("Omer Anati", "omer4554@gmail.com", "lala123");
-        String[] ingredients = {"1kg Chicken", "2cups Canola oil", "1tbsp Salt"};
-        String[] preparation = {"Defrost chicken", "Sprinkle salt", "Heat oil to 180°C", "Deep fry chicken until golden brown"};
-        Recipe friedChickenRecipe = new Recipe("Fried Chicken", omerUser, "picture", ingredients, preparation);
-
-        recipeCardAdapter.recipes.add(friedChickenRecipe);
-        recipeCardAdapter.notifyDataSetChanged();
-        recipeCardAdapter.recipes.add(friedChickenRecipe);
-        recipeCardAdapter.notifyDataSetChanged();
-        recipeCardAdapter.recipes.add(friedChickenRecipe);
-        recipeCardAdapter.notifyDataSetChanged();
-
-
-
         Model m = Model.getInstance();
+
         m.getAllRecipes().observe(this, new Observer<List<Recipe>>() {
             @Override
             public void onChanged(@Nullable List<Recipe> students) {
-                /*myAdapter.notifyDataSetChanged();
-                Log.d("TAG","notifyDataSetChanged" + students.size());*/
-            }});
-        List<Recipe> list = m.getAllRecipes().getValue();
+                updateFeedWithChangedData(students);
+           }});
+    }
 
+    private void updateFeedWithChangedData(@Nullable List<Recipe> students) {
+        if (students.size() > 0) {
+            recipeCardAdapter.recipes.addAll(students);
+            recipeCardAdapter.notifyDataSetChanged();
+        }
     }
 
     private void initRecipesRecyclerView() {

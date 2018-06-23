@@ -16,7 +16,7 @@ abstract class AppLocalDbRepository extends RoomDatabase {
 }
 
 public class AppLocalDb {
-    static public AppLocalDbRepository db = Room.databaseBuilder(CookIt.context,
+    static public AppLocalDbRepository db = Room.databaseBuilder(CookIt.getContext(),
             AppLocalDbRepository.class,
             "dbFileName.db").fallbackToDestructiveMigration().build();
 }

@@ -1,15 +1,14 @@
-package com.example.cookit;
+package com.example.cookit.Adapters;
 
-import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.provider.ContactsContract;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.example.cookit.R;
+import com.example.cookit.Recipe;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,7 +29,7 @@ public class RecipeCardAdapter extends RecyclerView.Adapter<RecipeCardAdapter.Vi
         if (position >= recipes.size())
             return;
         Recipe recipe = recipes.get(position);
-        holder.ownerName.setText(recipe.getUploader().getFullName());
+        holder.ownerName.setText(recipe.getUploader());
         holder.foodName.setText(recipe.getName());
     }
 

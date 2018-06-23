@@ -1,7 +1,12 @@
 package com.example.cookit.Model;
 
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.util.Log;
+
 import com.example.cookit.Ingredient;
 import com.example.cookit.Recipe;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -13,7 +18,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class ModelFirebase {
-
     ValueEventListener eventListener;
 
     public void cancelGetAllRecipes() {
@@ -50,10 +54,9 @@ public class ModelFirebase {
     public void getAllRecipes(final GetAllRecipesListener listener) {
         DatabaseReference dbRef = FirebaseDatabase.getInstance().getReference().child("recipes");
 
-
         eventListener = dbRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
+            @Override public void onDataChange(DataSnapshot dataSnapshot) {
+                Log.d("TAG","onDataChange" );
                 ArrayList<Recipe> recipeList = new ArrayList<>();
 
                 for (DataSnapshot recipeSnapshot: dataSnapshot.getChildren()) {
@@ -64,12 +67,7 @@ public class ModelFirebase {
             }
 
             @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-
-            }
+            public void onCancelled(DatabaseError databaseError) { }
         });
-
     }
-
 }
