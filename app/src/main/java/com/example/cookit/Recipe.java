@@ -15,6 +15,7 @@ public class Recipe {
     private String id;
     private String name;
     private String uploaderEmail;
+    private String uploaderName;
     private String picture;
     private ArrayList<Ingredient> ingredients;
     private ArrayList<String> preparation;
@@ -25,12 +26,14 @@ public class Recipe {
     }
 
     public Recipe(String name,
-                  String uploaderEmail,
+                  User uploader,
                   String picture,
                   ArrayList<Ingredient> ingredients,
                   ArrayList<String> preparation) {
+        this.id = "1";
         this.name = name;
-        this.uploaderEmail = uploaderEmail;
+        this.uploaderEmail = uploader.getEmail();
+        this.uploaderName = uploader.getFullName();
         this.picture = picture;
         this.ingredients = ingredients;
         this.preparation = preparation;
@@ -38,9 +41,7 @@ public class Recipe {
 
     public String getPreperationString() {
         String recipePrint = "";
-        recipePrint +=  /* System.lineSeparator() + uploader.getFullName() + ": " + name + System.lineSeparator() +
-        picture + System.lineSeparator() +*/
-                "Ingredients:" + System.lineSeparator();
+        recipePrint += "Ingredients:" + System.lineSeparator();
 
         for (int i = 0; i < ingredients.size(); i++) {
             recipePrint += "• " + ingredients.get(i).getQuantity() + " " + ingredients.get(i).getDescription() + System.lineSeparator();
@@ -72,18 +73,20 @@ public class Recipe {
         this.uploaderEmail = uploaderEmail;
     }
 
+    public String getUploaderName() {
+        return uploaderName;
+    }
+
+    public void setUploaderName(String uploaderName) {
+        this.uploaderName = uploaderName;
+    }
+
     public String getName() {
         return name;
     }
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public String getUploader() { return uploaderEmail; }
-
-    public void setUploader(String uploaderEmail) {
-        this.uploaderEmail = uploaderEmail;
     }
 
     public String getPicture() {

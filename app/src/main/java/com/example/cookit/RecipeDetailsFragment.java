@@ -1,30 +1,37 @@
 package com.example.cookit;
 
+import android.content.Context;
 import android.net.Uri;
 import android.support.v4.app.DialogFragment;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.text.Layout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextClock;
 import android.widget.TextView;
 
+import com.example.cookit.Model.AppLocalDb;
+import com.example.cookit.Model.GetAllRecipesListener;
+import com.example.cookit.Model.RecipeAsyncDao;
+import com.example.cookit.Model.RecipeAsyncDaoListener;
+
 import java.util.ArrayList;
+import java.util.List;
 
 
 public class RecipeDetailsFragment extends DialogFragment {
 
     private Recipe recipe;
+
     /*private static final String NAME = "NAME";
     private static final String RECIPE_NAME = "RECIPE_NAME";
     private static final String OWNER_PROFILE_PIC = "OWNER_PROFILE_PIC";
     private static final String FOOD_PIC = "OWNER_PROFILE_PIC";
     private static final String INSTRUCTIONS = "INSTRUCTIONS";*/
-
-    public RecipeDetailsFragment() {
-    }
 
     public static RecipeDetailsFragment newInstance() {
         RecipeDetailsFragment fragment = new RecipeDetailsFragment();
@@ -43,24 +50,28 @@ public class RecipeDetailsFragment extends DialogFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_recipe_details, container, false);
+        final View view = inflater.inflate(R.layout.fragment_recipe_details, container, false);
 
-        // Creating User and Recipe for testing the fragment.
-        User omerUser = new User("Omer Anati", "omer4554@gmail.com");
-        ArrayList<Ingredient> ingredients = new ArrayList<Ingredient>() {{
-            add(new Ingredient("1 kg", "Chicken"));
-            add(new Ingredient("2 cups", "Canola oil"));
-            add(new Ingredient("1 tbsp", "Salt"));
-        }};
-        ArrayList<String> preparation = new ArrayList<String>() {{
-            add("Defrost chicken");
-            add("Sprinkle salt");
-            add("Heat oil to 180°C");
-            add("Deep fry chicken until golden brown");
-        }};
-        Recipe friedChickenRecipe = new Recipe("Fried Chicken", omerUser.getEmail(), "picture", ingredients, preparation);
+        RecipeAsyncDao.getRecipeById(new RecipeAsyncDaoListener<Recipe>() {
 
-        this.recipe = friedChickenRecipe;
+            @Override
+            public void onComplete(Recipe data) {
+                recipe = data;
+
+
+                TextView ownerName = view.findViewById(R.id.ownerName);
+                ownerName.setText(recipe.getUploaderName());
+
+                // Recipe name
+                TextView recipeName = view.findViewById(R.id.recipeName);
+                recipeName.setText(recipe.getName());
+
+                // Recipe directions
+                TextView recipeDirections = view.findViewById(R.id.recipeDirections);
+                recipeDirections.setText(recipe.getPreperationString());
+
+            }
+        }, (String)getArguments().get("recipeID"));
 
         // Displaying profile picture.
         ImageView ownerProfilePicture = view.findViewById(R.id.ownerProfilePicture);
@@ -80,19 +91,6 @@ public class RecipeDetailsFragment extends DialogFragment {
         }
         
         RecipePicture.setImageBitmap(chickenBitmap);
-
-
-        // Owner name
-        TextView ownerName = view.findViewById(R.id.ownerName);
-        ownerName.setText(omerUser.getFullName());
-
-        // Recipe name
-        TextView recipeName = view.findViewById(R.id.recipeName);
-        recipeName.setText(friedChickenRecipe.getName());
-
-        // Recipe directions
-        TextView recipeDirections = view.findViewById(R.id.recipeDirections);
-        recipeDirections.setText(friedChickenRecipe.getPreperationString());
 
         /*
         // Used to bring back saved instance

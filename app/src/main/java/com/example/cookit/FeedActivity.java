@@ -4,6 +4,9 @@ import android.arch.lifecycle.Observer;
 import android.content.Intent;
 import android.support.annotation.Nullable;
 import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
@@ -37,22 +40,41 @@ public class FeedActivity extends AppCompatActivity {
            }});
     }
 
-    private void updateFeedWithChangedData(@Nullable List<Recipe> students) {
-        if (students.size() > 0) {
-            recipeCardAdapter.recipes.addAll(students);
-            recipeCardAdapter.notifyDataSetChanged();
+    private void updateFeedWithChangedData(@Nullable List<Recipe> recipes) {
+        if (recipes.size() > 0) {
+           for(Recipe r: recipes)
+            {
+                if (!recipeCardAdapter.recipes.containsKey(r.getId())) {
+                    recipeCardAdapter.recipesIds.add(0,r.getId());
+                    recipeCardAdapter.recipes.put(r.getId(),r);
+                    recipeCardAdapter.notifyDataSetChanged();
+                }
+                if (r.hashCode() != ((Recipe)recipeCardAdapter.recipes.get(r.getId())).hashCode()) {
+                    recipeCardAdapter.recipesIds.set(recipeCardAdapter.recipesIds.indexOf((Object)r.getId()),r.getId());
+                    recipeCardAdapter.recipes.put(r.getId(),r);
+                    recipeCardAdapter.notifyDataSetChanged();
+
+                }
+            }
         }
     }
 
     private void initRecipesRecyclerView() {
         recipeCardAdapter = new RecipeCardAdapter();
         RecyclerView recipeRV = ((RecyclerView) findViewById(R.id.recipesRecyclerView));
+        recipeRV.setItemAnimator(null);
         recipeRV.setLayoutManager(new LinearLayoutManager(this));
         recipeRV.setAdapter(recipeCardAdapter);
     }
 
     public void uploadRecipe(View view) {
         Intent intent = new Intent(this, UploadRecipeActivity.class);
+        startActivity(intent);
+    }
+
+    public void viewRecipeDetails(View view) {
+        Intent intent = new Intent(this, RecipeDetailsActivity.class);
+        intent.putExtra("recipeID", ((Recipe)view.getTag()).getId());
         startActivity(intent);
     }
 }

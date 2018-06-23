@@ -31,6 +31,7 @@ public class ModelFirebase {
         recipe.setName(recipeSnapshot.child("name").getValue().toString());
         recipe.setPicture(recipeSnapshot.child("picture").getValue().toString());
         recipe.setUploaderEmail(recipeSnapshot.child("uploaderEmail").getValue().toString());
+        recipe.setUploaderName(recipeSnapshot.child("uploaderName").getValue().toString());
         ArrayList<Ingredient> ingredients = new ArrayList<>();
         ArrayList<String> preparation = new ArrayList<>();
 

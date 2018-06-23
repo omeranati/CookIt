@@ -11,11 +11,13 @@ import com.example.cookit.R;
 import com.example.cookit.Recipe;
 
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.List;
 
 public class RecipeCardAdapter extends RecyclerView.Adapter<RecipeCardAdapter.ViewHolder> {
 
-    public List<Recipe> recipes = new ArrayList<>();
+    public Hashtable<String,Recipe> recipes = new Hashtable<>();
+    public List<String> recipesIds = new ArrayList<>();
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -28,9 +30,10 @@ public class RecipeCardAdapter extends RecyclerView.Adapter<RecipeCardAdapter.Vi
     public void onBindViewHolder(RecipeCardAdapter.ViewHolder holder, int position) {
         if (position >= recipes.size())
             return;
-        Recipe recipe = recipes.get(position);
-        holder.ownerName.setText(recipe.getUploader());
+        Recipe recipe = recipes.get(recipesIds.get(position));
+        holder.ownerName.setText(recipe.getUploaderName());
         holder.foodName.setText(recipe.getName());
+        holder.itemView.findViewById(R.id.card_view).setTag(recipe);
     }
 
     @Override
@@ -40,7 +43,7 @@ public class RecipeCardAdapter extends RecyclerView.Adapter<RecipeCardAdapter.Vi
 
     class ViewHolder extends RecyclerView.ViewHolder {
 
-        public ImageView owner,food;
+        public ImageView owner, food;
         public TextView ownerName, foodName;
 
         public ViewHolder(View itemView) {
