@@ -2,6 +2,8 @@ package com.example.cookit;
 
 import android.arch.lifecycle.Observer;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.support.annotation.Nullable;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
@@ -17,6 +19,7 @@ import com.google.firebase.database.DatabaseReference;
 import java.util.List;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.widget.ImageView;
 
 public class FeedActivity extends AppCompatActivity {
     private DatabaseReference mDatabase;
@@ -62,7 +65,6 @@ public class FeedActivity extends AppCompatActivity {
     private void initRecipesRecyclerView() {
         recipeCardAdapter = new RecipeCardAdapter();
         RecyclerView recipeRV = ((RecyclerView) findViewById(R.id.recipesRecyclerView));
-        recipeRV.setItemAnimator(null);
         recipeRV.setLayoutManager(new LinearLayoutManager(this));
         recipeRV.setAdapter(recipeCardAdapter);
     }

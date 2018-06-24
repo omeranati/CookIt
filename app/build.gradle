@@ -27,7 +27,7 @@ dependencies {
     implementation "android.arch.persistence.room:runtime:1.0.0"
     annotationProcessor "android.arch.persistence.room:compiler:1.0.0"
     // Paging
-   // implementation "android.arch.paging:runtime:1.0.0-alpha4-1"
+    // implementation "android.arch.paging:runtime:1.0.0-alpha4-1"
     // Test helpers for LiveData
     testImplementation "android.arch.core:core-testing:1.0.0"
     // Test helpers for Room
@@ -44,7 +44,7 @@ dependencies {
     implementation "android.arch.lifecycle:runtime:$lifecycle_version"
     compile fileTree(dir: 'libs', include: ['*.jar'])
     //androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
-      //  exclude group: 'com.android.support', module: 'support-annotations'
+    //  exclude group: 'com.android.support', module: 'support-annotations'
     //})
     compile 'com.android.support:appcompat-v7:26.+'
     implementation 'com.google.firebase:firebase-core:16.0.0'

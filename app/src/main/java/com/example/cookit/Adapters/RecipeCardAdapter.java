@@ -1,5 +1,13 @@
 package com.example.cookit.Adapters;
 
+import android.app.Activity;
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.Build;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -7,6 +15,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.cookit.ImageHelper;
 import com.example.cookit.R;
 import com.example.cookit.Recipe;
 
@@ -27,13 +36,40 @@ public class RecipeCardAdapter extends RecyclerView.Adapter<RecipeCardAdapter.Vi
     }
 
     @Override
-    public void onBindViewHolder(RecipeCardAdapter.ViewHolder holder, int position) {
+    public void onBindViewHolder(final RecipeCardAdapter.ViewHolder holder, int position) {
         if (position >= recipes.size())
             return;
         Recipe recipe = recipes.get(recipesIds.get(position));
         holder.ownerName.setText(recipe.getUploaderName());
         holder.foodName.setText(recipe.getName());
-        holder.itemView.findViewById(R.id.card_view).setTag(recipe);
+        holder.itemView.findViewById(R.id.recipeCardLayout).setTag(recipe);
+        holder.itemView.setTag(recipe);
+        holder.itemView.findViewById(R.id.recipeCardLayout).setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+
+                Vibrator t = (Vibrator)(holder.itemView.getContext().getSystemService(Context.VIBRATOR_SERVICE));
+                // Vibrate for 500 milliseconds
+                if (t.hasVibrator())
+                {
+                    t.vibrate(500);
+                }
+
+                return true;
+            }
+        });
+
+
+
+        ImageView imageView = holder.itemView.findViewById(R.id.recipePicture);
+        Bitmap food = BitmapFactory.decodeResource(holder.itemView.getContext().getResources(),R.drawable.ham);
+        imageView.setImageBitmap(food);
+
+        ImageView imageView2 = holder.itemView.findViewById(R.id.ownerProfilePicture);
+        Bitmap omerProfilePicture = BitmapFactory.decodeResource(holder.itemView.getContext().getResources(),R.drawable.omer);
+
+        omerProfilePicture = ImageHelper.getRoundedCornerBitmap(omerProfilePicture, omerProfilePicture.getHeight()/2);
+        imageView2.setImageBitmap(omerProfilePicture);
     }
 
     @Override
