@@ -18,6 +18,7 @@ public class RecipeDetailsActivity extends AppCompatActivity {
         RecipeDetailsFragment newRecipeDetailsFragment = new RecipeDetailsFragment();
         newRecipeDetailsFragment.setArguments(this.getIntent().getExtras().getBundle("recipe"));
         fragmentTransaction.replace(R.id.activity_recipe_details,newRecipeDetailsFragment);
+
         fragmentTransaction.commit();
     }
 }
