@@ -1,13 +1,9 @@
 package com.example.cookit.Adapters;
 
-import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.os.Build;
-import android.os.VibrationEffect;
 import android.os.Vibrator;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,7 +22,7 @@ import java.util.List;
 public class RecipeCardAdapter extends RecyclerView.Adapter<RecipeCardAdapter.ViewHolder> {
 
     public Hashtable<String,Recipe> recipes = new Hashtable<>();
-    public List<String> recipesIds = new ArrayList<>();
+    public List<String> recipeIds = new ArrayList<>();
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -37,14 +33,14 @@ public class RecipeCardAdapter extends RecyclerView.Adapter<RecipeCardAdapter.Vi
 
     @Override
     public void onBindViewHolder(final RecipeCardAdapter.ViewHolder holder, int position) {
-        if (position >= recipes.size())
-            return;
-        Recipe recipe = recipes.get(recipesIds.get(position));
+       /* if (position >= recipes.size())
+            return;*/
+        Recipe recipe = recipes.get(recipeIds.get(position));
         holder.ownerName.setText(recipe.getUploaderName());
         holder.foodName.setText(recipe.getName());
         holder.itemView.findViewById(R.id.recipeCardLayout).setTag(recipe);
         holder.itemView.setTag(recipe);
-        holder.itemView.findViewById(R.id.recipeCardLayout).setOnLongClickListener(new View.OnLongClickListener() {
+        holder.itemView.findViewById(R.id.recipePicture).setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
 
@@ -58,8 +54,6 @@ public class RecipeCardAdapter extends RecyclerView.Adapter<RecipeCardAdapter.Vi
                 return true;
             }
         });
-
-
 
         ImageView imageView = holder.itemView.findViewById(R.id.recipePicture);
         Bitmap food = BitmapFactory.decodeResource(holder.itemView.getContext().getResources(),R.drawable.ham);

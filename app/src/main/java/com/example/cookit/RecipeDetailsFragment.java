@@ -2,6 +2,7 @@ package com.example.cookit;
 
 import android.content.Context;
 import android.net.Uri;
+import android.os.Vibrator;
 import android.support.v4.app.DialogFragment;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -27,12 +28,6 @@ public class RecipeDetailsFragment extends DialogFragment {
 
     private Recipe recipe;
 
-    /*private static final String NAME = "NAME";
-    private static final String RECIPE_NAME = "RECIPE_NAME";
-    private static final String OWNER_PROFILE_PIC = "OWNER_PROFILE_PIC";
-    private static final String FOOD_PIC = "OWNER_PROFILE_PIC";
-    private static final String INSTRUCTIONS = "INSTRUCTIONS";*/
-
     public static RecipeDetailsFragment newInstance() {
         RecipeDetailsFragment fragment = new RecipeDetailsFragment();
         Bundle args = new Bundle();
@@ -52,26 +47,21 @@ public class RecipeDetailsFragment extends DialogFragment {
         // Inflate the layout for this fragment
         final View view = inflater.inflate(R.layout.fragment_recipe_details, container, false);
 
-        RecipeAsyncDao.getRecipeById(new RecipeAsyncDaoListener<Recipe>() {
+        Bundle b = getArguments();
+        recipe = b.getParcelable("recipe");
 
-            @Override
-            public void onComplete(Recipe data) {
-                recipe = data;
+        // Owner name
+        TextView ownerName = view.findViewById(R.id.ownerName);
+        ownerName.setText(recipe.getUploaderName());
 
+        // Recipe name
+        TextView recipeName = view.findViewById(R.id.recipeName);
+        recipeName.setText(recipe.getName());
+        recipeName.setClickable(false);
 
-                TextView ownerName = view.findViewById(R.id.ownerName);
-                ownerName.setText(recipe.getUploaderName());
-
-                // Recipe name
-                TextView recipeName = view.findViewById(R.id.recipeName);
-                recipeName.setText(recipe.getName());
-
-                // Recipe directions
-                TextView recipeDirections = view.findViewById(R.id.recipeDirections);
-                recipeDirections.setText(recipe.getPreperationString());
-
-            }
-        }, (String)getArguments().get("recipeID"));
+        // Recipe directions
+        TextView recipeDirections = view.findViewById(R.id.recipeDirections);
+        recipeDirections.setText(recipe.getPreperationString());
 
         // Displaying profile picture.
         ImageView ownerProfilePicture = view.findViewById(R.id.ownerProfilePicture);
@@ -81,14 +71,23 @@ public class RecipeDetailsFragment extends DialogFragment {
 
         // Displaying food picture.
         ImageView RecipePicture = view.findViewById(R.id.recipePicture);
-        Bitmap chickenBitmap = BitmapFactory.decodeResource(getContext().getResources(),R.drawable.chicken);
+        Bitmap chickenBitmap = BitmapFactory.decodeResource(getContext().getResources(),R.drawable.ham);
+        RecipePicture.setClickable(false);
+        RecipePicture.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
 
-        if (chickenBitmap.getHeight() > chickenBitmap.getWidth()) {
-            chickenBitmap = ImageHelper.getRoundedCornerBitmap(chickenBitmap, chickenBitmap.getHeight() / 35);
-        }
-        else {
-            chickenBitmap = ImageHelper.getRoundedCornerBitmap(chickenBitmap, chickenBitmap.getWidth() / 35);
-        }
+                Vibrator t = (Vibrator)(getContext().getSystemService(Context.VIBRATOR_SERVICE));
+                // Vibrate for 500 milliseconds
+                if (t.hasVibrator())
+                {
+                    t.vibrate(500);
+                }
+
+                return true;
+            }
+        });
+
         
         RecipePicture.setImageBitmap(chickenBitmap);
 

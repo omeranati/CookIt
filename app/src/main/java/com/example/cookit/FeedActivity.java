@@ -2,15 +2,10 @@ package com.example.cookit;
 
 import android.arch.lifecycle.Observer;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.support.annotation.Nullable;
 import android.os.Bundle;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
 
 import com.example.cookit.Adapters.RecipeCardAdapter;
@@ -19,7 +14,6 @@ import com.google.firebase.database.DatabaseReference;
 import java.util.List;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.widget.ImageView;
 
 public class FeedActivity extends AppCompatActivity {
     private DatabaseReference mDatabase;
@@ -48,12 +42,12 @@ public class FeedActivity extends AppCompatActivity {
            for(Recipe r: recipes)
             {
                 if (!recipeCardAdapter.recipes.containsKey(r.getId())) {
-                    recipeCardAdapter.recipesIds.add(0,r.getId());
+                    recipeCardAdapter.recipeIds.add(0,r.getId());
                     recipeCardAdapter.recipes.put(r.getId(),r);
                     recipeCardAdapter.notifyDataSetChanged();
                 }
                 if (r.hashCode() != ((Recipe)recipeCardAdapter.recipes.get(r.getId())).hashCode()) {
-                    recipeCardAdapter.recipesIds.set(recipeCardAdapter.recipesIds.indexOf((Object)r.getId()),r.getId());
+                    recipeCardAdapter.recipeIds.set(recipeCardAdapter.recipeIds.indexOf((Object)r.getId()),r.getId());
                     recipeCardAdapter.recipes.put(r.getId(),r);
                     recipeCardAdapter.notifyDataSetChanged();
 
@@ -75,8 +69,17 @@ public class FeedActivity extends AppCompatActivity {
     }
 
     public void viewRecipeDetails(View view) {
+        while (view.getTag() == null)
+        {
+            view = (View)view.getParent();
+
+        }
+
         Intent intent = new Intent(this, RecipeDetailsActivity.class);
-        intent.putExtra("recipeID", ((Recipe)view.getTag()).getId());
+        Bundle b = new Bundle();
+        b.putParcelable("recipe", (Recipe)view.getTag());
+        intent.putExtra("recipe",b);
+       // intent.putExtra("recipe", b);
         startActivity(intent);
     }
 }
