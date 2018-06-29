@@ -26,6 +26,8 @@ public class Model {
         modelFirebase.cancelGetAllRecipes();
     }
 
+    public void addRecipe(Recipe r) {modelFirebase.addRecipe(r);}
+
     public class RecipesLiveData extends MutableLiveData<List<Recipe>> {
 
         private RecipesLiveData(){

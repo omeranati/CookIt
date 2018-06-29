@@ -18,6 +18,7 @@ import android.view.View;
 
 import com.example.cookit.Adapters.IngredientAdapter;
 import com.example.cookit.Adapters.PreparationAdapter;
+import com.example.cookit.Model.Model;
 
 public class UploadRecipeActivity extends AppCompatActivity {
     private static final int CAMERA_DIALOG_INDEX = 0;
@@ -50,7 +51,10 @@ public class UploadRecipeActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_send:
-                return getAndValidateInputRecipe();
+                if (validateInput()) {
+                    Model.getInstance().addRecipe(inputRecipe);
+                }
+                break;
         }
 
         return false;
@@ -87,7 +91,6 @@ public class UploadRecipeActivity extends AppCompatActivity {
                 if(resultCode == RESULT_OK){
                     imageView.setImageBitmap((Bitmap) imageReturnedIntent.getExtras().get("data"));
                 }
-
                 break;
             case GALLERY_DIALOG_INDEX:
                 if(resultCode == RESULT_OK){
@@ -127,30 +130,49 @@ public class UploadRecipeActivity extends AppCompatActivity {
         addNewIngredient(null);
     }
 
-    private boolean getAndValidateInputRecipe() {
-        inputRecipe = new Recipe();
+    private boolean validateInput() {
+        setInputRecipe();
 
-        inputRecipe.setName(((TextInputLayout)findViewById(R.id.nameTextView)).getEditText().getText().toString());
         if (inputRecipe.getName().length() == 0) {
             ((TextInputLayout)findViewById(R.id.nameTextView)).setError("Enter recipe name");
             return false;
         }
 
-        getInputIngredients();
-        getInputPreparation();
+        if (inputRecipe.getIngredients().size() == 0) {
+            showEmptyListAlert(R.string.empty_ingredients_error_massage);
+            return false;
+        }
+
+        if (inputRecipe.getPreparation().size() == 0) {
+            showEmptyListAlert(R.string.empty_preparation_error_message);
+            return false;
+        }
 
         return true;
     }
 
-    private boolean getInputPreparation() {
+    private void showEmptyListAlert(int messageId) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(R.string.error_string).setMessage(messageId).setPositiveButton("Ok", null);
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
+    private void setInputRecipe() {
+        inputRecipe = new Recipe();
+        inputRecipe.setName(((TextInputLayout)findViewById(R.id.nameTextView)).getEditText().getText().toString());
+        getInputIngredients();
+        getInputPreparation();
+    }
+
+    private void getInputPreparation() {
         for (String currStage : prepareStagesAdapter.prepareStages) {
             if (!currStage.isEmpty())
                 inputRecipe.getPreparation().add(currStage);
         }
-        return true;
     }
 
-    private boolean getInputIngredients() {
+    private void getInputIngredients() {
         String q, d;
         for (int i=0; i < ingredientsAdapter.quantities.size(); i++) {
             q = ingredientsAdapter.quantities.get(i);
@@ -161,7 +183,5 @@ public class UploadRecipeActivity extends AppCompatActivity {
                 inputRecipe.getIngredients().add(new Ingredient(q, d));
 
         }
-
-        return !inputRecipe.getIngredients().isEmpty();
     }
 }
