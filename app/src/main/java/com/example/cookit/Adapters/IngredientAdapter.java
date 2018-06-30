@@ -1,6 +1,8 @@
 package com.example.cookit.Adapters;
 
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -45,20 +47,35 @@ public class IngredientAdapter extends RecyclerView.Adapter<IngredientAdapter.Vi
         public ViewHolder(View itemView) {
             super(itemView);
             quantityEditText = itemView.findViewById(R.id.quantityEditText);
-            quantityEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            quantityEditText.addTextChangedListener(new TextWatcher() {
+
                 @Override
-                public void onFocusChange(View view, boolean hasFocus) {
-                    if(!hasFocus)
-                        quantities.set(getLayoutPosition(),quantityEditText.getText().toString());
+                public void afterTextChanged(Editable s) {}
+
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
+
+                @Override
+                public void onTextChanged(CharSequence s, int start,
+                                          int before, int count) {
+                    quantities.set(getLayoutPosition(),quantityEditText.getText().toString());
                 }
             });
 
+
             descriptionEditText = itemView.findViewById(R.id.descriptionEditText);
-            descriptionEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            descriptionEditText.addTextChangedListener(new TextWatcher() {
+
                 @Override
-                public void onFocusChange(View view, boolean hasFocus) {
-                    if(!hasFocus)
-                        descriptions.set(getLayoutPosition(),descriptionEditText.getText().toString());
+                public void afterTextChanged(Editable s) {}
+
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
+
+                @Override
+                public void onTextChanged(CharSequence s, int start,
+                                          int before, int count) {
+                    descriptions.set(getLayoutPosition(),descriptionEditText.getText().toString());
                 }
             });
         }

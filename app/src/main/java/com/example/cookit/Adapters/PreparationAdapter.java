@@ -1,6 +1,8 @@
 package com.example.cookit.Adapters;
 
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -46,11 +48,18 @@ public class PreparationAdapter extends RecyclerView.Adapter<PreparationAdapter.
             serialNumTextView = itemView.findViewById(R.id.serialNunTextView);
             prepEditText = itemView.findViewById(R.id.preparationEditText);
 
-            prepEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            prepEditText.addTextChangedListener(new TextWatcher() {
+
                 @Override
-                public void onFocusChange(View view, boolean hasFocus) {
-                    if(!hasFocus)
-                        prepareStages.set(getLayoutPosition(),prepEditText.getText().toString());
+                public void afterTextChanged(Editable s) {}
+
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
+
+                @Override
+                public void onTextChanged(CharSequence s, int start,
+                                          int before, int count) {
+                    prepareStages.set(getLayoutPosition(),prepEditText.getText().toString());
                 }
             });
         }

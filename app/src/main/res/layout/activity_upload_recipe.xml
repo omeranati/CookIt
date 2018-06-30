@@ -6,7 +6,8 @@
     android:layout_height="match_parent"
     android:layout_width="match_parent"
     tools:context=".UploadRecipeActivity"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:focusableInTouchMode="true">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/upload_toolbar"
@@ -17,6 +18,7 @@
         android:theme="@style/Theme.AppCompat.Light"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
         tools:titleTextColor="@android:color/background_light"
+        android:focusableInTouchMode="true"
         app:title="Upload"/>
 
     <ScrollView

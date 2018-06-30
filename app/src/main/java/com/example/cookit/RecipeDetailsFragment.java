@@ -68,7 +68,7 @@ public class RecipeDetailsFragment extends DialogFragment {
 
                 // Recipe directions
                 TextView recipeDirections = view.findViewById(R.id.recipeDirections);
-                recipeDirections.setText(recipe.getPreperationString());
+                recipeDirections.setText(createRecipeString(recipe));
 
             }
         }, (String)getArguments().get("recipeID"));
@@ -98,6 +98,23 @@ public class RecipeDetailsFragment extends DialogFragment {
         }*/
 
         return view;
+    }
+
+    private String createRecipeString(Recipe recipe) {
+        String recipePrint = "";
+        recipePrint += "Ingredients:" + System.lineSeparator();
+
+        for (int i = 0; i < recipe.getIngredients().size(); i++) {
+            recipePrint += "• " + recipe.getIngredients().get(i).getQuantity() + " " + recipe.getIngredients().get(i).getDescription() + System.lineSeparator();
+        }
+
+        recipePrint += System.lineSeparator()+ "Preparation:" + System.lineSeparator();
+
+        for (int i = 0; i < recipe.getPreparation().size(); i++) {
+            recipePrint += i+1 + ". " + recipe.getPreparation().get(i) + System.lineSeparator();
+        }
+
+        return (recipePrint);
     }
 
     //@Override

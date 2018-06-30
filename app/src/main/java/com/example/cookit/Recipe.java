@@ -39,23 +39,6 @@ public class Recipe {
         this.preparation = preparation;
     }
 
-    public String getPreperationString() {
-        String recipePrint = "";
-        recipePrint += "Ingredients:" + System.lineSeparator();
-
-        for (int i = 0; i < ingredients.size(); i++) {
-            recipePrint += "• " + ingredients.get(i).getQuantity() + " " + ingredients.get(i).getDescription() + System.lineSeparator();
-        }
-
-        recipePrint += System.lineSeparator()+ "Preparation:" + System.lineSeparator();
-
-        for (int i = 0; i < preparation.size(); i++) {
-            recipePrint += i+1 + ". " + preparation.get(i) + System.lineSeparator();
-        }
-
-        return (recipePrint);
-    }
-
     @NonNull
     public String getId() {
         return id;

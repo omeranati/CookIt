@@ -42,7 +42,6 @@ public class UploadRecipeActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.upload_activity_menu, menu);
         return true;
     }
@@ -53,6 +52,7 @@ public class UploadRecipeActivity extends AppCompatActivity {
             case R.id.action_send:
                 if (validateInput()) {
                     Model.getInstance().addRecipe(inputRecipe);
+                    finish();
                 }
                 break;
         }
@@ -119,7 +119,7 @@ public class UploadRecipeActivity extends AppCompatActivity {
         RecyclerView preparationRV = ((RecyclerView) findViewById(R.id.preparationRecyclerView));
         preparationRV.setLayoutManager(new LinearLayoutManager(this));
         preparationRV.setAdapter(prepareStagesAdapter);
-        prepareStagesAdapter.prepareStages.add("");
+        addNewPrepareStage(null);
     }
 
     private void initIngredientsRecyclerView() {
@@ -153,7 +153,7 @@ public class UploadRecipeActivity extends AppCompatActivity {
 
     private void showEmptyListAlert(int messageId) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle(R.string.error_string).setMessage(messageId).setPositiveButton("Ok", null);
+        builder.setMessage(messageId).setPositiveButton("Ok", null);
         AlertDialog dialog = builder.create();
         dialog.show();
     }
@@ -163,6 +163,10 @@ public class UploadRecipeActivity extends AppCompatActivity {
         inputRecipe.setName(((TextInputLayout)findViewById(R.id.nameTextView)).getEditText().getText().toString());
         getInputIngredients();
         getInputPreparation();
+
+        inputRecipe.setUploaderName("Shirlilol");
+        inputRecipe.setUploaderEmail("Shirlilol@gmail.com");
+        inputRecipe.setPicture("NotAnPicture.jpg");
     }
 
     private void getInputPreparation() {
