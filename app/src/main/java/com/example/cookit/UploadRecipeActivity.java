@@ -3,6 +3,8 @@ package com.example.cookit;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.design.widget.TextInputLayout;
@@ -35,7 +37,9 @@ public class UploadRecipeActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.upload_toolbar);
         setSupportActionBar(toolbar);
         toolbar.setTitleTextColor(0xFFFFFFFF);
-
+        Bitmap bitmap = FeedActivity.blurredImage;
+        Drawable d = new BitmapDrawable(getResources(), bitmap);
+        findViewById(R.id.uploadRecipeLayout).setBackground(d);
         initIngredientsRecyclerView();
         initPreparationRecyclerView();
     }
