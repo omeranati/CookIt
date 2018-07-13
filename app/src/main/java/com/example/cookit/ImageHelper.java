@@ -17,6 +17,7 @@ import android.renderscript.Allocation;
 import android.renderscript.Element;
 import android.renderscript.RenderScript;
 import android.renderscript.ScriptIntrinsicBlur;
+//import android.support.v7.graphics.Palette;
 
 public class ImageHelper {
     public static Bitmap getRoundedCornerBitmap(Bitmap bitmap, int pixels) {
@@ -69,11 +70,9 @@ public class ImageHelper {
 
         Canvas canvas = new Canvas(bm);
         Paint p = new Paint(Color.RED);
-        ColorFilter filter = new LightingColorFilter(0xFFFFFFFF , 0x00222222); // lighten
-        //ColorFilter filter = new LightingColorFilter(0xFF7F7F7F, 0x00000000);    // darken
+        ColorFilter filter = new LightingColorFilter(0xffffffdb , 0x00333333); // lighten
         p.setColorFilter(filter);
         canvas.drawBitmap(bm, new Matrix(), p);
-
         return bm;
     }
 

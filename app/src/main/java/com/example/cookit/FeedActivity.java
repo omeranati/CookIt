@@ -141,7 +141,7 @@ public class FeedActivity extends AppCompatActivity {
             protected Bitmap doInBackground(String... strings) {
                 if (drawingCache != null) {
                     // Blurring the image
-                    blurredImage = ImageHelper.fastblur(drawingCache,0.05f,10);
+                    blurredImage = ImageHelper.fastblur(drawingCache,0.01f,6);
 
                     // Lightening the image
                     blurredImage = ImageHelper.lightenBitmap(blurredImage);

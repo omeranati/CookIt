@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 import com.example.cookit.FeedActivity;
 import com.example.cookit.ImageHelper;
+import com.example.cookit.Model.RecipeAsyncDaoListener;
 import com.example.cookit.R;
 import com.example.cookit.Recipe;
 
@@ -34,9 +35,6 @@ public class RecipeCardAdapter extends RecyclerView.Adapter<RecipeCardAdapter.Vi
 
     @Override
     public void onBindViewHolder(final RecipeCardAdapter.ViewHolder holder, int position) {
-       /* if (position >= recipes.size())
-            return;*/
-
         Recipe recipe = recipes.get(recipeIds.get(position));
         holder.ownerName.setText(recipe.getUploaderName());
         holder.foodName.setText(recipe.getName());
@@ -65,8 +63,15 @@ public class RecipeCardAdapter extends RecyclerView.Adapter<RecipeCardAdapter.Vi
             }
         });
 
+        Bitmap food;
         ImageView imageView = holder.itemView.findViewById(R.id.recipePicture);
-        Bitmap food = BitmapFactory.decodeResource(holder.itemView.getContext().getResources(),R.drawable.ham);
+        if (position == 0) {
+            food = BitmapFactory.decodeResource(holder.itemView.getContext().getResources(), R.drawable.ham);
+        }
+        else {
+            food = BitmapFactory.decodeResource(holder.itemView.getContext().getResources(), R.drawable.salad);
+
+        }
         imageView.setImageBitmap(food);
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -74,8 +79,6 @@ public class RecipeCardAdapter extends RecyclerView.Adapter<RecipeCardAdapter.Vi
                 ((FeedActivity)holder.itemView.getContext()).viewRecipeDetails(view);
             }
         });
-
-
 
         ImageView imageView2 = holder.itemView.findViewById(R.id.ownerProfilePicture);
         Bitmap omerProfilePicture = BitmapFactory.decodeResource(holder.itemView.getContext().getResources(),R.drawable.omer);
