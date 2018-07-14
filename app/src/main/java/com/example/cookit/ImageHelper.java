@@ -38,11 +38,10 @@ public class ImageHelper {
         return output;
     }
 
-    public static Bitmap lightenBitmap(Bitmap bm) {
+    public static Bitmap filterBitmap(Bitmap bm, int mul, int add) {
         Canvas canvas = new Canvas(bm);
         Paint p = new Paint(Color.RED);
-        Palette pal = Palette.from(bm).generate();
-        ColorFilter filter = new LightingColorFilter(0xffffffbf , 0x00333333); // lighten
+        ColorFilter filter = new LightingColorFilter(mul, add);
         p.setColorFilter(filter);
         canvas.drawBitmap(bm, new Matrix(), p);
         return bm;

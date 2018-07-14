@@ -1,6 +1,8 @@
 package com.example.cookit;
 
 import android.content.Context;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Vibrator;
 import android.support.v4.app.DialogFragment;
@@ -72,6 +74,14 @@ public class RecipeDetailsFragment extends DialogFragment {
         // Displaying food picture.
         ImageView RecipePicture = view.findViewById(R.id.recipePicture);
         Bitmap chickenBitmap = BitmapFactory.decodeResource(getContext().getResources(),R.drawable.ham);
+
+
+        Bitmap blurredFoodPicture = ImageHelper.fastblur(chickenBitmap,0.1f,15);
+        blurredFoodPicture = ImageHelper.filterBitmap(blurredFoodPicture, 0xfffffff, 0x00777777);
+        Drawable d = new BitmapDrawable(getResources(), blurredFoodPicture);
+        view.findViewById(R.id.recipeDetailsLayout).setBackground(d);
+
+
         RecipePicture.setClickable(false);
         RecipePicture.setOnLongClickListener(new View.OnLongClickListener() {
             @Override

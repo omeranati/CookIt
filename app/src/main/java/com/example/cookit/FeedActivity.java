@@ -96,6 +96,7 @@ public class FeedActivity extends AppCompatActivity {
 
             final Intent intent = new Intent(this, UploadRecipeActivity.class);
 
+            /* Used for blurring background in upload recipe activity. removed it for now
             appView.destroyDrawingCache();
             appView.buildDrawingCache();
             drawingCache = appView.getDrawingCache();
@@ -107,7 +108,8 @@ public class FeedActivity extends AppCompatActivity {
                     blurredImage = data;
                     startActivity(intent);
                 }
-            });
+            });*/
+            startActivity(intent);
         }
     }
 
@@ -144,7 +146,7 @@ public class FeedActivity extends AppCompatActivity {
                     blurredImage = ImageHelper.fastblur(drawingCache,0.1f,60);
 
                     // Lightening the image
-                    blurredImage = ImageHelper.lightenBitmap(blurredImage);
+                    blurredImage = ImageHelper.filterBitmap(blurredImage, 0xffffffbf, 0x00333333);
                 }
 
                 return blurredImage;

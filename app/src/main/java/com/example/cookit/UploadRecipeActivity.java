@@ -37,9 +37,12 @@ public class UploadRecipeActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.upload_toolbar);
         setSupportActionBar(toolbar);
         toolbar.setTitleTextColor(0xFFFFFFFF);
+
+        /* Used for blurring the backround. removed it for now.
         Bitmap bitmap = FeedActivity.blurredImage;
         Drawable d = new BitmapDrawable(getResources(), bitmap);
-        findViewById(R.id.uploadRecipeLayout).setBackground(d);
+        findViewById(R.id.uploadRecipeLayout).setBackground(d);*/
+
         initIngredientsRecyclerView();
         initPreparationRecyclerView();
     }
