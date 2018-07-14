@@ -74,7 +74,7 @@ public class RecipeDetailsFragment extends DialogFragment {
 
         // Displaying food picture.
         ImageView RecipePicture = view.findViewById(R.id.recipePicture);
-        Bitmap chickenBitmap = BitmapFactory.decodeResource(getContext().getResources(),R.drawable.salad);
+        Bitmap chickenBitmap = BitmapFactory.decodeResource(getContext().getResources(),R.drawable.ham);
 
         // Extracting main colors from food picture and coloring the background and the food's name
         Palette p = Palette.from(chickenBitmap).generate();
