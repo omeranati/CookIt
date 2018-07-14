@@ -1,6 +1,5 @@
 package com.example.cookit;
 
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -13,13 +12,10 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.Bitmap.Config;
 import android.graphics.PorterDuff.Mode;
-import android.renderscript.Allocation;
-import android.renderscript.Element;
-import android.renderscript.RenderScript;
-import android.renderscript.ScriptIntrinsicBlur;
-//import android.support.v7.graphics.Palette;
+import android.support.v7.graphics.Palette;
 
 public class ImageHelper {
+
     public static Bitmap getRoundedCornerBitmap(Bitmap bitmap, int pixels) {
         Bitmap output = Bitmap.createBitmap(bitmap.getWidth(), bitmap
                 .getHeight(), Config.ARGB_8888);
@@ -42,45 +38,17 @@ public class ImageHelper {
         return output;
     }
 
-
-
-        private static final float BITMAP_SCALE = 0.4f;
-        private static final float BLUR_RADIUS = 25f;
-
-        public static Bitmap blur(Context context, Bitmap image, int radius) {
-            int width = Math.round(image.getWidth() * BITMAP_SCALE);
-            int height = Math.round(image.getHeight() * BITMAP_SCALE);
-
-            Bitmap inputBitmap = image;//Bitmap.createScaledBitmap(image, width, height, true);
-            Bitmap outputBitmap = Bitmap.createBitmap(inputBitmap);
-
-            RenderScript rs = RenderScript.create(context);
-            ScriptIntrinsicBlur theIntrinsic = ScriptIntrinsicBlur.create(rs, Element.U8_4(rs));
-            Allocation tmpIn = Allocation.createFromBitmap(rs, inputBitmap);
-            Allocation tmpOut = Allocation.createFromBitmap(rs, outputBitmap);
-            theIntrinsic.setRadius(radius);
-            theIntrinsic.setInput(tmpIn);
-            theIntrinsic.forEach(tmpOut);
-            tmpOut.copyTo(outputBitmap);
-
-            return outputBitmap;
-    }
-
     public static Bitmap lightenBitmap(Bitmap bm) {
-
         Canvas canvas = new Canvas(bm);
         Paint p = new Paint(Color.RED);
-        ColorFilter filter = new LightingColorFilter(0xffffffdb , 0x00333333); // lighten
+        Palette pal = Palette.from(bm).generate();
+        ColorFilter filter = new LightingColorFilter(0xffffffbf , 0x00333333); // lighten
         p.setColorFilter(filter);
         canvas.drawBitmap(bm, new Matrix(), p);
         return bm;
     }
 
-
-
-
     public static Bitmap fastblur(Bitmap sentBitmap, float scale, int radius) {
-
         int width = Math.round(sentBitmap.getWidth() * scale);
         int height = Math.round(sentBitmap.getHeight() * scale);
         sentBitmap = Bitmap.createScaledBitmap(sentBitmap, width, height, false);
@@ -200,6 +168,7 @@ public class ImageHelper {
             }
             yw += w;
         }
+
         for (x = 0; x < w; x++) {
             rinsum = ginsum = binsum = routsum = goutsum = boutsum = rsum = gsum = bsum = 0;
             yp = -radius * w;
@@ -281,7 +250,6 @@ public class ImageHelper {
             }
         }
 
-        //Log.e("pix", w + " " + h + " " + pix.length);
         bitmap.setPixels(pix, 0, w, 0, 0, w, h);
 
         return (bitmap);

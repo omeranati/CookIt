@@ -28,12 +28,11 @@ import android.widget.ImageView;
 public class FeedActivity extends AppCompatActivity {
     private DatabaseReference mDatabase;
     private RecipeCardAdapter recipeCardAdapter;
-
     private static boolean viewingRecipeDetails = false;
     private static boolean uploadingRecipe = false;
-    public static Bitmap blurredImage;
-    public static Bitmap drawingCache;
-    public static View appView;
+    public static Bitmap   blurredImage;
+    public static Bitmap   drawingCache;
+    public static View     appView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,10 +96,10 @@ public class FeedActivity extends AppCompatActivity {
 
             final Intent intent = new Intent(this, UploadRecipeActivity.class);
 
-            // Getting the current look of the user's screen.
             appView.destroyDrawingCache();
             appView.buildDrawingCache();
             drawingCache = appView.getDrawingCache();
+
 
             blurBitmap(new RecipeAsyncDaoListener<Bitmap>() {
                 @Override
@@ -140,8 +139,9 @@ public class FeedActivity extends AppCompatActivity {
             @Override
             protected Bitmap doInBackground(String... strings) {
                 if (drawingCache != null) {
+
                     // Blurring the image
-                    blurredImage = ImageHelper.fastblur(drawingCache,0.01f,6);
+                    blurredImage = ImageHelper.fastblur(drawingCache,0.1f,60);
 
                     // Lightening the image
                     blurredImage = ImageHelper.lightenBitmap(blurredImage);
