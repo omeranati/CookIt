@@ -19,8 +19,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar">
         <activity
-            android:name=".FeedActivity"
-            android:screenOrientation="portrait">
+            android:name=".FeedActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

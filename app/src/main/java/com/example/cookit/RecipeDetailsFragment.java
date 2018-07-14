@@ -9,6 +9,7 @@ import android.support.v4.app.DialogFragment;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.support.v7.graphics.Palette;
 import android.text.Layout;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -73,15 +74,13 @@ public class RecipeDetailsFragment extends DialogFragment {
 
         // Displaying food picture.
         ImageView RecipePicture = view.findViewById(R.id.recipePicture);
-        Bitmap chickenBitmap = BitmapFactory.decodeResource(getContext().getResources(),R.drawable.ham);
+        Bitmap chickenBitmap = BitmapFactory.decodeResource(getContext().getResources(),R.drawable.salad);
 
-
-        Bitmap blurredFoodPicture = ImageHelper.fastblur(chickenBitmap,0.1f,15);
-        blurredFoodPicture = ImageHelper.filterBitmap(blurredFoodPicture, 0xfffffff, 0x00777777);
-        Drawable d = new BitmapDrawable(getResources(), blurredFoodPicture);
-        view.findViewById(R.id.recipeDetailsLayout).setBackground(d);
-
-
+        Palette p = Palette.from(chickenBitmap).generate();
+        p.getLightVibrantColor(0xffffffff);
+        view.findViewById(R.id.recipeDetailsLayout).setBackgroundColor(p.getLightVibrantColor(0xffffffff));
+        ((TextView)view.findViewById(R.id.recipeName)).setTextColor(p.getDarkVibrantColor(0x00000000));
+        ((TextView)view.findViewById(R.id.textView)).setTextColor(p.getDarkVibrantColor(0x00000000));
         RecipePicture.setClickable(false);
         RecipePicture.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
