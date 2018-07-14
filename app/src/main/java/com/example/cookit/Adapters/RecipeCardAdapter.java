@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Vibrator;
+import android.support.v7.graphics.Palette;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -82,6 +83,10 @@ public class RecipeCardAdapter extends RecyclerView.Adapter<RecipeCardAdapter.Vi
 
         ImageView imageView2 = holder.itemView.findViewById(R.id.ownerProfilePicture);
         Bitmap omerProfilePicture = BitmapFactory.decodeResource(holder.itemView.getContext().getResources(),R.drawable.omer);
+
+        // Extracting dark vibrant color from food picture and coloring the food name.
+        Palette pal = Palette.from(food).generate();
+        holder.foodName.setTextColor(pal.getDarkVibrantColor(0x00000000));
 
         omerProfilePicture = ImageHelper.getRoundedCornerBitmap(omerProfilePicture, omerProfilePicture.getHeight()/2);
         imageView2.setImageBitmap(omerProfilePicture);

@@ -13,7 +13,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="27dp"
+        android:layout_marginTop="16dp"
         android:text="ownerName"
         android:textColor="#000000"
         android:textSize="15sp"
@@ -58,30 +58,15 @@
         android:id="@+id/recipeName"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="3dp"
-        android:layout_marginTop="27dp"
+        android:layout_marginStart="8dp"
         android:clickable="true"
         android:foreground="?android:attr/selectableItemBackground"
         android:text="recipeName"
-        android:textAlignment="viewStart"
         android:textColor="#000000"
         android:textSize="15sp"
         android:textStyle="bold"
-        app:layout_constraintStart_toEndOf="@+id/textView"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="3dp"
-        android:layout_marginTop="27dp"
-        android:text="shared"
-        android:textColor="#000000"
-        android:textSize="15sp"
-        app:layout_constraintStart_toEndOf="@+id/ownerName"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:text="shared" />
+        app:layout_constraintStart_toEndOf="@+id/ownerProfilePicture"
+        app:layout_constraintTop_toBottomOf="@+id/ownerName" />
 
 
 </android.support.constraint.ConstraintLayout>
