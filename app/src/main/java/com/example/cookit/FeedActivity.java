@@ -10,6 +10,7 @@ import android.provider.ContactsContract;
 import android.support.annotation.Nullable;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.graphics.Palette;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 
@@ -32,7 +33,9 @@ public class FeedActivity extends AppCompatActivity {
     private static boolean uploadingRecipe = false;
     public static Bitmap   blurredImage;
     public static Bitmap   drawingCache;
+    public static int mainColor;
     public static View     appView;
+    public static View     feedView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,7 +48,9 @@ public class FeedActivity extends AppCompatActivity {
         toolbar.setTitleTextColor(0xFFFFFFFF);
         Model m = Model.getInstance();
         appView = findViewById(R.id.main_container);
+        feedView = appView.findViewById(R.id.recipesRecyclerView);
         appView.setDrawingCacheEnabled(true);
+        feedView.setDrawingCacheEnabled(true);
 
         m.getAllRecipes().observe(this, new Observer<List<Recipe>>() {
             @Override
@@ -96,11 +101,15 @@ public class FeedActivity extends AppCompatActivity {
 
             final Intent intent = new Intent(this, UploadRecipeActivity.class);
 
-            /* Used for blurring background in upload recipe activity. removed it for now
+             //Used for blurring background in upload recipe activity. removed it for now
             appView.destroyDrawingCache();
             appView.buildDrawingCache();
             drawingCache = appView.getDrawingCache();
 
+            feedView.destroyDrawingCache();
+            feedView.buildDrawingCache();
+            Palette pal = Palette.from(feedView.getDrawingCache()).generate();
+            mainColor = pal.getVibrantColor(0xffffffff);
 
             blurBitmap(new RecipeAsyncDaoListener<Bitmap>() {
                 @Override
@@ -108,8 +117,8 @@ public class FeedActivity extends AppCompatActivity {
                     blurredImage = data;
                     startActivity(intent);
                 }
-            });*/
-            startActivity(intent);
+            });
+            //startActivity(intent);
         }
     }
 
@@ -142,11 +151,13 @@ public class FeedActivity extends AppCompatActivity {
             protected Bitmap doInBackground(String... strings) {
                 if (drawingCache != null) {
 
-                    // Blurring the image
-                    blurredImage = ImageHelper.fastblur(drawingCache,0.1f,60);
-
                     // Lightening the image
-                    blurredImage = ImageHelper.filterBitmap(blurredImage, 0xffffffbf, 0x00333333);
+                    blurredImage = ImageHelper.filterBitmap(drawingCache, 0xffffff55, 0x00888888);
+
+                    // Blurring the image
+                    blurredImage = ImageHelper.fastblur(blurredImage,0.1f,22);
+
+
                 }
 
                 return blurredImage;

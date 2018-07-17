@@ -77,10 +77,10 @@ public class RecipeDetailsFragment extends DialogFragment {
         Bitmap chickenBitmap = BitmapFactory.decodeResource(getContext().getResources(),R.drawable.ham);
 
         // Extracting main colors from food picture and coloring the background and the food's name
-        Palette p = Palette.from(chickenBitmap).generate();
+        /*Palette p = Palette.from(chickenBitmap).generate();
         view.findViewById(R.id.recipeDetailsLayout).setBackgroundColor(p.getLightVibrantColor(0xffffffff));
         ((TextView)view.findViewById(R.id.recipeName)).setTextColor(p.getDarkVibrantColor(0x00000000));
-
+        */
         RecipePicture.setClickable(false);
         RecipePicture.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
