@@ -15,7 +15,7 @@ import android.os.Parcelable;
 import android.support.annotation.NonNull;
 
 @Entity
-public class Recipe {
+public class Recipe implements Parcelable {
     @PrimaryKey
     @NonNull
     private String id;
