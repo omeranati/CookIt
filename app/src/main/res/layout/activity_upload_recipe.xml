@@ -7,8 +7,7 @@
     android:layout_width="match_parent"
     tools:context=".UploadRecipeActivity"
     android:orientation="vertical"
-    android:focusableInTouchMode="true">
-    android:orientation="vertical"
+    android:focusableInTouchMode="true"
     android:id="@+id/uploadRecipeLayout">
 
     <android.support.v7.widget.Toolbar

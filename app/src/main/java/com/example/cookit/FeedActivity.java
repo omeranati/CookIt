@@ -25,6 +25,7 @@ import java.util.concurrent.Semaphore;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.widget.ImageView;
+import android.widget.PopupMenu;
 
 public class FeedActivity extends AppCompatActivity {
     private DatabaseReference mDatabase;
@@ -43,9 +44,8 @@ public class FeedActivity extends AppCompatActivity {
         setContentView(R.layout.activity_feed);
         initRecipesRecyclerView();
 
-        Toolbar toolbar = findViewById(R.id.feed_toolbar);
-        setSupportActionBar(toolbar);
-        toolbar.setTitleTextColor(0xFFFFFFFF);
+        setToolbar();
+
         Model m = Model.getInstance();
         appView = findViewById(R.id.main_container);
         feedView = appView.findViewById(R.id.recipesRecyclerView);
@@ -83,6 +83,20 @@ public class FeedActivity extends AppCompatActivity {
                 }
             }
         }
+    }
+
+    private void setToolbar() {
+        Toolbar toolbar = findViewById(R.id.feed_toolbar);
+        setSupportActionBar(toolbar);
+        toolbar.setTitleTextColor(0xFFFFFFFF);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                PopupMenu popup = new PopupMenu(CookIt.getContext(), v);
+                popup.inflate(R.menu.feed_activity_menu);
+                popup.show();
+            }
+        });
     }
 
     private void initRecipesRecyclerView() {

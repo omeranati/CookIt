@@ -13,10 +13,13 @@
         android:layout_height="@dimen/toolbar_height"
         android:background="@color/colorPrimary"
         android:elevation="@dimen/toolbar_elevation"
+        android:gravity="center_vertical|start"
         android:theme="@style/Theme.AppCompat.Light"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
         app:title="CookIt"
-        tools:titleTextColor="@android:color/background_light" />
+        app:navigationIcon="@drawable/round_menu_24"
+        tools:titleTextColor="@android:color/background_light">
+    </android.support.v7.widget.Toolbar>
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/uploadRecipeButton"
