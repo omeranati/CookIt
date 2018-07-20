@@ -2,10 +2,16 @@ package com.example.cookit;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.ListIterator;
 
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
 import android.arch.persistence.room.TypeConverter;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 
 @Entity
@@ -37,6 +43,30 @@ public class Recipe {
         this.picture = picture;
         this.ingredients = ingredients;
         this.preparation = preparation;
+    }
+
+    public Recipe(Parcel p){
+        this.ingredients = new ArrayList<>();
+        this.preparation = new ArrayList<>();
+        ArrayList<String> data = new ArrayList<>();
+        p.readStringList(data);
+        this.id = data.get(0);
+        this.name = data.get(1);
+        this.uploaderEmail = data.get(2);
+        this.uploaderName = data.get(3);
+        this.picture = data.get(4);
+
+        int ingredientsLength = p.readInt();
+
+        for(int i = 0; i < ingredientsLength; i++){
+            this.ingredients.add(new Ingredient(p.readString(),p.readString()));
+        }
+
+        int preparationLength = p.readInt();
+
+        for(int i = 0; i < preparationLength; i++){
+            this.preparation.add(p.readString());
+        }
     }
 
     @NonNull
@@ -95,5 +125,43 @@ public class Recipe {
     public void setPreparation(ArrayList<String> preparation) {
         this.preparation = preparation;
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeStringArray(new String []{
+            this.id,
+            this.name,
+            this.uploaderEmail,
+            this.uploaderName,
+            this.picture});
+
+        parcel.writeInt(this.ingredients.size());
+
+        for(Ingredient nextIngredient : this.ingredients) {
+            parcel.writeString(nextIngredient.getQuantity());
+            parcel.writeString(nextIngredient.getDescription());
+        }
+
+        parcel.writeInt(this.preparation.size());
+
+        for (String step : this.preparation) {
+            parcel.writeString(step);
+        }
+    }
+
+    public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {
+        public Recipe createFromParcel(Parcel in) {
+            return new Recipe(in);
+        }
+
+        public Recipe[] newArray(int size) {
+            return new Recipe[size];
+        }
+    };
 }
 

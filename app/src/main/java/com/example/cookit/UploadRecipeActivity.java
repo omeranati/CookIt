@@ -3,9 +3,12 @@ package com.example.cookit;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.design.widget.TextInputLayout;
+import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -31,10 +34,15 @@ public class UploadRecipeActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_upload_recipe);
-
+        ((NestedScrollView)findViewById(R.id.scrollLayout)).setNestedScrollingEnabled(false);
         Toolbar toolbar = findViewById(R.id.upload_toolbar);
         setSupportActionBar(toolbar);
         toolbar.setTitleTextColor(0xFFFFFFFF);
+
+        /* Used for blurring the backround. removed it for now.
+        Bitmap bitmap = FeedActivity.blurredImage;
+        Drawable d = new BitmapDrawable(getResources(), bitmap);
+        findViewById(R.id.uploadRecipeLayout).setBackground(d);*/
 
         initIngredientsRecyclerView();
         initPreparationRecyclerView();
