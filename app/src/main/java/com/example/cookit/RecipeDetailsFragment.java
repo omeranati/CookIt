@@ -19,7 +19,6 @@ import android.widget.TextClock;
 import android.widget.TextView;
 
 import com.example.cookit.Model.AppLocalDb;
-import com.example.cookit.Model.GetAllRecipesListener;
 import com.example.cookit.Model.RecipeAsyncDao;
 import com.example.cookit.Model.RecipeAsyncDaoListener;
 

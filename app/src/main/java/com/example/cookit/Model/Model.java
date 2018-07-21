@@ -22,9 +22,9 @@ public class Model {
         return recipesLiveData;
     }
 
-    public void cancelGetAllRecipes() {
-        modelFirebase.cancelGetAllRecipes();
-    }
+  //  public void cancelGetAllRecipes() {
+  //      modelFirebase.cancelGetAllRecipes();
+   // }
 
     public void addRecipe(Recipe r) {modelFirebase.addRecipe(r);}
 
@@ -43,12 +43,14 @@ public class Model {
                 public void onComplete(List<Recipe> data) {
                     setValue(data);
 
-                    modelFirebase.getAllRecipes(new GetAllRecipesListener() {
+                    modelFirebase.getAllRecipes(new FirebaseChildEventListener() {
                         @Override
-                        public void onSuccess(List<Recipe> recipeslist) {
-                            setValue(recipeslist);
+                        public void onChildAdded(Recipe r) {
+                            List<Recipe> data = getValue();
+                            data.add(r);
+                            setValue(data);
 
-                            RecipeAsyncDao.insertAll(recipeslist, new RecipeAsyncDaoListener<Boolean>() {
+                            RecipeAsyncDao.insert(r, new RecipeAsyncDaoListener<Boolean>() {
                                 @Override
                                 public void onComplete(Boolean data) {
 

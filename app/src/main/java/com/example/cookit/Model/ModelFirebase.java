@@ -1,9 +1,12 @@
 package com.example.cookit.Model;
 
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.example.cookit.Ingredient;
 import com.example.cookit.Recipe;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -13,34 +16,45 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 
 public class ModelFirebase {
-    ValueEventListener eventListener;
     DatabaseReference recipesReference;
 
     public ModelFirebase() {
         recipesReference = FirebaseDatabase.getInstance().getReference().child("recipes");
     }
 
-    public void getAllRecipes(final GetAllRecipesListener listener) {
-        eventListener = recipesReference.addValueEventListener(new ValueEventListener() {
-            @Override public void onDataChange(DataSnapshot dataSnapshot) {
-                Log.d("TAG","onDataChange" );
-                ArrayList<Recipe> recipeList = new ArrayList<>();
+    public void getAllRecipes(final FirebaseChildEventListener listener) {
 
-                for (DataSnapshot recipeSnapshot: dataSnapshot.getChildren()) {
-                    recipeList.add(getRecipeFromDataSnapshot(recipeSnapshot));
-                }
-
-                listener.onSuccess(recipeList);
+        recipesReference.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                listener.onChildAdded(getRecipeFromDataSnapshot(dataSnapshot));
             }
 
             @Override
-            public void onCancelled(DatabaseError databaseError) { }
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
         });
     }
 
-    public void cancelGetAllRecipes() {
-        recipesReference.removeEventListener(eventListener);
-    }
+   // public void cancelGetAllRecipes() {
+    //    recipesReference.removeEventListener(eventListener);
+    //}
 
     public void addRecipe(Recipe r) {
         recipesReference.push().setValue(r);
