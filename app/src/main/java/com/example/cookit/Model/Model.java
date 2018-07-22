@@ -26,7 +26,7 @@ public class Model {
         modelFirebase.cancelGetAllRecipes();
     }
 
-    public void addRecipe(Recipe r) {modelFirebase.addRecipe(r);}
+    public void addRecipe(Recipe r, byte[] imageByteData) {modelFirebase.addRecipe(r, imageByteData);}
 
     public class RecipesLiveData extends MutableLiveData<List<Recipe>> {
 

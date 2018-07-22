@@ -22,7 +22,6 @@ public class Recipe implements Parcelable {
     private String name;
     private String uploaderEmail;
     private String uploaderName;
-    private String picture;
     private ArrayList<Ingredient> ingredients;
     private ArrayList<String> preparation;
 
@@ -33,14 +32,12 @@ public class Recipe implements Parcelable {
 
     public Recipe(String name,
                   User uploader,
-                  String picture,
                   ArrayList<Ingredient> ingredients,
                   ArrayList<String> preparation) {
         this.id = "1";
         this.name = name;
         this.uploaderEmail = uploader.getEmail();
         this.uploaderName = uploader.getFullName();
-        this.picture = picture;
         this.ingredients = ingredients;
         this.preparation = preparation;
     }
@@ -54,7 +51,6 @@ public class Recipe implements Parcelable {
         this.name = data.get(1);
         this.uploaderEmail = data.get(2);
         this.uploaderName = data.get(3);
-        this.picture = data.get(4);
 
         int ingredientsLength = p.readInt();
 
@@ -102,14 +98,6 @@ public class Recipe implements Parcelable {
         this.name = name;
     }
 
-    public String getPicture() {
-        return picture;
-    }
-
-    public void setPicture(String picture) {
-        this.picture = picture;
-    }
-
     public ArrayList<Ingredient> getIngredients() {
         return ingredients;
     }
@@ -137,8 +125,7 @@ public class Recipe implements Parcelable {
             this.id,
             this.name,
             this.uploaderEmail,
-            this.uploaderName,
-            this.picture});
+            this.uploaderName});
 
         parcel.writeInt(this.ingredients.size());
 

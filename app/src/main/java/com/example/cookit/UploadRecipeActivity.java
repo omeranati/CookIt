@@ -4,7 +4,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.design.widget.TextInputLayout;
@@ -23,18 +22,24 @@ import com.example.cookit.Adapters.IngredientAdapter;
 import com.example.cookit.Adapters.PreparationAdapter;
 import com.example.cookit.Model.Model;
 
+import java.io.ByteArrayOutputStream;
+
 public class UploadRecipeActivity extends AppCompatActivity {
     private static final int CAMERA_DIALOG_INDEX = 0;
     private static final int GALLERY_DIALOG_INDEX = 1;
     private IngredientAdapter ingredientsAdapter;
     private PreparationAdapter prepareStagesAdapter;
     private Recipe inputRecipe;
+    private boolean wasPhotoUploaded = false;
+    private byte[] data;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_upload_recipe);
         ((NestedScrollView)findViewById(R.id.scrollLayout)).setNestedScrollingEnabled(false);
+        findViewById(R.id.uploadImageButton).setDrawingCacheEnabled(true);
+
         Toolbar toolbar = findViewById(R.id.upload_toolbar);
         setSupportActionBar(toolbar);
         toolbar.setTitleTextColor(0xFFFFFFFF);
@@ -59,7 +64,7 @@ public class UploadRecipeActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.action_send:
                 if (validateInput()) {
-                    Model.getInstance().addRecipe(inputRecipe);
+                    Model.getInstance().addRecipe(inputRecipe, data);
                     finish();
                 }
                 break;
@@ -98,17 +103,28 @@ public class UploadRecipeActivity extends AppCompatActivity {
             case CAMERA_DIALOG_INDEX:
                 if(resultCode == RESULT_OK){
                     imageView.setImageBitmap((Bitmap) imageReturnedIntent.getExtras().get("data"));
+                    wasPhotoUploaded = true;
                 }
                 break;
             case GALLERY_DIALOG_INDEX:
                 if(resultCode == RESULT_OK){
                     Uri selectedImage = imageReturnedIntent.getData();
                     imageView.setImageURI(selectedImage);
+                    wasPhotoUploaded = true;
                 }
                 break;
         }
+        setDataFromImageView(imageView);
         imageView.requestLayout();
         imageView.invalidate();
+    }
+
+    private void setDataFromImageView(SquareImageView imageView) {
+        imageView.buildDrawingCache();
+        Bitmap bitmap = ((BitmapDrawable) imageView.getDrawable()).getBitmap();
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+        data = baos.toByteArray();
     }
 
     public void addNewIngredient(View view) {
@@ -147,19 +163,24 @@ public class UploadRecipeActivity extends AppCompatActivity {
         }
 
         if (inputRecipe.getIngredients().size() == 0) {
-            showEmptyListAlert(R.string.empty_ingredients_error_massage);
+            showErrorAlert(R.string.empty_ingredients_error_massage);
             return false;
         }
 
         if (inputRecipe.getPreparation().size() == 0) {
-            showEmptyListAlert(R.string.empty_preparation_error_message);
+            showErrorAlert(R.string.empty_preparation_error_message);
+            return false;
+        }
+
+        if (!wasPhotoUploaded) {
+            showErrorAlert(R.string.no_photo_error_message);
             return false;
         }
 
         return true;
     }
 
-    private void showEmptyListAlert(int messageId) {
+    private void showErrorAlert(int messageId) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage(messageId).setPositiveButton("Ok", null);
         AlertDialog dialog = builder.create();
@@ -174,7 +195,6 @@ public class UploadRecipeActivity extends AppCompatActivity {
 
         inputRecipe.setUploaderName("Shirlilol");
         inputRecipe.setUploaderEmail("Shirlilol@gmail.com");
-        inputRecipe.setPicture("NotAnPicture.jpg");
     }
 
     private void getInputPreparation() {

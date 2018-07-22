@@ -9,15 +9,19 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
 
 public class ModelFirebase {
     ValueEventListener eventListener;
     DatabaseReference recipesReference;
+    StorageReference storageRef;
 
     public ModelFirebase() {
         recipesReference = FirebaseDatabase.getInstance().getReference().child("recipes");
+        storageRef = FirebaseStorage.getInstance().getReference();
     }
 
     public void getAllRecipes(final GetAllRecipesListener listener) {
@@ -42,15 +46,17 @@ public class ModelFirebase {
         recipesReference.removeEventListener(eventListener);
     }
 
-    public void addRecipe(Recipe r) {
-        recipesReference.push().setValue(r);
+    public void addRecipe(Recipe r, byte[] imageByteData) {
+        String recipeGeneratedKey = recipesReference.push().getKey();
+        recipesReference.child(recipeGeneratedKey).setValue(r);
+
+        storageRef.child(recipeGeneratedKey).putBytes(imageByteData);
     }
 
     private Recipe getRecipeFromDataSnapshot(DataSnapshot recipeSnapshot) {
         Recipe recipe = new Recipe();
         recipe.setId(recipeSnapshot.getKey());
         recipe.setName(recipeSnapshot.child("name").getValue().toString());
-        recipe.setPicture(recipeSnapshot.child("picture").getValue().toString());
         recipe.setUploaderEmail(recipeSnapshot.child("uploaderEmail").getValue().toString());
         recipe.setUploaderName(recipeSnapshot.child("uploaderName").getValue().toString());
         ArrayList<Ingredient> ingredients = new ArrayList<>();
