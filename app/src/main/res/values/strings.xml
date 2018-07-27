@@ -11,6 +11,7 @@
     <string name="empty_ingredients_error_massage">Ingredients list can\'t be empty.</string>
     <string name="error_string">Error</string>
     <string name="empty_preparation_error_message">Preparation list List can\'t be empty.</string>
+    <string name="cant_create_photo_file_error">Could not create photo file</string>
     <string name="menu">Menu</string>
     <string name="my_recipes">My Recipes</string>
     <string name="my_profile">My Profile</string>

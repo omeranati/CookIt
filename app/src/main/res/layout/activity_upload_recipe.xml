@@ -35,15 +35,15 @@
             android:focusable="true"
             android:focusableInTouchMode="true"
             android:focusedByDefault="true"
-            android:orientation="vertical"
-            android:padding="16dp">
+            android:orientation="vertical">
 
             <com.example.cookit.SquareImageView
                 android:id="@+id/uploadImageButton"
-                android:layout_width="150dp"
-                android:layout_height="150dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintHorizontal_bias="0.0"
                 android:layout_gravity="center"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="8dp"
                 android:background="@android:color/transparent"
                 android:onClick="addPhoto"
                 android:scaleType="fitXY"
@@ -51,6 +51,16 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/linearScroll2"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:focusedByDefault="true"
+            android:orientation="vertical"
+            android:padding="16dp">
 
             <android.support.design.widget.TextInputLayout
                 android:id="@+id/nameTextView"
@@ -135,6 +145,7 @@
                 android:onClick="addNewPrepareStage"
                 app:srcCompat="@drawable/black_circle_plus"/>
 
+        </LinearLayout>
         </LinearLayout>
     </android.support.v4.widget.NestedScrollView>
 </LinearLayout>
