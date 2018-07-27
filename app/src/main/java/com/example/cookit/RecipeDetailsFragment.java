@@ -10,6 +10,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v7.graphics.Palette;
+import android.support.v7.widget.Toolbar;
 import android.text.Layout;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,6 +21,7 @@ import android.widget.TextView;
 
 import com.example.cookit.Model.AppLocalDb;
 import com.example.cookit.Model.GetAllRecipesListener;
+import com.example.cookit.Model.Model;
 import com.example.cookit.Model.RecipeAsyncDao;
 import com.example.cookit.Model.RecipeAsyncDaoListener;
 
@@ -42,6 +44,12 @@ public class RecipeDetailsFragment extends DialogFragment {
     public void onCreate(Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         super.onCreate(savedInstanceState);
+
+    }
+
+    public void onDelete(View view){
+        Model.getInstance().deleteRecipe(recipe);
+        getActivity().finish();
     }
 
     @Override

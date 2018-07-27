@@ -7,6 +7,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 
+import com.example.cookit.Model.Model;
+
 public class RecipeDetailsActivity extends AppCompatActivity {
 
     @Override
@@ -18,7 +20,11 @@ public class RecipeDetailsActivity extends AppCompatActivity {
         RecipeDetailsFragment newRecipeDetailsFragment = new RecipeDetailsFragment();
         newRecipeDetailsFragment.setArguments(this.getIntent().getExtras().getBundle("recipe"));
         fragmentTransaction.replace(R.id.activity_recipe_details,newRecipeDetailsFragment);
-
         fragmentTransaction.commit();
+    }
+
+    public void onDelete(View view){
+        Model.getInstance().deleteRecipe((Recipe)this.getIntent().getExtras().getBundle("recipe").getParcelable("recipe"));
+        this.finish();
     }
 }

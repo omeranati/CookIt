@@ -82,6 +82,15 @@ public class FeedActivity extends AppCompatActivity {
                     recipeCardAdapter.notifyDataSetChanged();
                 }
             }
+
+            for (Recipe r:recipeCardAdapter.recipes.values()) {
+               if (!recipes.contains(r)){
+                   recipeCardAdapter.recipes.remove(r.getId());
+                   recipeCardAdapter.recipeIds.remove(r.getId());
+                   recipeCardAdapter.notifyDataSetChanged();
+               }
+            }
+
         }
     }
 

@@ -4,6 +4,7 @@ import com.example.cookit.Recipe;
 import java.util.List;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
+import android.view.View;
 
 public class Model {
     private static Model instance = new Model();
@@ -22,11 +23,46 @@ public class Model {
         return recipesLiveData;
     }
 
+    public void deleteRecipe(final Recipe recipe) {
+        RecipeAsyncDao.deleteRecipeById(recipe.getId(), new Listener() {
+            @Override
+            public void onSuccess() {
+                modelFirebase.deleteRecipe(recipe, new Listener(){
+
+                    @Override
+                    public void onSuccess() {
+                        List<Recipe> allRecipes = recipesLiveData.getValue();
+                        for (Recipe r:allRecipes){
+                            if (r.getId().equals(recipe.getId())){
+                                allRecipes.remove(r);
+                                break;
+                            }
+                        }
+
+                        recipesLiveData.setValue(allRecipes);
+                    }
+
+                    @Override
+                    public void onFail() {
+
+                    }
+                });
+            }
+
+            @Override
+            public void onFail() {
+
+            }
+        });
+    }
+
     public void cancelGetAllRecipes() {
         modelFirebase.cancelGetAllRecipes();
     }
 
     public void addRecipe(Recipe r, byte[] imageByteData) {modelFirebase.addRecipe(r, imageByteData);}
+
+    public void signUp(String email, String password, final Listener listener){modelFirebase.signUp(email,password,listener);}
 
     public class RecipesLiveData extends MutableLiveData<List<Recipe>> {
 

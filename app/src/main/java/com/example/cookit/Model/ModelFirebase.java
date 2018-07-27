@@ -1,9 +1,18 @@
 package com.example.cookit.Model;
 
+import android.net.sip.SipSession;
+import android.support.annotation.NonNull;
 import android.util.Log;
+import android.view.View;
+import android.widget.Toast;
 
 import com.example.cookit.Ingredient;
 import com.example.cookit.Recipe;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -15,13 +24,15 @@ import com.google.firebase.storage.StorageReference;
 import java.util.ArrayList;
 
 public class ModelFirebase {
-    ValueEventListener eventListener;
-    DatabaseReference recipesReference;
-    StorageReference storageRef;
+    private ValueEventListener eventListener;
+    private DatabaseReference recipesReference;
+    private StorageReference storageRef;
+    private FirebaseAuth authInstance;
 
     public ModelFirebase() {
         recipesReference = FirebaseDatabase.getInstance().getReference().child("recipes");
         storageRef = FirebaseStorage.getInstance().getReference();
+        authInstance = FirebaseAuth.getInstance();
     }
 
     public void getAllRecipes(final GetAllRecipesListener listener) {
@@ -77,5 +88,27 @@ public class ModelFirebase {
         recipe.setPreparation(preparation);
 
         return (recipe);
+    }
+
+    public void deleteRecipe(Recipe recipe, final Listener listener){
+        recipesReference.child(recipe.getId()).removeValue();
+        listener.onSuccess();
+    }
+
+    public void signUp(String email, String password, final Listener listener) {
+        authInstance.createUserWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+            @Override
+            public void onComplete(@NonNull Task<AuthResult> task) {
+                if (task.isSuccessful()) {
+                    listener.onSuccess();
+                } else {
+                    listener.onFail();
+                }
+            }
+        });
+    }
+
+    public FirebaseUser getCurrentUser() {
+        return authInstance.getCurrentUser();
     }
 }
