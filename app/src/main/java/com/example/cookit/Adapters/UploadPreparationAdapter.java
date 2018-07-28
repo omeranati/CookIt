@@ -14,19 +14,19 @@ import com.example.cookit.R;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PreparationAdapter extends RecyclerView.Adapter<PreparationAdapter.ViewHolder> {
+public class UploadPreparationAdapter extends RecyclerView.Adapter<UploadPreparationAdapter.ViewHolder> {
 
     public List<String> prepareStages = new ArrayList<>();
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.preparation_list_item, parent, false);
-        PreparationAdapter.ViewHolder vh = new PreparationAdapter.ViewHolder(v);
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.upload_preparation_list_item, parent, false);
+        UploadPreparationAdapter.ViewHolder vh = new UploadPreparationAdapter.ViewHolder(v);
         return vh;
     }
 
     @Override
-    public void onBindViewHolder(PreparationAdapter.ViewHolder holder, int position) {
+    public void onBindViewHolder(UploadPreparationAdapter.ViewHolder holder, int position) {
         if (position < prepareStages.size()) {
             holder.serialNumTextView.setText(String.valueOf(position + 1));
             holder.prepEditText.setText(prepareStages.get(position));

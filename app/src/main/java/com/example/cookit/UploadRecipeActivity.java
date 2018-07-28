@@ -22,8 +22,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 
-import com.example.cookit.Adapters.IngredientAdapter;
-import com.example.cookit.Adapters.PreparationAdapter;
+import com.example.cookit.Adapters.UploadIngredientAdapter;
+import com.example.cookit.Adapters.UploadPreparationAdapter;
 import com.example.cookit.Model.Model;
 
 import java.io.ByteArrayOutputStream;
@@ -33,8 +33,8 @@ import java.io.IOException;
 public class UploadRecipeActivity extends AppCompatActivity {
     private static final int CAMERA_DIALOG_INDEX = 0;
     private static final int GALLERY_DIALOG_INDEX = 1;
-    private IngredientAdapter ingredientsAdapter;
-    private PreparationAdapter prepareStagesAdapter;
+    private UploadIngredientAdapter ingredientsAdapter;
+    private UploadPreparationAdapter prepareStagesAdapter;
     private Recipe inputRecipe;
     private boolean wasPhotoUploaded = false;
     private byte[] data;
@@ -138,7 +138,7 @@ public class UploadRecipeActivity extends AppCompatActivity {
     }
 
     private void initPreparationRecyclerView() {
-        prepareStagesAdapter = new PreparationAdapter();
+        prepareStagesAdapter = new UploadPreparationAdapter();
         RecyclerView preparationRV = ((RecyclerView) findViewById(R.id.preparationRecyclerView));
         preparationRV.setLayoutManager(new LinearLayoutManager(this));
         preparationRV.setAdapter(prepareStagesAdapter);
@@ -146,7 +146,7 @@ public class UploadRecipeActivity extends AppCompatActivity {
     }
 
     private void initIngredientsRecyclerView() {
-        ingredientsAdapter = new IngredientAdapter();
+        ingredientsAdapter = new UploadIngredientAdapter();
         RecyclerView ingredientsRV = ((RecyclerView) findViewById(R.id.ingredientsRecyclerView));
         ingredientsRV.setLayoutManager(new LinearLayoutManager(this));
         ingredientsRV.setAdapter(ingredientsAdapter);
