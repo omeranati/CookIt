@@ -100,7 +100,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/IngredientsTextView"
-                tools:listitem="@layout/ingredient_list_item">
+                tools:listitem="@layout/upload_ingredient_list_item">
 
             </android.support.v7.widget.RecyclerView>
 
@@ -133,7 +133,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/preparationTextView"
-                tools:listitem="@layout/preparation_list_item">
+                tools:listitem="@layout/upload_preparation_list_item">
 
             </android.support.v7.widget.RecyclerView>
 
