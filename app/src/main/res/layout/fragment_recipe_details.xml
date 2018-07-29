@@ -31,18 +31,62 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
-                android:id="@+id/recipeDirections"
+                android:id="@+id/ingredientsDetailsTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                android:text="@string/ingredients"
+                android:textColor="#000000"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/include" />
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/ingredientsDetailsRecyclerView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="16dp"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="8dp"
-                android:text="recipeDirections"
-                android:textColor="#000000"
-                android:textSize="18sp"
+                android:scrollbars="vertical"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/include" />
+                app:layout_constraintTop_toBottomOf="@+id/ingredientsDetailsTitle"
+                tools:listitem="@layout/details_ingredients_list_item">
+
+            </android.support.v7.widget.RecyclerView>
+
+            <TextView
+                android:id="@+id/preparationDetailsTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                android:text="@string/preparation"
+                android:textColor="#000000"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/ingredientsDetailsRecyclerView" />
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/preparationDetailsRecyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                android:scrollbars="vertical"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/preparationDetailsTitle"
+                tools:listitem="@layout/details_preparation_list_item">
+
+            </android.support.v7.widget.RecyclerView>
         </LinearLayout>
     </ScrollView>
 

@@ -14,20 +14,20 @@ import com.example.cookit.R;
 import java.util.ArrayList;
 import java.util.List;
 
-public class IngredientAdapter extends RecyclerView.Adapter<IngredientAdapter.ViewHolder> {
+public class UploadIngredientAdapter extends RecyclerView.Adapter<UploadIngredientAdapter.ViewHolder> {
 
     public List<String> quantities = new ArrayList<>();
     public List<String> descriptions = new ArrayList<>();
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.ingredient_list_item, parent, false);
-        IngredientAdapter.ViewHolder vh = new IngredientAdapter.ViewHolder(v);
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.upload_ingredient_list_item, parent, false);
+        UploadIngredientAdapter.ViewHolder vh = new UploadIngredientAdapter.ViewHolder(v);
         return vh;
     }
 
     @Override
-    public void onBindViewHolder(IngredientAdapter.ViewHolder holder, int position) {
+    public void onBindViewHolder(UploadIngredientAdapter.ViewHolder holder, int position) {
         if (position >= quantities.size())
             return;
         holder.quantityEditText.setText(quantities.get(position), TextView.BufferType.EDITABLE);

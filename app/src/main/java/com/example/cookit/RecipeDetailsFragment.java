@@ -9,16 +9,16 @@ import android.support.v4.app.DialogFragment;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
 import android.support.v7.graphics.Palette;
 import android.support.v7.widget.Toolbar;
 import android.text.Layout;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.TextClock;
 import android.widget.TextView;
-
 import com.example.cookit.Model.AppLocalDb;
 import com.example.cookit.Model.GetAllRecipesListener;
 import com.example.cookit.Model.Model;
@@ -27,11 +27,15 @@ import com.example.cookit.Model.RecipeAsyncDaoListener;
 
 import java.util.ArrayList;
 import java.util.List;
+import com.example.cookit.Adapters.DetailsIngredientsAdapter;
+import com.example.cookit.Adapters.DetailsPreparatoinAdapter;
 
 
 public class RecipeDetailsFragment extends DialogFragment {
 
     private Recipe recipe;
+    private DetailsPreparatoinAdapter preparationDetailsAdapter;
+    private DetailsIngredientsAdapter ingredientsDetailsAdapter;
 
     public static RecipeDetailsFragment newInstance() {
         RecipeDetailsFragment fragment = new RecipeDetailsFragment();
@@ -70,9 +74,7 @@ public class RecipeDetailsFragment extends DialogFragment {
         recipeName.setText(recipe.getName());
         recipeName.setClickable(false);
 
-        // Recipe directions
-        TextView recipeDirections = view.findViewById(R.id.recipeDirections);
-        recipeDirections.setText(createRecipeString(recipe));
+        fillIngredientsAndPreparation(view);
 
         // Displaying profile picture.
         ImageView ownerProfilePicture = view.findViewById(R.id.ownerProfilePicture);
@@ -158,14 +160,37 @@ public class RecipeDetailsFragment extends DialogFragment {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        /*outState.putString(NAME, this.recipe.getUploader().getFullName());
-        outState.putString(RECIPE_NAME, this.recipe.getName());
-        outState.putString(INSTRUCTIONS, this.recipe.toString());
-        outState.putString(OWNER_PROFILE_PIC, "omer");
-        outState.putString(FOOD_PIC,"chicken");*/
     }
 
-    public interface OnFragmentInteractionListener {
-        void onFragmentInteraction(Uri uri);
+    private void fillIngredientsAndPreparation(View view) {
+        initPreparationRecyclerView(view);
+        fillPreparationRecyclerView();
+        initIngredientsRecyclerView(view);
+        fillIngredientsRecyclerView();
+    }
+
+    private void initPreparationRecyclerView(View view) {
+        preparationDetailsAdapter = new DetailsPreparatoinAdapter();
+        RecyclerView preparationRV = view.findViewById(R.id.preparationDetailsRecyclerView);
+        preparationRV.setLayoutManager(new LinearLayoutManager(getContext()));
+        preparationRV.setAdapter(preparationDetailsAdapter);
+    }
+
+    private void fillPreparationRecyclerView() {
+        preparationDetailsAdapter.prepareStages.addAll(recipe.getPreparation());
+    }
+
+    private void initIngredientsRecyclerView(View view) {
+        ingredientsDetailsAdapter = new DetailsIngredientsAdapter();
+        RecyclerView ingredientsRV = view.findViewById(R.id.ingredientsDetailsRecyclerView);
+        ingredientsRV.setLayoutManager(new LinearLayoutManager(getContext()));
+        ingredientsRV.setAdapter(ingredientsDetailsAdapter);
+    }
+
+    private void fillIngredientsRecyclerView() {
+        for(Ingredient currIngredient : recipe.getIngredients()) {
+            ingredientsDetailsAdapter.quantities.add(currIngredient.getQuantity());
+            ingredientsDetailsAdapter.descriptions.add(currIngredient.getDescription());
+        }
     }
 }

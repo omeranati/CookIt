@@ -3,10 +3,13 @@ package com.example.cookit;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.design.widget.TextInputLayout;
+import android.support.v4.content.FileProvider;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -17,21 +20,25 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 
-import com.example.cookit.Adapters.IngredientAdapter;
-import com.example.cookit.Adapters.PreparationAdapter;
+import com.example.cookit.Adapters.UploadIngredientAdapter;
+import com.example.cookit.Adapters.UploadPreparationAdapter;
 import com.example.cookit.Model.Model;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
 
 public class UploadRecipeActivity extends AppCompatActivity {
     private static final int CAMERA_DIALOG_INDEX = 0;
     private static final int GALLERY_DIALOG_INDEX = 1;
-    private IngredientAdapter ingredientsAdapter;
-    private PreparationAdapter prepareStagesAdapter;
+    private UploadIngredientAdapter ingredientsAdapter;
+    private UploadPreparationAdapter prepareStagesAdapter;
     private Recipe inputRecipe;
     private boolean wasPhotoUploaded = false;
     private byte[] data;
+    private String photoPath;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,13 +51,11 @@ public class UploadRecipeActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         toolbar.setTitleTextColor(0xFFFFFFFF);
 
-        /* Used for blurring the backround. removed it for now.
-        Bitmap bitmap = FeedActivity.blurredImage;
-        Drawable d = new BitmapDrawable(getResources(), bitmap);
-        findViewById(R.id.uploadRecipeLayout).setBackground(d);*/
-
         initIngredientsRecyclerView();
         initPreparationRecyclerView();
+
+        Bitmap uploadImageBitmap = BitmapFactory.decodeResource(this.getResources(),R.drawable.add_photo);
+        ((ImageView)findViewById(R.id.uploadImageButton)).setImageBitmap(uploadImageBitmap);
     }
 
     @Override
@@ -80,8 +85,7 @@ public class UploadRecipeActivity extends AppCompatActivity {
                     public void onClick(DialogInterface dialog, int which) {
                         switch (which) {
                             case CAMERA_DIALOG_INDEX:
-                                Intent takePicture = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                                startActivityForResult(takePicture, CAMERA_DIALOG_INDEX);
+                                startCameraActivity();
                                 break;
                             case GALLERY_DIALOG_INDEX:
                                 Intent pickPhoto = new Intent(Intent.ACTION_PICK,
@@ -102,7 +106,8 @@ public class UploadRecipeActivity extends AppCompatActivity {
         switch(requestCode) {
             case CAMERA_DIALOG_INDEX:
                 if(resultCode == RESULT_OK){
-                    imageView.setImageBitmap((Bitmap) imageReturnedIntent.getExtras().get("data"));
+                    Uri outputFileUri = Uri.fromFile(new File(photoPath));
+                    imageView.setImageURI(outputFileUri);
                     wasPhotoUploaded = true;
                 }
                 break;
@@ -114,18 +119,12 @@ public class UploadRecipeActivity extends AppCompatActivity {
                 }
                 break;
         }
-        setDataFromImageView(imageView);
+        getDataFromImageView(imageView);
         imageView.requestLayout();
         imageView.invalidate();
     }
 
-    private void setDataFromImageView(SquareImageView imageView) {
-        imageView.buildDrawingCache();
-        Bitmap bitmap = ((BitmapDrawable) imageView.getDrawable()).getBitmap();
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-        data = baos.toByteArray();
-    }
+
 
     public void addNewIngredient(View view) {
         ingredientsAdapter.quantities.add("");
@@ -139,7 +138,7 @@ public class UploadRecipeActivity extends AppCompatActivity {
     }
 
     private void initPreparationRecyclerView() {
-        prepareStagesAdapter = new PreparationAdapter();
+        prepareStagesAdapter = new UploadPreparationAdapter();
         RecyclerView preparationRV = ((RecyclerView) findViewById(R.id.preparationRecyclerView));
         preparationRV.setLayoutManager(new LinearLayoutManager(this));
         preparationRV.setAdapter(prepareStagesAdapter);
@@ -147,7 +146,7 @@ public class UploadRecipeActivity extends AppCompatActivity {
     }
 
     private void initIngredientsRecyclerView() {
-        ingredientsAdapter = new IngredientAdapter();
+        ingredientsAdapter = new UploadIngredientAdapter();
         RecyclerView ingredientsRV = ((RecyclerView) findViewById(R.id.ingredientsRecyclerView));
         ingredientsRV.setLayoutManager(new LinearLayoutManager(this));
         ingredientsRV.setAdapter(ingredientsAdapter);
@@ -215,5 +214,46 @@ public class UploadRecipeActivity extends AppCompatActivity {
                 inputRecipe.getIngredients().add(new Ingredient(q, d));
 
         }
+    }
+
+    private void getDataFromImageView(SquareImageView imageView) {
+        imageView.buildDrawingCache();
+        Bitmap bitmap = ((BitmapDrawable) imageView.getDrawable()).getBitmap();
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+        data = baos.toByteArray();
+    }
+
+    private void startCameraActivity() {
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+            // Create the File where the photo should go
+            File photoFile = null;
+            try {
+                photoFile = createImageFile();
+            } catch (IOException ex) {
+                showErrorAlert(R.string.cant_create_photo_file_error);
+            }
+            // Continue only if the File was successfully created
+            if (photoFile != null) {
+                Uri photoURI = FileProvider.getUriForFile(this,
+                        "com.example.cookit.fileProvider",
+                        photoFile);
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                startActivityForResult(takePictureIntent, CAMERA_DIALOG_INDEX);
+            }
+        }
+    }
+
+    private File createImageFile() throws IOException {
+        File image = File.createTempFile(
+                "Recipe",  /* prefix */
+                ".jpg",         /* suffix */
+                getExternalFilesDir(Environment.DIRECTORY_PICTURES)      /* directory */
+        );
+
+        // Save a file: path for use with ACTION_VIEW intents
+        photoPath = image.getAbsolutePath();
+        return image;
     }
 }
