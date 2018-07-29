@@ -15,6 +15,11 @@ public class Model {
         modelFirebase = new ModelFirebase();
     }
 
+    public String getCurrentUserID() {
+        return modelFirebase.getCurrentUser().getUid();
+    }
+
+
     public static Model getInstance() {
         return instance;
     }
@@ -39,7 +44,7 @@ public class Model {
                             }
                         }
 
-                        recipesLiveData.setValue(allRecipes);
+                        recipesLiveData.postValue(allRecipes);
                     }
 
                     @Override
@@ -63,6 +68,7 @@ public class Model {
     public void addRecipe(Recipe r, byte[] imageByteData) {modelFirebase.addRecipe(r, imageByteData);}
 
     public void signUp(String email, String password, final Listener listener){modelFirebase.signUp(email,password,listener);}
+    public void login(String email, String password, final Listener listener){modelFirebase.login(email,password,listener);}
 
     public class RecipesLiveData extends MutableLiveData<List<Recipe>> {
 

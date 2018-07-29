@@ -19,6 +19,10 @@ import com.example.cookit.Model.AppLocalDb;
 import com.example.cookit.Model.Model;
 import com.example.cookit.Model.RecipeAsyncDaoListener;
 import com.google.firebase.database.DatabaseReference;
+
+import java.util.Collection;
+import java.util.Enumeration;
+import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.Semaphore;
 
@@ -37,6 +41,7 @@ public class FeedActivity extends AppCompatActivity {
     public static int mainColor;
     public static View     appView;
     public static View     feedView;
+    public static User     appUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,7 +73,7 @@ public class FeedActivity extends AppCompatActivity {
     }
 
     private void updateFeedWithChangedData(@Nullable List<Recipe> recipes) {
-        if (recipes.size() > 0) {
+        if (recipes.size() >= 0) {
            for(Recipe r: recipes)
             {
                 if (!recipeCardAdapter.recipes.containsKey(r.getId())) {
@@ -82,15 +87,18 @@ public class FeedActivity extends AppCompatActivity {
                     recipeCardAdapter.notifyDataSetChanged();
                 }
             }
+            Collection<Recipe> recipeCollection = recipeCardAdapter.recipes.values();
+            Iterator<Recipe> recipeIterator = recipeCollection.iterator();
 
-            for (Recipe r:recipeCardAdapter.recipes.values()) {
-               if (!recipes.contains(r)){
-                   recipeCardAdapter.recipes.remove(r.getId());
-                   recipeCardAdapter.recipeIds.remove(r.getId());
-                   recipeCardAdapter.notifyDataSetChanged();
-               }
+            while (recipeIterator.hasNext())
+            {
+                Recipe nextRecipe = recipeIterator.next();
+                if (!recipes.contains(nextRecipe)){
+                    recipeCardAdapter.recipes.remove(nextRecipe.getId());
+                    recipeCardAdapter.recipeIds.remove(nextRecipe.getId());
+                    recipeCardAdapter.notifyDataSetChanged();
+                }
             }
-
         }
     }
 

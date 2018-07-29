@@ -11,6 +11,7 @@ import com.example.cookit.Model.Model;
 
 public class RecipeDetailsActivity extends AppCompatActivity {
 
+    Recipe recipe;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -18,13 +19,18 @@ public class RecipeDetailsActivity extends AppCompatActivity {
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         RecipeDetailsFragment newRecipeDetailsFragment = new RecipeDetailsFragment();
-        newRecipeDetailsFragment.setArguments(this.getIntent().getExtras().getBundle("recipe"));
+        Bundle recipeBundle = this.getIntent().getExtras().getBundle("recipe");
+        recipe = recipeBundle.getParcelable("recipe");
+        newRecipeDetailsFragment.setArguments(recipeBundle);
         fragmentTransaction.replace(R.id.activity_recipe_details,newRecipeDetailsFragment);
         fragmentTransaction.commit();
     }
 
     public void onDelete(View view){
-        Model.getInstance().deleteRecipe((Recipe)this.getIntent().getExtras().getBundle("recipe").getParcelable("recipe"));
+        /*if (Model.getInstance().getCurrentUserID().equals(recipe.getUploaderEmail())){
+
+        }*/
+        Model.getInstance().deleteRecipe(recipe);
         this.finish();
     }
 }

@@ -108,6 +108,19 @@ public class ModelFirebase {
         });
     }
 
+    public void login(String email, String password, final Listener listener) {
+        authInstance.signInWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+            @Override
+            public void onComplete(@NonNull Task<AuthResult> task) {
+                if (task.isSuccessful()) {
+                    listener.onSuccess();
+                } else {
+                    listener.onFail();
+                }
+            }
+        });
+    }
+
     public FirebaseUser getCurrentUser() {
         return authInstance.getCurrentUser();
     }

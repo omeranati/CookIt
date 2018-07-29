@@ -9,30 +9,24 @@ import android.widget.EditText;
 import com.example.cookit.Model.Listener;
 import com.example.cookit.Model.Model;
 
-public class LoginActivity extends AppCompatActivity {
+public class SignUpActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
+        setContentView(R.layout.activity_sign_up);
+
     }
 
-    public void startSignUpActivity(View view) {
-        Intent intent = new Intent(this, SignUpActivity.class);
-        intent.setFlags(intent.getFlags() | Intent.FLAG_ACTIVITY_NO_HISTORY);
-        startActivity(intent);
-    }
-
-
-    public void login(View view) {
-        Model.getInstance().login(
+    public void signUp(View view) {
+        Model.getInstance().signUp(
                 ((EditText) findViewById(R.id.emailAddress)).getText().toString(),
                 ((EditText) findViewById(R.id.password)).getText().toString(),
                 new Listener() {
                     @Override
                     public void onSuccess() {
                         final Intent intent= new Intent(getBaseContext(), FeedActivity.class);
-                        // intent.setFlags(intent.getFlags() | Intent.FLAG_ACTIVITY_NO_HISTORY);
+                       // intent.setFlags(intent.getFlags() | Intent.FLAG_ACTIVITY_NO_HISTORY);
                         startActivity(intent);
 
                     }
@@ -44,5 +38,3 @@ public class LoginActivity extends AppCompatActivity {
                 });
     }
 }
-
-
