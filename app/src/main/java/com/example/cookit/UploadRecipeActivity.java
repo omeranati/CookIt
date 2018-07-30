@@ -192,8 +192,8 @@ public class UploadRecipeActivity extends AppCompatActivity {
         getInputIngredients();
         getInputPreparation();
 
-        inputRecipe.setUploaderName("Shirlilol");
-        inputRecipe.setUploaderEmail("Shirlilol@gmail.com");
+        inputRecipe.setUploaderName(FeedActivity.appUser.getFullName());
+        inputRecipe.setUploaderEmail(FeedActivity.appUser.getEmailAddress());
     }
 
     private void getInputPreparation() {

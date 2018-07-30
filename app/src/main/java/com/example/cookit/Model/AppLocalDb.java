@@ -8,8 +8,9 @@ import android.arch.persistence.room.TypeConverters;
 import com.example.cookit.Converters;
 import com.example.cookit.CookIt;
 import com.example.cookit.Recipe;
+import com.example.cookit.User;
 
-@Database(entities = {Recipe.class}, version = 6)
+@Database(entities = {Recipe.class}, version = 9)
 @TypeConverters({Converters.class})
 abstract class AppLocalDbRepository extends RoomDatabase {
     public abstract RecipeDao recipeDao();

@@ -11,7 +11,7 @@
     <TextView
         android:id="@+id/ownerName"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="23dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="16dp"
         android:text="ownerName"
@@ -19,6 +19,7 @@
         android:textSize="15sp"
         android:textStyle="bold"
         app:layout_constraintStart_toEndOf="@+id/ownerProfilePicture"
+        app:layout_constraintBottom_toTopOf="@+id/recipeName"
         app:layout_constraintTop_toTopOf="parent"
         tools:capitalize="characters" />
 
@@ -37,11 +38,10 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:src="@drawable/ham"
         android:clickable="true"
-        android:longClickable="true"
         android:foreground="?android:attr/selectableItemBackground"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:longClickable="true"
+        android:src="@drawable/ham"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
@@ -58,6 +58,7 @@
         android:id="@+id/recipeName"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
         android:layout_marginStart="8dp"
         android:clickable="true"
         android:foreground="?android:attr/selectableItemBackground"
@@ -65,19 +66,22 @@
         android:textColor="#000000"
         android:textSize="15sp"
         android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/recipePicture"
         app:layout_constraintStart_toEndOf="@+id/ownerProfilePicture"
         app:layout_constraintTop_toBottomOf="@+id/ownerName" />
 
     <Button
-        android:id="@+id/button"
+        android:id="@+id/delete"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
         android:layout_marginEnd="8dp"
+        android:layout_marginTop="8dp"
         android:onClick="onDelete"
         android:text="Delete"
         app:layout_constraintBottom_toTopOf="@+id/recipePicture"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 
 </android.support.constraint.ConstraintLayout>

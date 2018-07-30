@@ -2,23 +2,20 @@ package com.example.cookit.Model;
 import com.example.cookit.Recipe;
 
 import java.util.List;
-import android.arch.lifecycle.LiveData;
+
 import android.arch.lifecycle.MutableLiveData;
-import android.view.View;
 
 public class Model {
     private static Model instance = new Model();
     private ModelFirebase modelFirebase;
     private RecipesLiveData recipesLiveData = new RecipesLiveData();
-
     private Model() {
         modelFirebase = new ModelFirebase();
     }
 
     public String getCurrentUserID() {
-        return modelFirebase.getCurrentUser().getUid();
+        return modelFirebase.getCurrentUserID();
     }
-
 
     public static Model getInstance() {
         return instance;
@@ -27,6 +24,8 @@ public class Model {
     public RecipesLiveData getAllRecipes(){
         return recipesLiveData;
     }
+
+    public void getUserByUID(final GetUserListener listener) {modelFirebase.getUserByUID(this.getCurrentUserID(),listener);}
 
     public void deleteRecipe(final Recipe recipe) {
         RecipeAsyncDao.deleteRecipeById(recipe.getId(), new Listener() {
@@ -67,7 +66,10 @@ public class Model {
 
     public void addRecipe(Recipe r, byte[] imageByteData) {modelFirebase.addRecipe(r, imageByteData);}
 
-    public void signUp(String email, String password, final Listener listener){modelFirebase.signUp(email,password,listener);}
+    public void signOut() { modelFirebase.signOut(); }
+
+    public void signUp(String email, String password, String fullName, final Listener listener){modelFirebase.signUp(email,password,fullName,listener);}
+
     public void login(String email, String password, final Listener listener){modelFirebase.login(email,password,listener);}
 
     public class RecipesLiveData extends MutableLiveData<List<Recipe>> {

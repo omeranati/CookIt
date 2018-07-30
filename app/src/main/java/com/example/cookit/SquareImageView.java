@@ -10,6 +10,7 @@ public class SquareImageView extends ImageView {
 
     private int bitmapWidth;
     private int bitmapHeight;
+    public  int measuredWidth;
 
     @Override
     public void setImageBitmap(Bitmap bm) {
@@ -41,24 +42,27 @@ public class SquareImageView extends ImageView {
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-
+        measuredWidth = getMeasuredWidth();
         int width = getMeasuredWidth();
+
+
+        this.setMeasuredDimension(width, (int)((double)(this.getBitmapHeight() * width / this.getBitmapWidth())));
+
+        // Stretching the picture if it is too small.
+        if (this.getBitmapWidth() < width) {
+            this.setScaleType(ScaleType.FIT_XY);
+            this.setMeasuredDimension(width,this.getBitmapHeight() * width / this.getBitmapWidth());
+        }
 
         // If the picture is tall and thin, blocking it into the square
         // thats has the screen's width as it's length and width.
-        if (this.getBitmapWidth() <= this.getBitmapHeight()) {
+        /*if (this.getBitmapWidth() <= this.getBitmapHeight()) {
             setMeasuredDimension(width, width);
         }
         // The picture is fat and short
         else
         {
-            this.setMeasuredDimension(width, (int)((double)(this.getBitmapHeight() * width / this.getBitmapWidth())));
 
-            // Stretching the picture if it is too small.
-            if (this.getBitmapWidth() < width) {
-                this.setScaleType(ScaleType.FIT_XY);
-                this.setMeasuredDimension(width,this.getBitmapHeight() * width / this.getBitmapWidth());
-            }
-        }
+        }*/
     }
 }

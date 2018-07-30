@@ -17,6 +17,7 @@ import android.support.v7.widget.Toolbar;
 import android.text.Layout;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import com.example.cookit.Model.AppLocalDb;
@@ -91,6 +92,26 @@ public class RecipeDetailsFragment extends DialogFragment {
         view.findViewById(R.id.recipeDetailsLayout).setBackgroundColor(p.getLightVibrantColor(0xffffffff));
         ((TextView)view.findViewById(R.id.recipeName)).setTextColor(p.getDarkVibrantColor(0x00000000));
         */
+
+        Button deleteButton = ((Button)view.findViewById(R.id.delete));
+
+        if (recipe.getUploaderEmail().equals(FeedActivity.appUser.getEmailAddress()))
+        {
+            deleteButton.setVisibility(View.VISIBLE);
+        }
+        else
+        {
+            deleteButton.setVisibility(View.INVISIBLE);
+        }
+
+        deleteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Model.getInstance().deleteRecipe(recipe);
+                getActivity().finish();
+            }
+        });
+
         RecipePicture.setClickable(false);
         RecipePicture.setOnLongClickListener(new View.OnLongClickListener() {
             @Override

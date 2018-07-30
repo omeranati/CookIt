@@ -1,51 +1,59 @@
 package com.example.cookit;
 
 import android.arch.lifecycle.Observer;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.media.Image;
 import android.os.AsyncTask;
-import android.provider.ContactsContract;
 import android.support.annotation.Nullable;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.graphics.Palette;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 
 import com.example.cookit.Adapters.RecipeCardAdapter;
-import com.example.cookit.Model.AppLocalDb;
+import com.example.cookit.Model.GetUserListener;
 import com.example.cookit.Model.Model;
 import com.example.cookit.Model.RecipeAsyncDaoListener;
 import com.google.firebase.database.DatabaseReference;
 
 import java.util.Collection;
-import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
-import java.util.concurrent.Semaphore;
 
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.widget.ImageView;
 import android.widget.PopupMenu;
 
 public class FeedActivity extends AppCompatActivity {
     private DatabaseReference mDatabase;
     private RecipeCardAdapter recipeCardAdapter;
-    private static boolean viewingRecipeDetails = false;
-    private static boolean uploadingRecipe = false;
-    public static Bitmap   blurredImage;
-    public static Bitmap   drawingCache;
-    public static int mainColor;
-    public static View     appView;
-    public static View     feedView;
-    public static User     appUser;
+    private static boolean  viewingRecipeDetails = false;
+    private static boolean  uploadingRecipe = false;
+    public static Bitmap    blurredImage;
+    public static Bitmap    drawingCache;
+    public static int       mainColor;
+    public static View      appView;
+    public static View      feedView;
+    public static User      appUser;
+    public static String    emailAddress;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Model.getInstance().getUserByUID(new GetUserListener() {
+            @Override
+            public void onSuccess(User myUser) {
+                    appUser = myUser;
+                    Log.d("full name", myUser.getFullName());
+            }
+        });
+
         setContentView(R.layout.activity_feed);
         initRecipesRecyclerView();
 
@@ -59,8 +67,8 @@ public class FeedActivity extends AppCompatActivity {
 
         m.getAllRecipes().observe(this, new Observer<List<Recipe>>() {
             @Override
-            public void onChanged(@Nullable List<Recipe> students) {
-                updateFeedWithChangedData(students);
+            public void onChanged(@Nullable List<Recipe> recipes) {
+                updateFeedWithChangedData(recipes);
             }});
     }
 
@@ -94,7 +102,7 @@ public class FeedActivity extends AppCompatActivity {
             {
                 Recipe nextRecipe = recipeIterator.next();
                 if (!recipes.contains(nextRecipe)){
-                    recipeCardAdapter.recipes.remove(nextRecipe.getId());
+                    recipeIterator.remove();
                     recipeCardAdapter.recipeIds.remove(nextRecipe.getId());
                     recipeCardAdapter.notifyDataSetChanged();
                 }
@@ -112,6 +120,19 @@ public class FeedActivity extends AppCompatActivity {
                 PopupMenu popup = new PopupMenu(CookIt.getContext(), v);
                 popup.inflate(R.menu.feed_activity_menu);
                 popup.show();
+                popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem menuItem) {
+                        switch (menuItem.getItemId()) {
+                            case R.id.menu_item_log_off:
+                                Model.getInstance().signOut();
+                                Intent intent = new Intent(getBaseContext(), LoginActivity.class);
+                                startActivity(intent);
+
+                        }
+                        return false;
+                    }
+                });
             }
         });
     }

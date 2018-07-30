@@ -1,9 +1,9 @@
 package com.example.cookit.Model;
 
-import com.example.cookit.Recipe;
+import com.example.cookit.User;
 
 import java.util.List;
 
-public interface GetAllRecipesListener {
-    public void onSuccess(List<Recipe> recipeslist);
+public interface GetAllUsersListener {
+    public void onSuccess(List<User> recipeslist);
 }

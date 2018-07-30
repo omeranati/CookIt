@@ -36,7 +36,7 @@ public class Recipe implements Parcelable {
                   ArrayList<String> preparation) {
         this.id = "1";
         this.name = name;
-        this.uploaderEmail = uploader.getEmail();
+        this.uploaderEmail = uploader.getEmailAddress();
         this.uploaderName = uploader.getFullName();
         this.ingredients = ingredients;
         this.preparation = preparation;

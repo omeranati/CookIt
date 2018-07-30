@@ -9,14 +9,17 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.cookit.FeedActivity;
 import com.example.cookit.ImageHelper;
+import com.example.cookit.Model.Model;
 import com.example.cookit.Model.RecipeAsyncDaoListener;
 import com.example.cookit.R;
 import com.example.cookit.Recipe;
+import com.example.cookit.SquareImageView;
 
 import java.util.ArrayList;
 import java.util.Hashtable;
@@ -36,7 +39,26 @@ public class RecipeCardAdapter extends RecyclerView.Adapter<RecipeCardAdapter.Vi
 
     @Override
     public void onBindViewHolder(final RecipeCardAdapter.ViewHolder holder, int position) {
-        Recipe recipe = recipes.get(recipeIds.get(position));
+        final Recipe recipe = recipes.get(recipeIds.get(position));
+
+        Button deleteButton = ((Button)holder.itemView.findViewById(R.id.delete));
+
+        if (recipe.getUploaderEmail().equals(FeedActivity.emailAddress))
+        {
+            deleteButton.setVisibility(View.VISIBLE);
+        }
+        else
+        {
+            deleteButton.setVisibility(View.INVISIBLE);
+        }
+
+        deleteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Model.getInstance().deleteRecipe(recipe);
+            }
+        });
+
         holder.ownerName.setText(recipe.getUploaderName());
         holder.foodName.setText(recipe.getName());
 
@@ -65,14 +87,24 @@ public class RecipeCardAdapter extends RecyclerView.Adapter<RecipeCardAdapter.Vi
         });
 
         Bitmap food;
-        ImageView imageView = holder.itemView.findViewById(R.id.recipePicture);
+        SquareImageView imageView = holder.itemView.findViewById(R.id.recipePicture);
         if (position == 0) {
             food = BitmapFactory.decodeResource(holder.itemView.getContext().getResources(), R.drawable.ham);
         }
         else {
-            food = BitmapFactory.decodeResource(holder.itemView.getContext().getResources(), R.drawable.salad);
+            food = BitmapFactory.decodeResource(holder.itemView.getContext().getResources(), R.drawable.a4590);
 
         }
+        /*float scale = imageView.measuredWidth / food.getWidth();
+        if (scale < 1)
+        {*/
+        float scale = food.getWidth() / 500;
+        if (scale > 1) {
+            int width = (int) Math.round(food.getWidth() * (float)(1 / scale));
+            int height = (int) Math.round(food.getHeight() * (float)(1 / scale));
+            food = Bitmap.createScaledBitmap(food, width, height, false);
+        }
+
         imageView.setImageBitmap(food);
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override

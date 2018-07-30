@@ -6,6 +6,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 
 import com.example.cookit.Model.Model;
 
@@ -21,16 +22,9 @@ public class RecipeDetailsActivity extends AppCompatActivity {
         RecipeDetailsFragment newRecipeDetailsFragment = new RecipeDetailsFragment();
         Bundle recipeBundle = this.getIntent().getExtras().getBundle("recipe");
         recipe = recipeBundle.getParcelable("recipe");
+
         newRecipeDetailsFragment.setArguments(recipeBundle);
         fragmentTransaction.replace(R.id.activity_recipe_details,newRecipeDetailsFragment);
         fragmentTransaction.commit();
-    }
-
-    public void onDelete(View view){
-        /*if (Model.getInstance().getCurrentUserID().equals(recipe.getUploaderEmail())){
-
-        }*/
-        Model.getInstance().deleteRecipe(recipe);
-        this.finish();
     }
 }

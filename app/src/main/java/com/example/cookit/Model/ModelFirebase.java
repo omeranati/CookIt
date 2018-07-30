@@ -1,13 +1,11 @@
 package com.example.cookit.Model;
 
-import android.net.sip.SipSession;
 import android.support.annotation.NonNull;
 import android.util.Log;
-import android.view.View;
-import android.widget.Toast;
 
 import com.example.cookit.Ingredient;
 import com.example.cookit.Recipe;
+import com.example.cookit.User;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -17,6 +15,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -24,19 +23,38 @@ import com.google.firebase.storage.StorageReference;
 import java.util.ArrayList;
 
 public class ModelFirebase {
-    private ValueEventListener eventListener;
+    private ValueEventListener recipeEventListener;
+    private ValueEventListener userEventListener;
     private DatabaseReference recipesReference;
+    private DatabaseReference usersReference;
     private StorageReference storageRef;
     private FirebaseAuth authInstance;
 
     public ModelFirebase() {
         recipesReference = FirebaseDatabase.getInstance().getReference().child("recipes");
+        usersReference = FirebaseDatabase.getInstance().getReference().child("users");
         storageRef = FirebaseStorage.getInstance().getReference();
         authInstance = FirebaseAuth.getInstance();
     }
 
+    public void getUserByUID(String UID, final GetUserListener listener) {
+        Query query = usersReference.child(UID);
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                listener.onSuccess(new User((String)snapshot.child("fullName").getValue(),
+                        (String)snapshot.child("emailAddress").getValue()));
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
     public void getAllRecipes(final GetAllRecipesListener listener) {
-        eventListener = recipesReference.addValueEventListener(new ValueEventListener() {
+        recipeEventListener = recipesReference.addValueEventListener(new ValueEventListener() {
             @Override public void onDataChange(DataSnapshot dataSnapshot) {
                 Log.d("TAG","onDataChange" );
                 ArrayList<Recipe> recipeList = new ArrayList<>();
@@ -54,14 +72,19 @@ public class ModelFirebase {
     }
 
     public void cancelGetAllRecipes() {
-        recipesReference.removeEventListener(eventListener);
+        recipesReference.removeEventListener(recipeEventListener);
     }
 
     public void addRecipe(Recipe r, byte[] imageByteData) {
         String recipeGeneratedKey = recipesReference.push().getKey();
         recipesReference.child(recipeGeneratedKey).setValue(r);
-
         storageRef.child(recipeGeneratedKey).putBytes(imageByteData);
+    }
+
+    public void addUser(User newUser) {
+        String userKey = this.getCurrentUserID();
+        usersReference.child(userKey).child("fullName").setValue(newUser.getFullName());
+        usersReference.child(userKey).child("emailAddress").setValue(newUser.getEmailAddress());
     }
 
     private Recipe getRecipeFromDataSnapshot(DataSnapshot recipeSnapshot) {
@@ -95,11 +118,12 @@ public class ModelFirebase {
         listener.onSuccess();
     }
 
-    public void signUp(String email, String password, final Listener listener) {
-        authInstance.createUserWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+    public void signUp(final String emailAddress, final String password, final String fullName, final Listener listener) {
+        authInstance.createUserWithEmailAndPassword(emailAddress, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if (task.isSuccessful()) {
+                    addUser(new User(fullName, emailAddress));
                     listener.onSuccess();
                 } else {
                     listener.onFail();
@@ -121,7 +145,15 @@ public class ModelFirebase {
         });
     }
 
-    public FirebaseUser getCurrentUser() {
-        return authInstance.getCurrentUser();
+    public String getCurrentUserID() {
+        if (authInstance.getCurrentUser() != null){
+            return authInstance.getCurrentUser().getUid();
+        }
+
+        return null;
+    }
+
+    public void signOut() {
+        authInstance.signOut();
     }
 }
