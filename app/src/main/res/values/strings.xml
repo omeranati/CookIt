@@ -5,8 +5,8 @@
     <string name="quantity">Quantity</string>
     <string name="description">Description</string>
     <string name="recipe_name">Recipe Name</string>
-    <string name="ingredients">Ingredients:</string>
-    <string name="preparation">Preparation:</string>
+    <string name="ingredients">INGREDIENTS</string>
+    <string name="preparation">Preparation</string>
     <string name="upload">Upload</string>
     <string name="empty_ingredients_error_massage">Ingredients list can\'t be empty.</string>
     <string name="error_string">Error</string>

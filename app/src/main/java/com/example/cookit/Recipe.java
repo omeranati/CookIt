@@ -26,6 +26,7 @@ public class Recipe implements Parcelable {
     private ArrayList<String> preparation;
 
     public Recipe() {
+        this.id = null;
         ingredients = new ArrayList<>();
         preparation = new ArrayList<>();
     }
@@ -34,7 +35,7 @@ public class Recipe implements Parcelable {
                   User uploader,
                   ArrayList<Ingredient> ingredients,
                   ArrayList<String> preparation) {
-        this.id = "1";
+        this.id = null;
         this.name = name;
         this.uploaderUID = uploader.getUID();
         this.uploaderName = uploader.getFullName();

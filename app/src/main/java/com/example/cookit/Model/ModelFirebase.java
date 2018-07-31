@@ -75,9 +75,19 @@ public class ModelFirebase {
     }
 
     public void addRecipe(Recipe r, byte[] imageByteData) {
-        String recipeGeneratedKey = recipesReference.push().getKey();
+        String recipeGeneratedKey;
+
+        if (r.getId() == null) {
+            recipeGeneratedKey = recipesReference.push().getKey();
+        }
+        else {
+            recipeGeneratedKey = r.getId();
+        }
+
+        r.setId(null);
+
         recipesReference.child(recipeGeneratedKey).setValue(r);
-        storageRef.child(recipeGeneratedKey).putBytes(imageByteData);
+        //storageRef.child(recipeGeneratedKey).putBytes(imageByteData);
     }
 
     public void addUser(User newUser) {

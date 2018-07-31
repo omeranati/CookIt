@@ -16,10 +16,6 @@ public interface RecipeDao {
     @Query("select * from Recipe")
     List<Recipe> getAll();
 
-    @Query("select * from Recipe where id = :recipeId")
-    Recipe getRecipeById(String recipeId);
-
-
     @Query("delete from Recipe where id = :recipeId")
     void deleteRecipeById(String recipeId);
 

@@ -1,14 +1,19 @@
 package com.example.cookit;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Vibrator;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.DialogFragment;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.view.PagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Display;
@@ -21,6 +26,8 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.example.cookit.Adapters.SimpleFragmentPagerAdapter;
 import com.example.cookit.Model.AppLocalDb;
 import com.example.cookit.Model.GetAllRecipesListener;
 import com.example.cookit.Model.Model;
@@ -76,7 +83,17 @@ public class RecipeDetailsFragment extends DialogFragment {
         recipeName.setText(recipe.getName());
         recipeName.setClickable(false);
 
-        fillIngredientsAndPreparation(view);
+        // fillIngredientsAndPreparation(view);
+        TabLayout tabLayout = (TabLayout) view.findViewById(R.id.tabLayout);
+        tabLayout.addTab(tabLayout.newTab().setText("Ingredients"));
+        tabLayout.addTab(tabLayout.newTab().setText("Preparation"));
+        final ViewPager viewPager = (ViewPager) view.findViewById(R.id.viewPager);
+        FragmentManager fm = getActivity().getSupportFragmentManager();
+        SimpleFragmentPagerAdapter adapter =
+                new SimpleFragmentPagerAdapter(getContext(), getActivity().getSupportFragmentManager(),recipe);
+        viewPager.setAdapter(adapter);
+
+        tabLayout.setupWithViewPager(viewPager);
 
         // Displaying profile picture.
         ImageView ownerProfilePicture = view.findViewById(R.id.ownerProfilePicture);
@@ -110,6 +127,28 @@ public class RecipeDetailsFragment extends DialogFragment {
             public void onClick(View view) {
                 Model.getInstance().deleteRecipe(recipe);
                 getActivity().finish();
+            }
+        });
+
+        Button editButton = ((Button)view.findViewById(R.id.edit));
+
+        if (recipe.getUploaderUID().equals(Model.getInstance().getCurrentUserID()))
+        {
+            editButton.setVisibility(View.VISIBLE);
+        }
+        else
+        {
+            editButton.setVisibility(View.INVISIBLE);
+        }
+
+        editButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getContext(), UploadRecipeActivity.class);
+                Bundle b = new Bundle();
+                b.putParcelable("recipeToEdit", recipe);
+                intent.putExtra("recipeToEdit",b);
+                startActivity(intent);
             }
         });
 

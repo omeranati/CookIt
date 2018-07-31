@@ -21,6 +21,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageView;
 
 import com.example.cookit.Adapters.UploadIngredientAdapter;
@@ -30,6 +31,7 @@ import com.example.cookit.Model.Model;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class UploadRecipeActivity extends AppCompatActivity {
     private static final int CAMERA_DIALOG_INDEX = 0;
@@ -40,10 +42,12 @@ public class UploadRecipeActivity extends AppCompatActivity {
     private boolean wasPhotoUploaded = false;
     private byte[] data;
     private String photoPath;
+    private String editedRecipeID = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_upload_recipe);
         ((NestedScrollView)findViewById(R.id.scrollLayout)).setNestedScrollingEnabled(false);
         findViewById(R.id.uploadImageButton).setDrawingCacheEnabled(true);
@@ -53,12 +57,38 @@ public class UploadRecipeActivity extends AppCompatActivity {
         toolbar.setTitleTextColor(0xFFFFFFFF);
 
         //Used for blurring the backround. removed it for now.
-        Bitmap bitmap = FeedActivity.blurredImage;
+        /*Bitmap bitmap = FeedActivity.blurredImage;
         Drawable d = new BitmapDrawable(getResources(), bitmap);
-        findViewById(R.id.uploadRecipeLayout).setBackground(d);
+        findViewById(R.id.uploadRecipeLayout).setBackground(d);*/
 
         initIngredientsRecyclerView();
         initPreparationRecyclerView();
+
+
+        if (getIntent().hasExtra("recipeToEdit")){
+            Bundle recipeBundle = this.getIntent().getExtras().getBundle("recipeToEdit");
+            inputRecipe = recipeBundle.getParcelable("recipeToEdit");
+            editedRecipeID = inputRecipe.getId();
+            ingredientsAdapter.quantities.remove(0);
+            ingredientsAdapter.descriptions.remove(0);
+
+            for(Ingredient i:inputRecipe.getIngredients()){
+                ingredientsAdapter.quantities.add(i.getQuantity());
+                ingredientsAdapter.descriptions.add(i.getDescription());
+            }
+            ingredientsAdapter.notifyDataSetChanged();
+
+            prepareStagesAdapter.prepareStages.remove(0);
+
+            for(String s:inputRecipe.getPreparation()){
+                prepareStagesAdapter.prepareStages.add(s);
+            }
+
+            ingredientsAdapter.notifyDataSetChanged();
+            prepareStagesAdapter.notifyDataSetChanged();
+
+            ((TextInputLayout)findViewById(R.id.nameTextView)).getEditText().setText(inputRecipe.getName());
+        }
 
         Bitmap uploadImageBitmap = BitmapFactory.decodeResource(this.getResources(),R.drawable.add_photo);
         ((ImageView)findViewById(R.id.uploadImageButton)).setImageBitmap(uploadImageBitmap);
@@ -194,6 +224,10 @@ public class UploadRecipeActivity extends AppCompatActivity {
 
     private void setInputRecipe() {
         inputRecipe = new Recipe();
+        if (editedRecipeID != null){
+            inputRecipe.setId(editedRecipeID);
+        }
+
         inputRecipe.setName(((TextInputLayout)findViewById(R.id.nameTextView)).getEditText().getText().toString());
         getInputIngredients();
         getInputPreparation();

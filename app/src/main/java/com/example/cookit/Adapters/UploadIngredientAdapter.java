@@ -32,6 +32,7 @@ public class UploadIngredientAdapter extends RecyclerView.Adapter<UploadIngredie
             return;
         holder.quantityEditText.setText(quantities.get(position), TextView.BufferType.EDITABLE);
         holder.descriptionEditText.setText(descriptions.get(position), TextView.BufferType.EDITABLE);
+
     }
 
     @Override

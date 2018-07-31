@@ -70,6 +70,7 @@ public class FeedActivity extends AppCompatActivity {
         appView.setDrawingCacheEnabled(true);
         feedView.setDrawingCacheEnabled(true);
 
+
         // Observing the recipes - adding new ones and removing deleted ones.
         modelInstance.getAllRecipes().observe(this, new Observer<List<Recipe>>() {
             @Override
@@ -87,18 +88,20 @@ public class FeedActivity extends AppCompatActivity {
     }
 
     private void updateFeedWithChangedData(@Nullable List<Recipe> recipes) {
+        boolean isChanged = false;
+
         if (recipes.size() >= 0) {
            for(Recipe r: recipes)
             {
                 if (!recipeCardAdapter.recipes.containsKey(r.getId())) {
                     recipeCardAdapter.recipeIds.add(0,r.getId());
                     recipeCardAdapter.recipes.put(r.getId(),r);
-                    recipeCardAdapter.notifyDataSetChanged();
+                    isChanged = true;
                 }
                 if (r.hashCode() != ((Recipe)recipeCardAdapter.recipes.get(r.getId())).hashCode()) {
                     recipeCardAdapter.recipeIds.set(recipeCardAdapter.recipeIds.indexOf((Object)r.getId()),r.getId());
                     recipeCardAdapter.recipes.put(r.getId(),r);
-                    recipeCardAdapter.notifyDataSetChanged();
+                    isChanged = true;
                 }
             }
 
@@ -112,7 +115,12 @@ public class FeedActivity extends AppCompatActivity {
                     recipeIterator.remove();
                     recipeCardAdapter.recipeIds.remove(nextRecipe.getId());
                     recipeCardAdapter.notifyDataSetChanged();
+                    isChanged = true;
                 }
+            }
+
+            if (isChanged) {
+                recipeCardAdapter.notifyDataSetChanged();
             }
         }
     }
