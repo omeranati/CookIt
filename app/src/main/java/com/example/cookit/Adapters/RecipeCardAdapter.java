@@ -43,15 +43,18 @@ public class RecipeCardAdapter extends RecyclerView.Adapter<RecipeCardAdapter.Vi
 
         Button deleteButton = ((Button)holder.itemView.findViewById(R.id.delete));
 
-        if (recipe.getUploaderEmail().equals(FeedActivity.emailAddress))
+        // Showing the delete button if the post is mine.
+        if (recipe.getUploaderUID().equals(Model.getInstance().getCurrentUserID()))
         {
             deleteButton.setVisibility(View.VISIBLE);
         }
+        // Hiding it if it is not mine.
         else
         {
             deleteButton.setVisibility(View.INVISIBLE);
         }
 
+        // Waiting dor the click.
         deleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -60,8 +63,8 @@ public class RecipeCardAdapter extends RecyclerView.Adapter<RecipeCardAdapter.Vi
         });
 
         holder.ownerName.setText(recipe.getUploaderName());
-        holder.foodName.setText(recipe.getName());
 
+        holder.foodName.setText(recipe.getName());
         holder.foodName.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -71,10 +74,10 @@ public class RecipeCardAdapter extends RecyclerView.Adapter<RecipeCardAdapter.Vi
 
         holder.itemView.findViewById(R.id.recipeCardLayout).setTag(recipe);
         holder.itemView.setTag(recipe);
+
         holder.itemView.findViewById(R.id.recipePicture).setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-
                 Vibrator t = (Vibrator)(holder.itemView.getContext().getSystemService(Context.VIBRATOR_SERVICE));
                 // Vibrate for 500 milliseconds
                 if (t.hasVibrator())
@@ -87,17 +90,17 @@ public class RecipeCardAdapter extends RecyclerView.Adapter<RecipeCardAdapter.Vi
         });
 
         Bitmap food;
+
         SquareImageView imageView = holder.itemView.findViewById(R.id.recipePicture);
+
         if (position == 0) {
             food = BitmapFactory.decodeResource(holder.itemView.getContext().getResources(), R.drawable.ham);
         }
         else {
             food = BitmapFactory.decodeResource(holder.itemView.getContext().getResources(), R.drawable.a4590);
-
         }
-        /*float scale = imageView.measuredWidth / food.getWidth();
-        if (scale < 1)
-        {*/
+
+        // Shrinking the photo so the scroll will be more fluent.
         float scale = food.getWidth() / 500;
         if (scale > 1) {
             int width = (int) Math.round(food.getWidth() * (float)(1 / scale));
@@ -113,7 +116,7 @@ public class RecipeCardAdapter extends RecyclerView.Adapter<RecipeCardAdapter.Vi
             }
         });
 
-        ImageView imageView2 = holder.itemView.findViewById(R.id.ownerProfilePicture);
+        ImageView ownerProfilePicture = holder.itemView.findViewById(R.id.ownerProfilePicture);
         Bitmap omerProfilePicture = BitmapFactory.decodeResource(holder.itemView.getContext().getResources(),R.drawable.omer);
 
         // Extracting dark vibrant color from food picture and coloring the food name.
@@ -121,7 +124,7 @@ public class RecipeCardAdapter extends RecyclerView.Adapter<RecipeCardAdapter.Vi
         holder.foodName.setTextColor(pal.getDarkVibrantColor(0x00000000));
 
         omerProfilePicture = ImageHelper.getRoundedCornerBitmap(omerProfilePicture, omerProfilePicture.getHeight()/2);
-        imageView2.setImageBitmap(omerProfilePicture);
+        ownerProfilePicture.setImageBitmap(omerProfilePicture);
     }
 
     @Override

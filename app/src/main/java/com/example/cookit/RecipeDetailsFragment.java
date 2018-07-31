@@ -11,6 +11,7 @@ import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.support.v7.graphics.Palette;
 import android.support.v7.widget.Toolbar;
@@ -95,7 +96,7 @@ public class RecipeDetailsFragment extends DialogFragment {
 
         Button deleteButton = ((Button)view.findViewById(R.id.delete));
 
-        if (recipe.getUploaderEmail().equals(FeedActivity.appUser.getEmailAddress()))
+        if (recipe.getUploaderUID().equals(Model.getInstance().getCurrentUserID()))
         {
             deleteButton.setVisibility(View.VISIBLE);
         }

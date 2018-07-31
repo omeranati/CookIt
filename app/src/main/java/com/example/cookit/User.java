@@ -8,13 +8,13 @@ import android.support.annotation.NonNull;
 public class User {
     @PrimaryKey
     @NonNull
-    private String emailAddress;
+    private String UID;
     private String fullName;
 
     public User(String fullName, String emailAddress)
     {
         this.fullName = fullName;
-        this.emailAddress    = emailAddress;
+        this.UID = emailAddress;
     }
 
     public String getFullName()
@@ -22,9 +22,9 @@ public class User {
         return (this.fullName);
     }
 
-    public String getEmailAddress()
+    public String getUID()
     {
-        return (this.emailAddress);
+        return (this.UID);
     }
 
     public void setFullName(String fullName)
@@ -32,8 +32,8 @@ public class User {
         this.fullName = fullName;
     }
 
-    public void setEmailAddress(String emailAddress)
+    public void setUID(String UID)
     {
-        this.emailAddress = emailAddress;
+        this.UID = UID;
     }
 }

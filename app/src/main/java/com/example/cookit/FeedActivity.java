@@ -39,33 +39,39 @@ public class FeedActivity extends AppCompatActivity {
     public static View      appView;
     public static View      feedView;
     public static User      appUser;
-    public static String    emailAddress;
+    public static Model     modelInstance;
+    public static String    UID;
 
-
+    @Override
+    public void onBackPressed() {
+        moveTaskToBack(true);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Model.getInstance().getUserByUID(new GetUserListener() {
+        modelInstance = Model.getInstance();
+        UID = getIntent().getExtras().get("UID").toString();
+
+        // Going to the server and getting the full name of the person who just logged in.
+        modelInstance.getUserByUID(new GetUserListener() {
             @Override
             public void onSuccess(User myUser) {
                     appUser = myUser;
-                    Log.d("full name", myUser.getFullName());
             }
         });
 
         setContentView(R.layout.activity_feed);
         initRecipesRecyclerView();
-
         setToolbar();
 
-        Model m = Model.getInstance();
         appView = findViewById(R.id.main_container);
         feedView = appView.findViewById(R.id.recipesRecyclerView);
         appView.setDrawingCacheEnabled(true);
         feedView.setDrawingCacheEnabled(true);
 
-        m.getAllRecipes().observe(this, new Observer<List<Recipe>>() {
+        // Observing the recipes - adding new ones and removing deleted ones.
+        modelInstance.getAllRecipes().observe(this, new Observer<List<Recipe>>() {
             @Override
             public void onChanged(@Nullable List<Recipe> recipes) {
                 updateFeedWithChangedData(recipes);
@@ -95,6 +101,7 @@ public class FeedActivity extends AppCompatActivity {
                     recipeCardAdapter.notifyDataSetChanged();
                 }
             }
+
             Collection<Recipe> recipeCollection = recipeCardAdapter.recipes.values();
             Iterator<Recipe> recipeIterator = recipeCollection.iterator();
 
@@ -125,8 +132,10 @@ public class FeedActivity extends AppCompatActivity {
                     public boolean onMenuItemClick(MenuItem menuItem) {
                         switch (menuItem.getItemId()) {
                             case R.id.menu_item_log_off:
-                                Model.getInstance().signOut();
+                                modelInstance.signOut();
                                 Intent intent = new Intent(getBaseContext(), LoginActivity.class);
+                                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                finish();
                                 startActivity(intent);
 
                         }
@@ -153,24 +162,24 @@ public class FeedActivity extends AppCompatActivity {
 
             final Intent intent = new Intent(this, UploadRecipeActivity.class);
 
-             //Used for blurring background in upload recipe activity. removed it for now
+            // Used for blurring background in upload recipe activity. removed it for now
             appView.destroyDrawingCache();
             appView.buildDrawingCache();
             drawingCache = appView.getDrawingCache();
 
             feedView.destroyDrawingCache();
             feedView.buildDrawingCache();
-            Palette pal = Palette.from(feedView.getDrawingCache()).generate();
-            mainColor = pal.getVibrantColor(0xffffffff);
+            //Palette pal = Palette.from(feedView.getDrawingCache()).generate();
+            //mainColor = pal.getVibrantColor(0xffffffff);
 
-            blurBitmap(new RecipeAsyncDaoListener<Bitmap>() {
+           /* blurBitmap(new RecipeAsyncDaoListener<Bitmap>() {
                 @Override
                 public void onComplete(Bitmap data) {
                     blurredImage = data;
                     startActivity(intent);
                 }
-            });
-            //startActivity(intent);
+            });*/
+            startActivity(intent);
         }
     }
 
@@ -198,18 +207,15 @@ public class FeedActivity extends AppCompatActivity {
 
     static public void blurBitmap(final RecipeAsyncDaoListener<Bitmap> listener) {
         class drawBlur extends AsyncTask<String, String, Bitmap> {
-
             @Override
             protected Bitmap doInBackground(String... strings) {
                 if (drawingCache != null) {
 
                     // Lightening the image
-                    blurredImage = ImageHelper.filterBitmap(drawingCache, 0xffffff55, 0x00888888);
+                    blurredImage = ImageHelper.filterBitmap(drawingCache, 0xffffffff, 0x00999999);
 
                     // Blurring the image
-                    blurredImage = ImageHelper.fastblur(blurredImage,0.1f,22);
-
-
+                    //blurredImage = ImageHelper.fastblur(blurredImage,0.1f,22);
                 }
 
                 return blurredImage;

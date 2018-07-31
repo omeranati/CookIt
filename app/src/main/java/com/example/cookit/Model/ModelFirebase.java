@@ -24,7 +24,6 @@ import java.util.ArrayList;
 
 public class ModelFirebase {
     private ValueEventListener recipeEventListener;
-    private ValueEventListener userEventListener;
     private DatabaseReference recipesReference;
     private DatabaseReference usersReference;
     private StorageReference storageRef;
@@ -43,7 +42,7 @@ public class ModelFirebase {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
                 listener.onSuccess(new User((String)snapshot.child("fullName").getValue(),
-                        (String)snapshot.child("emailAddress").getValue()));
+                        snapshot.getKey()));
             }
 
             @Override
@@ -84,14 +83,13 @@ public class ModelFirebase {
     public void addUser(User newUser) {
         String userKey = this.getCurrentUserID();
         usersReference.child(userKey).child("fullName").setValue(newUser.getFullName());
-        usersReference.child(userKey).child("emailAddress").setValue(newUser.getEmailAddress());
     }
 
     private Recipe getRecipeFromDataSnapshot(DataSnapshot recipeSnapshot) {
         Recipe recipe = new Recipe();
         recipe.setId(recipeSnapshot.getKey());
         recipe.setName(recipeSnapshot.child("name").getValue().toString());
-        recipe.setUploaderEmail(recipeSnapshot.child("uploaderEmail").getValue().toString());
+        recipe.setUploaderUID(recipeSnapshot.child("uploaderUID").getValue().toString());
         recipe.setUploaderName(recipeSnapshot.child("uploaderName").getValue().toString());
         ArrayList<Ingredient> ingredients = new ArrayList<>();
         ArrayList<String> preparation = new ArrayList<>();
@@ -123,7 +121,7 @@ public class ModelFirebase {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if (task.isSuccessful()) {
-                    addUser(new User(fullName, emailAddress));
+                    addUser(new User(fullName, getCurrentUserID()));
                     listener.onSuccess();
                 } else {
                     listener.onFail();
@@ -145,6 +143,7 @@ public class ModelFirebase {
         });
     }
 
+    // Returns the current UID. If no user is logged on - returns null.
     public String getCurrentUserID() {
         if (authInstance.getCurrentUser() != null){
             return authInstance.getCurrentUser().getUid();

@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -50,6 +51,11 @@ public class UploadRecipeActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.upload_toolbar);
         setSupportActionBar(toolbar);
         toolbar.setTitleTextColor(0xFFFFFFFF);
+
+        //Used for blurring the backround. removed it for now.
+        Bitmap bitmap = FeedActivity.blurredImage;
+        Drawable d = new BitmapDrawable(getResources(), bitmap);
+        findViewById(R.id.uploadRecipeLayout).setBackground(d);
 
         initIngredientsRecyclerView();
         initPreparationRecyclerView();
@@ -193,7 +199,7 @@ public class UploadRecipeActivity extends AppCompatActivity {
         getInputPreparation();
 
         inputRecipe.setUploaderName(FeedActivity.appUser.getFullName());
-        inputRecipe.setUploaderEmail(FeedActivity.appUser.getEmailAddress());
+        inputRecipe.setUploaderUID(FeedActivity.appUser.getUID());
     }
 
     private void getInputPreparation() {

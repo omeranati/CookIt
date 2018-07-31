@@ -10,7 +10,6 @@ public class RecipeAsyncDao {
     static public void getAll(final RecipeAsyncDaoListener<List<Recipe>> listener) {
 
         class GetAllAsyncTask extends AsyncTask<String, String, List<Recipe>> {
-
             @Override
             protected List<Recipe> doInBackground(String... strings) {
                 List<Recipe> list = AppLocalDb.db.recipeDao().getAll();
@@ -29,14 +28,12 @@ public class RecipeAsyncDao {
     }
 
     static void insertAll(final List<Recipe> recipes, final RecipeAsyncDaoListener<Boolean> listener) {
-
         class InsertAllAsyncTask extends AsyncTask<List<Recipe>, String, Boolean> {
             @Override
             protected Boolean doInBackground(List<Recipe>... recipes) {
                 for (Recipe r : recipes[0]) {
                     AppLocalDb.db.recipeDao().insertAll(r);
                 }
-                // TODO: return false??
 
                 return true;
             }
@@ -50,27 +47,6 @@ public class RecipeAsyncDao {
 
         InsertAllAsyncTask task = new InsertAllAsyncTask();
         task.execute(recipes);
-    }
-
-    static public void getRecipeById(final RecipeAsyncDaoListener<Recipe> listener, final String id) {
-
-        class getRecipeByIdAsyncTask extends AsyncTask<String, String, Recipe> {
-
-            @Override
-            protected Recipe doInBackground(String... strings) {
-                Recipe recipe = AppLocalDb.db.recipeDao().getRecipeById(id);
-                return recipe;
-            }
-
-            @Override
-            protected void onPostExecute(Recipe recipe) {
-                super.onPostExecute(recipe);
-                listener.onComplete(recipe);
-            }
-        }
-
-        getRecipeByIdAsyncTask task = new getRecipeByIdAsyncTask();
-        task.execute();
     }
 
     static public void deleteRecipeById(final String id, final Listener listener) {

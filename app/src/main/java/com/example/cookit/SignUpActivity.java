@@ -32,11 +32,10 @@ public class SignUpActivity extends AppCompatActivity {
                     @Override
                     public void onSuccess() {
                         final Intent intent= new Intent(getBaseContext(), FeedActivity.class);
-                       // intent.setFlags(intent.getFlags() | Intent.FLAG_ACTIVITY_NO_HISTORY);
-                        intent.putExtra("fullName", fullName);
-                        intent.putExtra("emailAddress", emailAddress);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK  |Intent.FLAG_ACTIVITY_NEW_TASK);
+                        intent.putExtra("UID", Model.getInstance().getCurrentUserID());
                         startActivity(intent);
-
+                        getCallingActivity();
                     }
 
                     @Override
