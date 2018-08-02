@@ -27,13 +27,6 @@ public class DetailsIngredientsAdapter extends RecyclerView.Adapter<DetailsIngre
     public void onBindViewHolder(DetailsIngredientsAdapter.ViewHolder holder, int position) {
         holder.quantity.setText(quantities.get(position));
         holder.description.setText(descriptions.get(position));
-        if (position == (quantities.size() - 1)){
-            holder.itemView.findViewById(R.id.ingredientsDivider).setVisibility(View.INVISIBLE);
-        }
-        else{
-            holder.itemView.findViewById(R.id.ingredientsDivider).setVisibility(View.VISIBLE);
-        }
-
     }
 
     @Override

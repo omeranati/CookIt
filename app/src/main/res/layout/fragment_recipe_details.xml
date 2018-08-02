@@ -7,109 +7,40 @@
     android:layout_height="match_parent"
     tools:context=".RecipeDetailsFragment">
 
-    <ScrollView
-        android:id="@+id/scrollView"
+    <android.support.design.widget.TabLayout
+        android:id="@+id/tabLayout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:fillViewport="true"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        android:layout_height="40dp"
+        app:layout_constraintTop_toBottomOf="@+id/recipePicture">
 
-        <LinearLayout
-            android:layout_width="match_parent"
+        <android.support.design.widget.TabItem
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:text="Ingredients" />
 
-            <include
-                android:id="@+id/include"
-                layout="@layout/layout_recipe_header"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:layout_constraintTop_toTopOf="parent" />
+        <android.support.design.widget.TabItem
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Preparation" />
 
-            <android.support.design.widget.TabLayout
-                android:id="@+id/tabLayout"
-                android:layout_width="match_parent"
-                android:layout_height="40dp">
+    </android.support.design.widget.TabLayout>
 
-                <android.support.design.widget.TabItem
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Ingredients" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="336dp"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tabLayout">
 
-                <android.support.design.widget.TabItem
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Preparation" />
-
-            </android.support.design.widget.TabLayout>
-            <android.support.v4.view.ViewPager
-                android:id="@+id/viewPager"
-                android:layout_width="match_parent"
-                android:layout_height="fill_parent"
-                android:layout_below="@id/tabLayout"/>
-            <!--<TextView
-                android:id="@+id/ingredientsDetailsTitle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="24dp"
-                android:layout_marginRight="24dp"
-                android:layout_marginTop="16dp"
-                android:text="@string/ingredients"
-                android:textAlignment="textStart"
-                android:textColor="#000000"
-                android:textSize="18sp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/include" />-->
-
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/ingredientsDetailsRecyclerView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="24dp"
-                android:layout_marginStart="24dp"
-                android:layout_marginTop="8dp"
-                android:scrollbars="vertical"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/ingredientsDetailsTitle"
-                tools:listitem="@layout/details_ingredients_list_item">
-
-            </android.support.v7.widget.RecyclerView>
-
-           <!-- <TextView
-                android:id="@+id/preparationDetailsTitle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="24dp"
-                android:layout_marginStart="24dp"
-                android:layout_marginTop="8dp"
-                android:paddingTop="16dp"
-                android:text="@string/preparation"
-                android:textAlignment="textStart"
-                android:textColor="#000000"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/ingredientsDetailsRecyclerView" />-->
-
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/preparationDetailsRecyclerView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="24dp"
-                android:layout_marginRight="24dp"
-                android:layout_marginTop="8dp"
-                android:scrollbars="vertical"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/preparationDetailsTitle"
-                tools:listitem="@layout/details_preparation_list_item">
-
-            </android.support.v7.widget.RecyclerView>
-        </LinearLayout>
-    </ScrollView>
+        <android.support.v4.view.ViewPager
+            android:id="@+id/viewPager"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:isScrollContainer="true"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tabLayout"
+            app:layout_scrollFlags="scroll|enterAlways" />
+    </LinearLayout>
 
 </android.support.constraint.ConstraintLayout>

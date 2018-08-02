@@ -7,18 +7,19 @@
     android:layout_height="match_parent"
     tools:context=".IngredientFragment">
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/ingredientsDetailsRecyclerVieww"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:scrollbars="vertical"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:layout_conversion_absoluteHeight="405dp"
-        tools:layout_conversion_absoluteWidth="336dp"
-        tools:listitem="@layout/details_ingredients_list_item">
+        <RecyclerView
+            android:id="@+id/ingredientsDetailsRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scrollbars="vertical"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.584"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="1.0"
+            tools:listitem="@layout/details_ingredients_list_item">
 
-    </android.support.v7.widget.RecyclerView>
-
+        </RecyclerView>
 </android.support.constraint.ConstraintLayout>

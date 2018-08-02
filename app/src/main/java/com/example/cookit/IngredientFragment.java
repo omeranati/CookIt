@@ -4,6 +4,7 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.NestedScrollView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -34,12 +35,14 @@ public class IngredientFragment extends Fragment {
         // Inflate the layout for this fragment
         final View view = inflater.inflate(R.layout.fragment_ingredient, container, false);
         fillIngredientsAndPreparation(view);
+        view.findViewById(R.id.ingredientsDetailsRecyclerView).setVerticalScrollBarEnabled(true);
+        view.findViewById(R.id.ingredientsDetailsRecyclerView).setNestedScrollingEnabled(true);
         return view;
     }
 
     private void initIngredientsRecyclerView(View view) {
         ingredientsDetailsAdapter = new DetailsIngredientsAdapter();
-        RecyclerView ingredientsRV = view.findViewById(R.id.ingredientsDetailsRecyclerVieww);
+        RecyclerView ingredientsRV = view.findViewById(R.id.ingredientsDetailsRecyclerView);
         ingredientsRV.setLayoutManager(new LinearLayoutManager(getContext()));
         ingredientsRV.setAdapter(ingredientsDetailsAdapter);
     }

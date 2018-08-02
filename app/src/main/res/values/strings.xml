@@ -17,4 +17,6 @@
     <string name="my_profile">My Profile</string>
     <string name="log_off">Log Off</string>
     <string name="no_photo_error_message">Please upload a recipe image</string>
+    <string name="edit_recipe">Edit</string>
+    <string name="delete_recipe">Delete</string>
 </resources>

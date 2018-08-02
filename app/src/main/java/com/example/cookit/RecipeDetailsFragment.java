@@ -2,6 +2,7 @@ package com.example.cookit;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -14,17 +15,25 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.SpannableString;
+import android.text.style.ForegroundColorSpan;
 import android.view.Display;
 import android.view.LayoutInflater;
 import android.support.v7.graphics.Palette;
 import android.support.v7.widget.Toolbar;
 import android.text.Layout;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import com.example.cookit.Adapters.SimpleFragmentPagerAdapter;
@@ -69,25 +78,34 @@ public class RecipeDetailsFragment extends DialogFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        final View view = inflater.inflate(R.layout.fragment_recipe_details, container, false);
+        final View view = inflater.inflate(R.layout.fragment_recipe_details2, container, false);
+
+
+
 
         Bundle b = getArguments();
         recipe = b.getParcelable("recipe");
 
+        if (Model.getInstance().getCurrentUserID().equals(recipe.getUploaderUID())) {
+            setHasOptionsMenu(true);
+            Toolbar toolbar = view.findViewById(R.id.recipe_details_toolbar);
+            ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
+        }
+
         // Owner name
-        TextView ownerName = view.findViewById(R.id.ownerName);
-        ownerName.setText(recipe.getUploaderName());
+        /*TextView ownerName = view.findViewById(R.id.ownerName);
+        ownerName.setText(recipe.getUploaderName());*/
 
         // Recipe name
-        TextView recipeName = view.findViewById(R.id.recipeName);
+       /* TextView recipeName = view.findViewById(R.id.recipeName);
         recipeName.setText(recipe.getName());
-        recipeName.setClickable(false);
+        recipeName.setClickable(false);*/
 
-        // fillIngredientsAndPreparation(view);
         TabLayout tabLayout = (TabLayout) view.findViewById(R.id.tabLayout);
         tabLayout.addTab(tabLayout.newTab().setText("Ingredients"));
         tabLayout.addTab(tabLayout.newTab().setText("Preparation"));
         final ViewPager viewPager = (ViewPager) view.findViewById(R.id.viewPager);
+        viewPager.setNestedScrollingEnabled(true);
         FragmentManager fm = getActivity().getSupportFragmentManager();
         SimpleFragmentPagerAdapter adapter =
                 new SimpleFragmentPagerAdapter(getContext(), getActivity().getSupportFragmentManager(),recipe);
@@ -96,10 +114,10 @@ public class RecipeDetailsFragment extends DialogFragment {
         tabLayout.setupWithViewPager(viewPager);
 
         // Displaying profile picture.
-        ImageView ownerProfilePicture = view.findViewById(R.id.ownerProfilePicture);
+        /*ImageView ownerProfilePicture = view.findViewById(R.id.ownerProfilePicture);
         Bitmap omerProfilePicture = BitmapFactory.decodeResource(getContext().getResources(),R.drawable.omer);
         omerProfilePicture = ImageHelper.getRoundedCornerBitmap(omerProfilePicture,omerProfilePicture.getHeight()/2);
-        ownerProfilePicture.setImageBitmap(omerProfilePicture);
+        ownerProfilePicture.setImageBitmap(omerProfilePicture);*/
 
         // Displaying food picture.
         ImageView RecipePicture = view.findViewById(R.id.recipePicture);
@@ -111,46 +129,6 @@ public class RecipeDetailsFragment extends DialogFragment {
         ((TextView)view.findViewById(R.id.recipeName)).setTextColor(p.getDarkVibrantColor(0x00000000));
         */
 
-        Button deleteButton = ((Button)view.findViewById(R.id.delete));
-
-        if (recipe.getUploaderUID().equals(Model.getInstance().getCurrentUserID()))
-        {
-            deleteButton.setVisibility(View.VISIBLE);
-        }
-        else
-        {
-            deleteButton.setVisibility(View.INVISIBLE);
-        }
-
-        deleteButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Model.getInstance().deleteRecipe(recipe);
-                getActivity().finish();
-            }
-        });
-
-        Button editButton = ((Button)view.findViewById(R.id.edit));
-
-        if (recipe.getUploaderUID().equals(Model.getInstance().getCurrentUserID()))
-        {
-            editButton.setVisibility(View.VISIBLE);
-        }
-        else
-        {
-            editButton.setVisibility(View.INVISIBLE);
-        }
-
-        editButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(getContext(), UploadRecipeActivity.class);
-                Bundle b = new Bundle();
-                b.putParcelable("recipeToEdit", recipe);
-                intent.putExtra("recipeToEdit",b);
-                startActivity(intent);
-            }
-        });
 
         RecipePicture.setClickable(false);
         RecipePicture.setOnLongClickListener(new View.OnLongClickListener() {
@@ -171,87 +149,41 @@ public class RecipeDetailsFragment extends DialogFragment {
         
         RecipePicture.setImageBitmap(chickenBitmap);
 
-        /*
-        // Used to bring back saved instance
-        if (savedInstanceState != null) {
-        }*/
-
         return view;
     }
 
-    private String createRecipeString(Recipe recipe) {
-        String recipePrint = "";
-        recipePrint += "Ingredients:" + System.lineSeparator();
 
-        for (int i = 0; i < recipe.getIngredients().size(); i++) {
-            recipePrint += "• " + recipe.getIngredients().get(i).getQuantity() + " " + recipe.getIngredients().get(i).getDescription() + System.lineSeparator();
-        }
 
-        recipePrint += System.lineSeparator()+ "Preparation:" + System.lineSeparator();
-
-        for (int i = 0; i < recipe.getPreparation().size(); i++) {
-            recipePrint += i+1 + ". " + recipe.getPreparation().get(i) + System.lineSeparator();
-        }
-
-        return (recipePrint);
-    }
-
-    //@Override
-   /* public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
-    }*/
-
-   // @Override
-    /*public void onDetach() {
-        super.onDetach();
-        mListener = null;
-    }*/
-
-   @Override
-   public void onDestroyView(){
-       super.onDestroyView();
-   }
 
     @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu,inflater);
+        inflater.inflate(R.menu.recipe_details_menu, menu);
     }
 
-    private void fillIngredientsAndPreparation(View view) {
-        initPreparationRecyclerView(view);
-        fillPreparationRecyclerView();
-        initIngredientsRecyclerView(view);
-        fillIngredientsRecyclerView();
-    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
 
-    private void initPreparationRecyclerView(View view) {
-        preparationDetailsAdapter = new DetailsPreparatoinAdapter();
-        RecyclerView preparationRV = view.findViewById(R.id.preparationDetailsRecyclerView);
-        preparationRV.setLayoutManager(new LinearLayoutManager(getContext()));
-        preparationRV.setAdapter(preparationDetailsAdapter);
-    }
+            case R.id.menu_item_edit_recipe: {
+                Intent intent = new Intent(getContext(), UploadRecipeActivity.class);
+                Bundle b = new Bundle();
+                b.putParcelable("recipeToEdit", recipe);
+                intent.putExtra("recipeToEdit", b);
+                startActivity(intent);
 
-    private void fillPreparationRecyclerView() {
-        preparationDetailsAdapter.prepareStages.addAll(recipe.getPreparation());
-    }
+                return true;
+            }
+            case R.id.menu_item_delete_recipe: {
+                Model.getInstance().deleteRecipe(recipe);
+                getActivity().finish();
 
-    private void initIngredientsRecyclerView(View view) {
-        ingredientsDetailsAdapter = new DetailsIngredientsAdapter();
-        RecyclerView ingredientsRV = view.findViewById(R.id.ingredientsDetailsRecyclerView);
-        ingredientsRV.setLayoutManager(new LinearLayoutManager(getContext()));
-        ingredientsRV.setAdapter(ingredientsDetailsAdapter);
-    }
-
-    private void fillIngredientsRecyclerView() {
-        for(Ingredient currIngredient : recipe.getIngredients()) {
-            ingredientsDetailsAdapter.quantities.add(currIngredient.getQuantity());
-            ingredientsDetailsAdapter.descriptions.add(currIngredient.getDescription());
+                return true;
+            }
+            default:
+                break;
         }
+
+        return false;
     }
 }
