@@ -16,10 +16,9 @@ import android.widget.TextView;
 import com.example.cookit.FeedActivity;
 import com.example.cookit.ImageHelper;
 import com.example.cookit.Model.Model;
-import com.example.cookit.Model.RecipeAsyncDaoListener;
 import com.example.cookit.R;
 import com.example.cookit.Recipe;
-import com.example.cookit.SquareImageView;
+import com.example.cookit.CustomImageView;
 
 import java.util.ArrayList;
 import java.util.Hashtable;
@@ -91,7 +90,7 @@ public class RecipeCardAdapter extends RecyclerView.Adapter<RecipeCardAdapter.Vi
 
         Bitmap food;
 
-        SquareImageView imageView = holder.itemView.findViewById(R.id.recipePicture);
+        CustomImageView imageView = holder.itemView.findViewById(R.id.recipePicture);
 
         if (position == 0) {
             food = BitmapFactory.decodeResource(holder.itemView.getContext().getResources(), R.drawable.ham);

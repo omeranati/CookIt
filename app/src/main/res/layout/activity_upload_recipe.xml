@@ -37,7 +37,7 @@
             android:focusedByDefault="true"
             android:orientation="vertical">
 
-            <com.example.cookit.SquareImageView
+            <com.example.cookit.CustomImageView
                 android:id="@+id/uploadImageButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

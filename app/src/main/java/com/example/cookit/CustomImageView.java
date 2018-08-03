@@ -6,7 +6,7 @@ import android.graphics.Bitmap;
 import android.util.AttributeSet;
 import android.widget.ImageView;
 
-public class SquareImageView extends ImageView {
+public class CustomImageView extends ImageView {
 
     private int bitmapWidth;
     private int bitmapHeight;
@@ -27,15 +27,15 @@ public class SquareImageView extends ImageView {
         return bitmapHeight;
     }
 
-    public SquareImageView(Context context) {
+    public CustomImageView(Context context) {
         super(context);
     }
 
-    public SquareImageView(Context context, AttributeSet attrs) {
+    public CustomImageView(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
-    public SquareImageView(Context context, AttributeSet attrs, int defStyleAttr) {
+    public CustomImageView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
     }
 

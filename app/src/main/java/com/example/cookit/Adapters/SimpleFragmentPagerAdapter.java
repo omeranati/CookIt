@@ -6,8 +6,8 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
-import com.example.cookit.IngredientFragment;
-import com.example.cookit.PreparationFragment;
+import com.example.cookit.IngredientListFragment;
+import com.example.cookit.PreparationListFragment;
 import com.example.cookit.Recipe;
 
 import java.util.ArrayList;
@@ -21,9 +21,9 @@ public class SimpleFragmentPagerAdapter extends FragmentPagerAdapter {
         mContext = context;
         Bundle b = new Bundle();
         b.putParcelable("recipe",recipe);
-        IngredientFragment ingredientFragment = new IngredientFragment();
+        IngredientListFragment ingredientFragment = new IngredientListFragment();
         ingredientFragment.setArguments(b);
-        PreparationFragment preparationFragment = new PreparationFragment();
+        PreparationListFragment preparationFragment = new PreparationListFragment();
         preparationFragment.setArguments(b);
         mFragmentList.add(ingredientFragment);
         mFragmentList.add(preparationFragment);

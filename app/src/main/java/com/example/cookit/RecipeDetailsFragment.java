@@ -2,10 +2,6 @@ package com.example.cookit;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
-import android.net.Uri;
 import android.os.Vibrator;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.DialogFragment;
@@ -13,38 +9,20 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.text.SpannableString;
-import android.text.style.ForegroundColorSpan;
-import android.view.Display;
 import android.view.LayoutInflater;
-import android.support.v7.graphics.Palette;
 import android.support.v7.widget.Toolbar;
-import android.text.Layout;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.PopupMenu;
-import android.widget.TextView;
 
 import com.example.cookit.Adapters.SimpleFragmentPagerAdapter;
-import com.example.cookit.Model.AppLocalDb;
-import com.example.cookit.Model.GetAllRecipesListener;
 import com.example.cookit.Model.Model;
-import com.example.cookit.Model.RecipeAsyncDao;
-import com.example.cookit.Model.RecipeAsyncDaoListener;
 
-import java.util.ArrayList;
-import java.util.List;
 import com.example.cookit.Adapters.DetailsIngredientsAdapter;
 import com.example.cookit.Adapters.DetailsPreparatoinAdapter;
 
@@ -78,10 +56,7 @@ public class RecipeDetailsFragment extends DialogFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        final View view = inflater.inflate(R.layout.fragment_recipe_details2, container, false);
-
-
-
+        final View view = inflater.inflate(R.layout.fragment_recipe_details, container, false);
 
         Bundle b = getArguments();
         recipe = b.getParcelable("recipe");
@@ -129,7 +104,6 @@ public class RecipeDetailsFragment extends DialogFragment {
         ((TextView)view.findViewById(R.id.recipeName)).setTextColor(p.getDarkVibrantColor(0x00000000));
         */
 
-
         RecipePicture.setClickable(false);
         RecipePicture.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
@@ -146,14 +120,10 @@ public class RecipeDetailsFragment extends DialogFragment {
             }
         });
 
-        
         RecipePicture.setImageBitmap(chickenBitmap);
 
         return view;
     }
-
-
-
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {

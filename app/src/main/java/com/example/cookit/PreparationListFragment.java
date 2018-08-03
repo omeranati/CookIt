@@ -1,7 +1,5 @@
 package com.example.cookit;
 
-import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -10,15 +8,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.example.cookit.Adapters.DetailsIngredientsAdapter;
 import com.example.cookit.Adapters.DetailsPreparatoinAdapter;
 
-public class PreparationFragment extends Fragment {
+public class PreparationListFragment extends Fragment {
 
     private DetailsPreparatoinAdapter preparationDetailsAdapter;
     private Recipe recipe;
 
-    public PreparationFragment() {
+    public PreparationListFragment() {
     }
 
     @Override
@@ -33,7 +30,7 @@ public class PreparationFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        final View view = inflater.inflate(R.layout.fragment_preparation, container, false);
+        final View view = inflater.inflate(R.layout.fragment_preparation_list, container, false);
         fillIngredientsAndPreparation(view);
         return view;
     }

@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -21,7 +20,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.ImageView;
 
 import com.example.cookit.Adapters.UploadIngredientAdapter;
@@ -31,7 +29,6 @@ import com.example.cookit.Model.Model;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 
 public class UploadRecipeActivity extends AppCompatActivity {
     private static final int CAMERA_DIALOG_INDEX = 0;
@@ -138,7 +135,7 @@ public class UploadRecipeActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent imageReturnedIntent) {
         super.onActivityResult(requestCode, resultCode, imageReturnedIntent);
-        SquareImageView imageView = findViewById(R.id.uploadImageButton);
+        CustomImageView imageView = findViewById(R.id.uploadImageButton);
         switch(requestCode) {
             case CAMERA_DIALOG_INDEX:
                 if(resultCode == RESULT_OK){
@@ -256,7 +253,7 @@ public class UploadRecipeActivity extends AppCompatActivity {
         }
     }
 
-    private void getDataFromImageView(SquareImageView imageView) {
+    private void getDataFromImageView(CustomImageView imageView) {
         imageView.buildDrawingCache();
         Bitmap bitmap = ((BitmapDrawable) imageView.getDrawable()).getBitmap();
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
