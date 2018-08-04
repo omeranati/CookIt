@@ -10,7 +10,6 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -23,6 +22,7 @@ import com.google.firebase.storage.StorageReference;
 import java.util.ArrayList;
 
 public class ModelFirebase {
+    private final String USER_FULL_NAME_FIELD_NAME = "fullName";
     private ValueEventListener recipeEventListener;
     private DatabaseReference recipesReference;
     private DatabaseReference usersReference;
@@ -41,7 +41,7 @@ public class ModelFirebase {
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
-                listener.onSuccess(new User((String)snapshot.child("fullName").getValue(),
+                listener.onSuccess(new User((String)snapshot.child(USER_FULL_NAME_FIELD_NAME).getValue(),
                         snapshot.getKey()));
             }
 
@@ -91,8 +91,7 @@ public class ModelFirebase {
     }
 
     public void addUser(User newUser) {
-        String userKey = this.getCurrentUserID();
-        usersReference.child(userKey).child("fullName").setValue(newUser.getFullName());
+        usersReference.child(newUser.getUserID()).child(USER_FULL_NAME_FIELD_NAME).setValue(newUser.getFullName());
     }
 
     private Recipe getRecipeFromDataSnapshot(DataSnapshot recipeSnapshot) {
@@ -126,18 +125,22 @@ public class ModelFirebase {
         listener.onSuccess();
     }
 
-    public void signUp(final String emailAddress, final String password, final String fullName, final Listener listener) {
+    public void signUp(final String emailAddress, final String password, final String fullName, final byte[] imageByteData, final UserListener listener) {
         authInstance.createUserWithEmailAndPassword(emailAddress, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if (task.isSuccessful()) {
-                    addUser(new User(fullName, getCurrentUserID()));
+                    String userID = getCurrentUserID();
+                    addUser(new User(fullName, userID));
+                    storageRef.child(userID).putBytes(imageByteData);
                     listener.onSuccess();
                 } else {
-                    listener.onFail();
+                    listener.onFail(task.getException().getMessage());
                 }
             }
         });
+
+
     }
 
     public void login(String email, String password, final Listener listener) {
@@ -164,5 +167,18 @@ public class ModelFirebase {
 
     public void signOut() {
         authInstance.signOut();
+    }
+
+    public void updateUser(boolean wasImageUpdated, String fullName, byte[] imageByteData, final Listener listener) {
+        if (wasImageUpdated)
+            storageRef.child(getCurrentUserID()).putBytes(imageByteData);
+
+        usersReference.child(getCurrentUserID()).child(USER_FULL_NAME_FIELD_NAME).setValue(fullName).
+                addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        listener.onSuccess();
+                    }
+                });
     }
 }

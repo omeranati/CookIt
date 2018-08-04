@@ -4,7 +4,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -26,7 +25,6 @@ import com.example.cookit.Adapters.UploadIngredientAdapter;
 import com.example.cookit.Adapters.UploadPreparationAdapter;
 import com.example.cookit.Model.Model;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 
@@ -37,7 +35,7 @@ public class UploadRecipeActivity extends AppCompatActivity {
     private UploadPreparationAdapter prepareStagesAdapter;
     private Recipe inputRecipe;
     private boolean wasPhotoUploaded = false;
-    private byte[] data;
+    private byte[] imageData;
     private String photoPath;
     private String editedRecipeID = null;
 
@@ -47,53 +45,25 @@ public class UploadRecipeActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_upload_recipe);
         ((NestedScrollView)findViewById(R.id.scrollLayout)).setNestedScrollingEnabled(false);
-        findViewById(R.id.uploadImageButton).setDrawingCacheEnabled(true);
+        findViewById(R.id.uploadRecipeImageButton).setDrawingCacheEnabled(true);
 
         Toolbar toolbar = findViewById(R.id.upload_toolbar);
         setSupportActionBar(toolbar);
         toolbar.setTitleTextColor(0xFFFFFFFF);
 
-        //Used for blurring the backround. removed it for now.
-        /*Bitmap bitmap = FeedActivity.blurredImage;
-        Drawable d = new BitmapDrawable(getResources(), bitmap);
-        findViewById(R.id.uploadRecipeLayout).setBackground(d);*/
-
         initIngredientsRecyclerView();
         initPreparationRecyclerView();
 
 
-        if (getIntent().hasExtra("recipeToEdit")){
-            Bundle recipeBundle = this.getIntent().getExtras().getBundle("recipeToEdit");
-            inputRecipe = recipeBundle.getParcelable("recipeToEdit");
-            editedRecipeID = inputRecipe.getId();
-            ingredientsAdapter.quantities.remove(0);
-            ingredientsAdapter.descriptions.remove(0);
-
-            for(Ingredient i:inputRecipe.getIngredients()){
-                ingredientsAdapter.quantities.add(i.getQuantity());
-                ingredientsAdapter.descriptions.add(i.getDescription());
-            }
-            ingredientsAdapter.notifyDataSetChanged();
-
-            prepareStagesAdapter.prepareStages.remove(0);
-
-            for(String s:inputRecipe.getPreparation()){
-                prepareStagesAdapter.prepareStages.add(s);
-            }
-
-            ingredientsAdapter.notifyDataSetChanged();
-            prepareStagesAdapter.notifyDataSetChanged();
-
-            ((TextInputLayout)findViewById(R.id.nameTextView)).getEditText().setText(inputRecipe.getName());
-        }
+        fillDataInCaseOfRecipeEdit();
 
         Bitmap uploadImageBitmap = BitmapFactory.decodeResource(this.getResources(),R.drawable.add_photo);
-        ((ImageView)findViewById(R.id.uploadImageButton)).setImageBitmap(uploadImageBitmap);
+        ((ImageView)findViewById(R.id.uploadRecipeImageButton)).setImageBitmap(uploadImageBitmap);
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.upload_activity_menu, menu);
+        getMenuInflater().inflate(R.menu.upload_menu, menu);
         return true;
     }
 
@@ -102,7 +72,7 @@ public class UploadRecipeActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.action_send:
                 if (validateInput()) {
-                    Model.getInstance().addRecipe(inputRecipe, data);
+                    Model.getInstance().addRecipe(inputRecipe, imageData);
                     finish();
                 }
                 break;
@@ -135,7 +105,7 @@ public class UploadRecipeActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent imageReturnedIntent) {
         super.onActivityResult(requestCode, resultCode, imageReturnedIntent);
-        CustomImageView imageView = findViewById(R.id.uploadImageButton);
+        CustomImageView imageView = findViewById(R.id.uploadRecipeImageButton);
         switch(requestCode) {
             case CAMERA_DIALOG_INDEX:
                 if(resultCode == RESULT_OK){
@@ -152,12 +122,10 @@ public class UploadRecipeActivity extends AppCompatActivity {
                 }
                 break;
         }
-        getDataFromImageView(imageView);
+        imageData = Utils.getDataFromImageView(imageView);
         imageView.requestLayout();
         imageView.invalidate();
     }
-
-
 
     public void addNewIngredient(View view) {
         ingredientsAdapter.quantities.add("");
@@ -195,28 +163,21 @@ public class UploadRecipeActivity extends AppCompatActivity {
         }
 
         if (inputRecipe.getIngredients().size() == 0) {
-            showErrorAlert(R.string.empty_ingredients_error_massage);
+            Utils.showErrorAlert(R.string.empty_ingredients_error_massage, this);
             return false;
         }
 
         if (inputRecipe.getPreparation().size() == 0) {
-            showErrorAlert(R.string.empty_preparation_error_message);
+            Utils.showErrorAlert(R.string.empty_preparation_error_message, this);
             return false;
         }
 
         if (!wasPhotoUploaded) {
-            showErrorAlert(R.string.no_photo_error_message);
+            Utils.showErrorAlert(R.string.no_photo_error_message, this);
             return false;
         }
 
         return true;
-    }
-
-    private void showErrorAlert(int messageId) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage(messageId).setPositiveButton("Ok", null);
-        AlertDialog dialog = builder.create();
-        dialog.show();
     }
 
     private void setInputRecipe() {
@@ -230,7 +191,7 @@ public class UploadRecipeActivity extends AppCompatActivity {
         getInputPreparation();
 
         inputRecipe.setUploaderName(FeedActivity.appUser.getFullName());
-        inputRecipe.setUploaderUID(FeedActivity.appUser.getUID());
+        inputRecipe.setUploaderUID(FeedActivity.appUser.getUserID());
     }
 
     private void getInputPreparation() {
@@ -253,14 +214,6 @@ public class UploadRecipeActivity extends AppCompatActivity {
         }
     }
 
-    private void getDataFromImageView(CustomImageView imageView) {
-        imageView.buildDrawingCache();
-        Bitmap bitmap = ((BitmapDrawable) imageView.getDrawable()).getBitmap();
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-        data = baos.toByteArray();
-    }
-
     private void startCameraActivity() {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
@@ -269,7 +222,7 @@ public class UploadRecipeActivity extends AppCompatActivity {
             try {
                 photoFile = createImageFile();
             } catch (IOException ex) {
-                showErrorAlert(R.string.cant_create_photo_file_error);
+                Utils.showErrorAlert(R.string.cant_create_photo_file_error, this);
             }
             // Continue only if the File was successfully created
             if (photoFile != null) {
@@ -292,5 +245,32 @@ public class UploadRecipeActivity extends AppCompatActivity {
         // Save a file: path for use with ACTION_VIEW intents
         photoPath = image.getAbsolutePath();
         return image;
+    }
+
+    private void fillDataInCaseOfRecipeEdit() {
+        if (getIntent().hasExtra("recipeToEdit")){
+            Bundle recipeBundle = this.getIntent().getExtras().getBundle("recipeToEdit");
+            inputRecipe = recipeBundle.getParcelable("recipeToEdit");
+            editedRecipeID = inputRecipe.getId();
+            ingredientsAdapter.quantities.remove(0);
+            ingredientsAdapter.descriptions.remove(0);
+
+            for(Ingredient i:inputRecipe.getIngredients()){
+                ingredientsAdapter.quantities.add(i.getQuantity());
+                ingredientsAdapter.descriptions.add(i.getDescription());
+            }
+            ingredientsAdapter.notifyDataSetChanged();
+
+            prepareStagesAdapter.prepareStages.remove(0);
+
+            for(String s:inputRecipe.getPreparation()){
+                prepareStagesAdapter.prepareStages.add(s);
+            }
+
+            ingredientsAdapter.notifyDataSetChanged();
+            prepareStagesAdapter.notifyDataSetChanged();
+
+            ((TextInputLayout)findViewById(R.id.nameTextView)).getEditText().setText(inputRecipe.getName());
+        }
     }
 }

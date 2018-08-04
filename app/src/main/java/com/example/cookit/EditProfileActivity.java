@@ -9,35 +9,72 @@ import android.support.v4.content.FileProvider;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.ProgressBar;
 
+import com.example.cookit.Model.Listener;
 import com.example.cookit.Model.Model;
 import com.example.cookit.Model.UserListener;
 
 import java.io.File;
 import java.io.IOException;
 
-public class SignUpActivity extends AppCompatActivity {
+public class EditProfileActivity extends AppCompatActivity {
 
     private static final int CAMERA_DIALOG_INDEX = 0;
     private static final int GALLERY_DIALOG_INDEX = 1;
     private String photoPath;
-    private boolean wasPhotoUploaded = false;
-    private byte[] imageData;
-    private String emailAddress;
-    private String fullName;
-    private String password;
+    byte[] imageData;
+    boolean wasImageUpdated = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_sign_up);
-        setProgressBarVisibility(View.INVISIBLE);
+        setContentView(R.layout.activity_edit_profile);
+
+        Toolbar toolbar = findViewById(R.id.profile_toolbar);
+        setSupportActionBar(toolbar);
+        toolbar.setTitleTextColor(0xFFFFFFFF);
+
+        ((EditText)findViewById(R.id.fullNameEditText)).setText(FeedActivity.appUser.getFullName());
     }
 
-    public void addPhoto(View view) {
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.upload_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_send:
+                Model.getInstance().updateUser(wasImageUpdated,
+                                               ((EditText)findViewById(R.id.fullNameEditText)).getText().toString(),
+                                               imageData,
+                                               new Listener() {
+
+                                                   @Override
+                                                   public void onSuccess() {
+                                                       finish();
+                                                   }
+
+                                                   @Override
+                                                   public void onFail() {
+
+                                                   }
+                                               });
+
+                break;
+        }
+
+        return false;
+    }
+
+    public void editPhoto(View view) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Photo Source")
                 .setItems(R.array.photo_inputs, new DialogInterface.OnClickListener() {
@@ -58,55 +95,23 @@ public class SignUpActivity extends AppCompatActivity {
         dialog.show();
     }
 
-    public void signUp(final View view) {
-        if(validateInput()) {
-            setProgressBarVisibility(View.VISIBLE);
-            Model.getInstance().signUp(
-                    emailAddress,
-                    password,
-                    fullName,
-                    imageData,
-                    new UserListener() {
-                        @Override
-                        public void onSuccess() {
-                            final Intent intent = new Intent(getBaseContext(), FeedActivity.class);
-                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                            intent.putExtra("UID", Model.getInstance().getCurrentUserID());
-                            startActivity(intent);
-                            getCallingActivity();
-                        }
-
-                        @Override
-                        public void onFail(String failMessage) {
-                            setProgressBarVisibility(View.INVISIBLE);
-                            Utils.showDynamicErrorAlert(failMessage, SignUpActivity.this);
-                        }
-                    }
-            );
-        }
-    }
-
-    private void setProgressBarVisibility(int visibility) {
-        findViewById(R.id.progressBar2).setVisibility(visibility);
-    }
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent imageReturnedIntent) {
         super.onActivityResult(requestCode, resultCode, imageReturnedIntent);
-        CustomImageView imageView = findViewById(R.id.uploadUserImageButton);
+        CustomImageView imageView = findViewById(R.id.editUserImageButton);
         switch(requestCode) {
             case CAMERA_DIALOG_INDEX:
                 if(resultCode == RESULT_OK){
                     Uri outputFileUri = Uri.fromFile(new File(photoPath));
                     imageView.setImageURI(outputFileUri);
-                    wasPhotoUploaded = true;
+                    wasImageUpdated = true;
                 }
                 break;
             case GALLERY_DIALOG_INDEX:
                 if(resultCode == RESULT_OK){
                     Uri selectedImage = imageReturnedIntent.getData();
                     imageView.setImageURI(selectedImage);
-                    wasPhotoUploaded = true;
+                    wasImageUpdated = true;
                 }
                 break;
         }
@@ -138,7 +143,7 @@ public class SignUpActivity extends AppCompatActivity {
 
     private File createImageFile() throws IOException {
         File image = File.createTempFile(
-                "User",  /* prefix */
+                "NewUser",  /* prefix */
                 ".jpg",         /* suffix */
                 getExternalFilesDir(Environment.DIRECTORY_PICTURES)      /* directory */
         );
@@ -146,33 +151,5 @@ public class SignUpActivity extends AppCompatActivity {
         // Save a file: path for use with ACTION_VIEW intents
         photoPath = image.getAbsolutePath();
         return image;
-    }
-
-    private boolean validateInput() {
-        emailAddress = ((EditText) findViewById(R.id.emailAddress)).getText().toString();
-        fullName = ((EditText) findViewById(R.id.fullName)).getText().toString();
-        password = ((EditText) findViewById(R.id.password)).getText().toString();
-
-        if (emailAddress.length() == 0) {
-            Utils.showErrorAlert(R.string.empty_email_error_message, this);
-            return false;
-        }
-
-        if (fullName.length() == 0) {
-            Utils.showErrorAlert(R.string.empty_name_error_message, this);
-            return false;
-        }
-
-        if (password.length() == 0) {
-            Utils.showErrorAlert(R.string.empty_password_error_message, this);
-            return false;
-        }
-
-        if (!wasPhotoUploaded) {
-            Utils.showErrorAlert(R.string.no_photo_error_message, this);
-            return false;
-        }
-
-        return true;
     }
 }

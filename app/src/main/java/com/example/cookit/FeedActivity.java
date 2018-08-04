@@ -53,13 +53,7 @@ public class FeedActivity extends AppCompatActivity {
         modelInstance = Model.getInstance();
         UID = getIntent().getExtras().get("UID").toString();
 
-        // Going to the server and getting the full name of the person who just logged in.
-        modelInstance.getUserByUID(new GetUserListener() {
-            @Override
-            public void onSuccess(User myUser) {
-                    appUser = myUser;
-            }
-        });
+        getUserFromServer();
 
         setContentView(R.layout.activity_feed);
         initRecipesRecyclerView();
@@ -79,12 +73,22 @@ public class FeedActivity extends AppCompatActivity {
             }});
     }
 
+    private void getUserFromServer() {
+        modelInstance.getUserByUID(new GetUserListener() {
+            @Override
+            public void onSuccess(User myUser) {
+                    appUser = myUser;
+            }
+        });
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
         viewingRecipeDetails = false;
         uploadingRecipe = false;
         appView.findViewById(R.id.uploadRecipeButton).setClickable(true);
+        getUserFromServer();
     }
 
     private void updateFeedWithChangedData(@Nullable List<Recipe> recipes) {
@@ -141,11 +145,14 @@ public class FeedActivity extends AppCompatActivity {
                         switch (menuItem.getItemId()) {
                             case R.id.menu_item_log_off:
                                 modelInstance.signOut();
-                                Intent intent = new Intent(getBaseContext(), LoginActivity.class);
-                                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                Intent loginIntent = new Intent(getBaseContext(), LoginActivity.class);
+                                loginIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                                 finish();
-                                startActivity(intent);
-
+                                startActivity(loginIntent);
+                                break;
+                            case R.id.menu_item_edit_profile:
+                                final Intent editProfileIntent = new Intent(getBaseContext(), EditProfileActivity.class);
+                                startActivity(editProfileIntent);
                         }
                         return false;
                     }

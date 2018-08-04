@@ -19,6 +19,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.example.cookit.Adapters.SimpleFragmentPagerAdapter;
 import com.example.cookit.Model.Model;
@@ -71,10 +72,8 @@ public class RecipeDetailsFragment extends DialogFragment {
         /*TextView ownerName = view.findViewById(R.id.ownerName);
         ownerName.setText(recipe.getUploaderName());*/
 
-        // Recipe name
-       /* TextView recipeName = view.findViewById(R.id.recipeName);
-        recipeName.setText(recipe.getName());
-        recipeName.setClickable(false);*/
+
+        ((TextView)view.findViewById(R.id.recipeNameText)).setText(recipe.getName());
 
         TabLayout tabLayout = (TabLayout) view.findViewById(R.id.tabLayout);
         tabLayout.addTab(tabLayout.newTab().setText("Ingredients"));

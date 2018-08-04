@@ -1,15 +1,9 @@
 package com.example.cookit;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.ListIterator;
 
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
-import android.arch.persistence.room.TypeConverter;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
@@ -37,7 +31,7 @@ public class Recipe implements Parcelable {
                   ArrayList<String> preparation) {
         this.id = null;
         this.name = name;
-        this.uploaderUID = uploader.getUID();
+        this.uploaderUID = uploader.getUserID();
         this.uploaderName = uploader.getFullName();
         this.ingredients = ingredients;
         this.preparation = preparation;

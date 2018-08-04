@@ -38,7 +38,7 @@
             android:orientation="vertical">
 
             <com.example.cookit.CustomImageView
-                android:id="@+id/uploadImageButton"
+                android:id="@+id/uploadRecipeImageButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 app:layout_constraintHorizontal_bias="0.0"
@@ -68,7 +68,7 @@
                 android:layout_height="wrap_content"
                 android:textSize="18sp"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/uploadImageButton">
+                app:layout_constraintTop_toBottomOf="@+id/uploadRecipeImageButton">
 
                 <android.support.design.widget.TextInputEditText
                     android:id="@+id/NameEditText"

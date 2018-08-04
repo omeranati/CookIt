@@ -66,9 +66,11 @@ public class Model {
 
     public void addRecipe(Recipe r, byte[] imageByteData) {modelFirebase.addRecipe(r, imageByteData);}
 
+    public void updateUser(boolean wasImageUpdated, String fullName, byte[] imageByteData, Listener listener) {modelFirebase.updateUser(wasImageUpdated, fullName, imageByteData, listener);}
+
     public void signOut() { modelFirebase.signOut(); }
 
-    public void signUp(String email, String password, String fullName, final Listener listener){modelFirebase.signUp(email,password,fullName,listener);}
+    public void signUp(String email, String password, String fullName, byte[] imageData, final UserListener listener){modelFirebase.signUp(email,password,fullName,imageData, listener);}
 
     public void login(String email, String password, final Listener listener){modelFirebase.login(email,password,listener);}
 

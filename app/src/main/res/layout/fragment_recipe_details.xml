@@ -22,12 +22,12 @@
         <android.support.design.widget.TabItem
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Ingredients" />
+            android:text="@string/ingredients" />
 
         <android.support.design.widget.TabItem
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Preparation" />
+            android:text="@string/preparation" />
 
     </android.support.design.widget.TabLayout>
 
