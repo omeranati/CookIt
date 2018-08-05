@@ -4,4 +4,5 @@ import com.example.cookit.Recipe;
 
 public interface FirebaseChildEventListener {
     void onChildAdded(Recipe r);
+    void onChildRemoved(Recipe r);
 }

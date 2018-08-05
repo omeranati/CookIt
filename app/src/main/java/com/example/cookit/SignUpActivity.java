@@ -12,10 +12,9 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 
 import com.example.cookit.Model.Model;
-import com.example.cookit.Model.UserListener;
+import com.example.cookit.Model.WithFailMessageListener;
 
 import java.io.File;
 import java.io.IOException;
@@ -67,7 +66,7 @@ public class SignUpActivity extends AppCompatActivity {
                     password,
                     fullName,
                     imageData,
-                    new UserListener() {
+                    new WithFailMessageListener() {
                         @Override
                         public void onSuccess() {
                             final Intent intent = new Intent(getBaseContext(), FeedActivity.class);

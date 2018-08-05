@@ -3,9 +3,7 @@ package com.example.cookit.Model;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.support.annotation.NonNull;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.util.Log;
 
 import com.example.cookit.Ingredient;
 import com.example.cookit.Recipe;
@@ -25,6 +23,7 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
 import java.util.ArrayList;
 
@@ -59,11 +58,7 @@ public class ModelFirebase {
         });
     }
 
-//    public void getAllRecipes(final GetAllRecipesListener listener) {
-//        recipeEventListener = recipesReference.addValueEventListener(new ValueEventListener() {
-//            @Override public void onDataChange(DataSnapshot dataSnapshot) {
-//                Log.d("TAG","onDataChange" );
-//                ArrayList<Recipe> recipeList = new ArrayList<>();
+
     public void getAllRecipes(final FirebaseChildEventListener listener) {
 
         recipesReference.addChildEventListener(new ChildEventListener() {
@@ -79,7 +74,7 @@ public class ModelFirebase {
 
             @Override
             public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-
+                listener.onChildRemoved(getRecipeFromDataSnapshot(dataSnapshot));
             }
 
             @Override
@@ -98,7 +93,7 @@ public class ModelFirebase {
     //    recipesReference.removeEventListener(eventListener);
     //}
 
-    public void addRecipe(Recipe r, byte[] imageByteData) {
+    public void addRecipe(Recipe r, byte[] imageByteData, final WithFailMessageListener listener) {
         String recipeGeneratedKey;
 
         if (r.getId().equals(Recipe.NO_UID)) {
@@ -111,7 +106,15 @@ public class ModelFirebase {
         }
 
         recipesReference.child(recipeGeneratedKey).setValue(r);
-        storageReference.child(recipeGeneratedKey).putBytes(imageByteData);
+        storageReference.child(recipeGeneratedKey).putBytes(imageByteData).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
+                if (task.isSuccessful())
+                    listener.onSuccess();
+                else
+                    listener.onFail(task.getException().getMessage().toString());
+            }
+        });
     }
 
     public void addUser(User newUser) {
@@ -149,7 +152,7 @@ public class ModelFirebase {
         listener.onSuccess();
     }
 
-    public void signUp(final String emailAddress, final String password, final String fullName, final byte[] imageByteData, final UserListener listener) {
+    public void signUp(final String emailAddress, final String password, final String fullName, final byte[] imageByteData, final WithFailMessageListener listener) {
         authInstance.createUserWithEmailAndPassword(emailAddress, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
