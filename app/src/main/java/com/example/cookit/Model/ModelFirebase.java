@@ -27,6 +27,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class ModelFirebase {
     DatabaseReference recipesReference;
@@ -94,6 +95,38 @@ public class ModelFirebase {
         });
     }
 
+    public void getAllUsers(final RecipeAsyncDaoListener<User> listener){
+        usersReference.addChildEventListener(new ChildEventListener() {
+
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                User user = getUserFromDataSnapshot(dataSnapshot);
+                listener.onComplete(user);
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                User user = getUserFromDataSnapshot(dataSnapshot);
+                listener.onComplete(user);
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
    // public void cancelGetAllRecipes() {
     //    recipesReference.removeEventListener(eventListener);
     //}
@@ -142,6 +175,14 @@ public class ModelFirebase {
         recipe.setPreparation(preparation);
 
         return (recipe);
+    }
+
+    private User getUserFromDataSnapshot(DataSnapshot recipeSnapshot) {
+       User user = new User(recipeSnapshot.child("fullName").getValue().toString(),
+               recipeSnapshot.getKey());
+
+
+        return (user);
     }
 
     public void deleteRecipe(Recipe recipe, final Listener listener){
@@ -239,7 +280,7 @@ public class ModelFirebase {
         StorageReference httpsReference = storage.getReferenceFromUrl(url);*/
 
         final long ONE_MEGABYTE = 1024 * 1024;
-        storageReference.child(recipeID).getBytes(3 * ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+        storageReference.child(recipeID).getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
             @Override
             public void onSuccess(byte[] bytes) {
                 Bitmap image = BitmapFactory.decodeByteArray(bytes,0,bytes.length);

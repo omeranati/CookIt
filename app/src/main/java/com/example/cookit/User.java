@@ -11,9 +11,9 @@ public class User {
     private String userID;
     private String fullName;
 
-    public User(String fullName, String emailAddress) {
+    public User(String fullName, String userID) {
         this.fullName = fullName;
-        this.userID = emailAddress;
+        this.userID = userID;
     }
 
     public String getFullName()

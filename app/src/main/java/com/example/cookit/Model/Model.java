@@ -1,5 +1,6 @@
 package com.example.cookit.Model;
 import com.example.cookit.Recipe;
+import com.example.cookit.User;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -21,6 +22,7 @@ public class Model {
     private static Model instance = new Model();
     private ModelFirebase modelFirebase;
     private RecipesLiveData recipesLiveData = new RecipesLiveData();
+    private UsersLiveData usersLiveData = new UsersLiveData();
 
     private Model() {
         modelFirebase = new ModelFirebase();
@@ -38,7 +40,23 @@ public class Model {
         return recipesLiveData;
     }
 
-    public void getUserByUID(final GetUserListener listener) {modelFirebase.getUserByUID(this.getCurrentUserID(),listener);}
+    public UsersLiveData getAllUsers(){
+        return usersLiveData;
+    }
+
+    public void getUserByUID(final String UID, final GetUserListener listener) {
+        RecipeAsyncDao.getUserByUID(UID, new RecipeAsyncDaoListener<User>() {
+            @Override
+            public void onComplete(User data) {
+                if (data != null){
+                    listener.onSuccess(data);
+                }
+                else {
+                    modelFirebase.getUserByUID(UID,listener);
+                }
+            }
+        });
+    }
 
     public void deleteRecipe(final Recipe recipe) {
         RecipeAsyncDao.deleteRecipeById(recipe.getId(), new Listener() {
@@ -109,6 +127,40 @@ public class Model {
                             setValue(data);
 
                             RecipeAsyncDao.insert(r, new RecipeAsyncDaoListener<Boolean>() {
+                                @Override
+                                public void onComplete(Boolean data) {
+
+                                }
+                            });
+                        }
+                    });
+                }
+            });
+        }
+    }
+
+    public class UsersLiveData extends MutableLiveData<List<User>> {
+
+        private UsersLiveData(){
+            this.onActive();
+        }
+        @Override
+        protected void onActive() {
+            super.onActive();
+
+            RecipeAsyncDao.getAllUsers(new RecipeAsyncDaoListener<List<User>>() {
+
+                @Override
+                public void onComplete(final List<User> data) {
+                    setValue(data);
+
+                    modelFirebase.getAllUsers(new RecipeAsyncDaoListener<User>() {
+                        @Override
+                        public void onComplete(User user) {
+                            data.add(user);
+                            setValue(data);
+
+                            RecipeAsyncDao.insertUser(user, new RecipeAsyncDaoListener<Boolean>() {
                                 @Override
                                 public void onComplete(Boolean data) {
 

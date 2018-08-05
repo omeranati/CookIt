@@ -113,15 +113,28 @@ public class RecipeCardAdapter extends RecyclerView.Adapter<RecipeCardAdapter.Vi
             }
         });
 
-        ImageView ownerProfilePicture = holder.itemView.findViewById(R.id.ownerProfilePicture);
-        Bitmap omerProfilePicture = BitmapFactory.decodeResource(holder.itemView.getContext().getResources(),R.drawable.omer);
+        final ImageView ownerProfilePicture = holder.itemView.findViewById(R.id.ownerProfilePicture);
+       // Bitmap omerProfilePicture = BitmapFactory.decodeResource(holder.itemView.getContext().getResources(),R.drawable.omer);
+
+        Model.getInstance().getImage(recipe.getUploaderUID(), new GetImageListener() {
+            @Override
+            public void onDone(Bitmap imageBitmap) {
+                if (imageBitmap != null) {
+                    imageBitmap = ImageHelper.getRoundedCornerBitmap(imageBitmap, imageBitmap.getWidth()/2);
+                    ownerProfilePicture.setImageBitmap(imageBitmap);
+                }
+                else{
+
+                }
+            }
+        }, holder.itemView.getContext());
 
         // Extracting dark vibrant color from food picture and coloring the food name.
        // Palette pal = Palette.from(food).generate();
         //holder.foodName.setTextColor(pal.getDarkVibrantColor(0x00000000));
 
-        omerProfilePicture = ImageHelper.getRoundedCornerBitmap(omerProfilePicture, omerProfilePicture.getHeight()/2);
-        ownerProfilePicture.setImageBitmap(omerProfilePicture);
+       // omerProfilePicture = ImageHelper.getRoundedCornerBitmap(omerProfilePicture, omerProfilePicture.getHeight()/2);
+       // ownerProfilePicture.setImageBitmap(omerProfilePicture);
     }
 
     @Override

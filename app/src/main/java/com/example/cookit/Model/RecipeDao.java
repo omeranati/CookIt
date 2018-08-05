@@ -16,11 +16,20 @@ public interface RecipeDao {
     @Query("select * from Recipe")
     List<Recipe> getAll();
 
+    @Query("select * from User")
+    List<User> getAllUsers();
+
     @Query("delete from Recipe where id = :recipeId")
     void deleteRecipeById(String recipeId);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertAll(Recipe... recipes);
+
+    @Query("select * from User where userID = :userID")
+    User getUserByUID(String userID);
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertAll(User... users);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insert(Recipe recipe);

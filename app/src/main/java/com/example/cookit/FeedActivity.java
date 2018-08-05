@@ -41,10 +41,15 @@ public class FeedActivity extends AppCompatActivity {
     public static User      appUser;
     public static Model     modelInstance;
     public static String    UID;
-
+    private String   feedUID = null;
     @Override
     public void onBackPressed() {
-        moveTaskToBack(true);
+        if (feedUID == null) {
+            moveTaskToBack(true);
+        }
+        else {
+            super.onBackPressed();
+        }
     }
 
     @Override
@@ -53,11 +58,30 @@ public class FeedActivity extends AppCompatActivity {
         modelInstance = Model.getInstance();
         UID = getIntent().getExtras().get("UID").toString();
 
+        // Observing the recipes - adding new ones and removing deleted ones.
+        modelInstance.getAllUsers().observe(this, new Observer<List<User>>() {
+            @Override
+            public void onChanged(@Nullable List<User> recipes) {
+
+            }});
+
         getUserFromServer();
 
         setContentView(R.layout.activity_feed);
         initRecipesRecyclerView();
         setToolbar();
+
+        if (getIntent().getExtras().get("feedUID") != null) {
+            feedUID = getIntent().getExtras().get("feedUID").toString();
+            ((Toolbar)findViewById(R.id.feed_toolbar)).setTitle("");
+            Model.getInstance().getUserByUID(feedUID, new GetUserListener(){
+
+                @Override
+                public void onSuccess(User user) {
+                    ((Toolbar)findViewById(R.id.feed_toolbar)).setTitle(user.getFullName());
+                }
+            });
+        }
 
         appView = findViewById(R.id.main_container);
         feedView = appView.findViewById(R.id.recipesRecyclerView);
@@ -74,7 +98,7 @@ public class FeedActivity extends AppCompatActivity {
     }
 
     private void getUserFromServer() {
-        modelInstance.getUserByUID(new GetUserListener() {
+        modelInstance.getUserByUID(Model.getInstance().getCurrentUserID(),new GetUserListener() {
             @Override
             public void onSuccess(User myUser) {
                     appUser = myUser;
@@ -93,20 +117,27 @@ public class FeedActivity extends AppCompatActivity {
 
     private void updateFeedWithChangedData(@Nullable List<Recipe> recipes) {
         boolean isChanged = false;
-
+        boolean isRValid = true;
         if (recipes.size() >= 0) {
            for(Recipe r: recipes)
             {
-                if (!recipeCardAdapter.recipes.containsKey(r.getId())) {
+                if (feedUID != null){
+                    if (!r.getUploaderUID().equals(feedUID)){
+                        isRValid = false;
+                    }
+                }
+                if (!recipeCardAdapter.recipes.containsKey(r.getId()) && isRValid) {
                     recipeCardAdapter.recipeIds.add(0,r.getId());
                     recipeCardAdapter.recipes.put(r.getId(),r);
                     isChanged = true;
                 }
-                if (r.hashCode() != ((Recipe)recipeCardAdapter.recipes.get(r.getId())).hashCode()) {
+                if ((r.hashCode() != ((Recipe)recipeCardAdapter.recipes.get(r.getId())).hashCode()) && isRValid) {
                     recipeCardAdapter.recipeIds.set(recipeCardAdapter.recipeIds.indexOf((Object)r.getId()),r.getId());
                     recipeCardAdapter.recipes.put(r.getId(),r);
                     isChanged = true;
                 }
+
+                isRValid = true;
             }
 
             Collection<Recipe> recipeCollection = recipeCardAdapter.recipes.values();
@@ -153,6 +184,11 @@ public class FeedActivity extends AppCompatActivity {
                             case R.id.menu_item_edit_profile:
                                 final Intent editProfileIntent = new Intent(getBaseContext(), EditProfileActivity.class);
                                 startActivity(editProfileIntent);
+                            case R.id.menu_item_my_recipes:
+                                final Intent myRecipesIntent = new Intent(getBaseContext(), FeedActivity.class);
+                                myRecipesIntent.putExtra("feedUID", Model.getInstance().getCurrentUserID());
+                                myRecipesIntent.putExtra("UID", UID);
+                                startActivity(myRecipesIntent);
                         }
                         return false;
                     }
