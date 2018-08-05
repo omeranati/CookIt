@@ -11,6 +11,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 
 import com.example.cookit.Model.Model;
@@ -93,7 +94,7 @@ public class SignUpActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent imageReturnedIntent) {
         super.onActivityResult(requestCode, resultCode, imageReturnedIntent);
-        CustomImageView imageView = findViewById(R.id.uploadUserImageButton);
+        ImageView imageView = findViewById(R.id.uploadUserImageButton);
         switch(requestCode) {
             case CAMERA_DIALOG_INDEX:
                 if(resultCode == RESULT_OK){
@@ -111,8 +112,8 @@ public class SignUpActivity extends AppCompatActivity {
                 break;
         }
         imageData = Utils.getDataFromImageView(imageView);
-        imageView.requestLayout();
-        imageView.invalidate();
+        //imageView.requestLayout();
+        //imageView.invalidate();
     }
 
     private void startCameraActivity() {

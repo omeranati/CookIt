@@ -4,12 +4,13 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.support.v7.app.AlertDialog;
+import android.widget.ImageView;
 
 import java.io.ByteArrayOutputStream;
 
 public class Utils {
 
-    public static byte[] getDataFromImageView(CustomImageView imageView) {
+    public static byte[] getDataFromImageView(ImageView imageView) {
         imageView.buildDrawingCache();
         Bitmap bitmap = ((BitmapDrawable) imageView.getDrawable()).getBitmap();
         ByteArrayOutputStream baos = new ByteArrayOutputStream();

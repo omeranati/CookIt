@@ -71,7 +71,6 @@ public class LoginActivity extends AppCompatActivity {
                         ((EditText) findViewById(R.id.emailAddress)).setText("");
                         ((EditText) findViewById(R.id.password)).setText("");
                         startActivity(intent);
-
                     }
 
                     @Override
