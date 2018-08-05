@@ -8,6 +8,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
 
+
 @Entity
 public class Recipe implements Parcelable {
     @PrimaryKey
@@ -19,8 +20,10 @@ public class Recipe implements Parcelable {
     private ArrayList<Ingredient> ingredients;
     private ArrayList<String> preparation;
 
+    public static final String NO_UID= "-1";
+
     public Recipe() {
-        this.id = null;
+        this.id = NO_UID;
         ingredients = new ArrayList<>();
         preparation = new ArrayList<>();
     }
@@ -29,7 +32,7 @@ public class Recipe implements Parcelable {
                   User uploader,
                   ArrayList<Ingredient> ingredients,
                   ArrayList<String> preparation) {
-        this.id = null;
+        this.id = NO_UID;
         this.name = name;
         this.uploaderUID = uploader.getUserID();
         this.uploaderName = uploader.getFullName();

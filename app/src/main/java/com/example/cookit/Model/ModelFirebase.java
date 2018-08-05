@@ -1,5 +1,7 @@
 package com.example.cookit.Model;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
@@ -7,6 +9,8 @@ import com.example.cookit.Ingredient;
 import com.example.cookit.Recipe;
 import com.example.cookit.User;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
@@ -26,13 +30,13 @@ public class ModelFirebase {
     private ValueEventListener recipeEventListener;
     private DatabaseReference recipesReference;
     private DatabaseReference usersReference;
-    private StorageReference storageRef;
+    private StorageReference storageReference;
     private FirebaseAuth authInstance;
 
     public ModelFirebase() {
         recipesReference = FirebaseDatabase.getInstance().getReference().child("recipes");
         usersReference = FirebaseDatabase.getInstance().getReference().child("users");
-        storageRef = FirebaseStorage.getInstance().getReference();
+        storageReference = FirebaseStorage.getInstance().getReference();
         authInstance = FirebaseAuth.getInstance();
     }
 
@@ -77,17 +81,17 @@ public class ModelFirebase {
     public void addRecipe(Recipe r, byte[] imageByteData) {
         String recipeGeneratedKey;
 
-        if (r.getId() == null) {
+        if (r.getId().equals(Recipe.NO_UID)) {
             recipeGeneratedKey = recipesReference.push().getKey();
+            r.setId(recipeGeneratedKey);
+
         }
         else {
             recipeGeneratedKey = r.getId();
         }
 
-        r.setId(null);
-
         recipesReference.child(recipeGeneratedKey).setValue(r);
-        //storageRef.child(recipeGeneratedKey).putBytes(imageByteData);
+        storageReference.child(recipeGeneratedKey).putBytes(imageByteData);
     }
 
     public void addUser(User newUser) {
@@ -132,7 +136,7 @@ public class ModelFirebase {
                 if (task.isSuccessful()) {
                     String userID = getCurrentUserID();
                     addUser(new User(fullName, userID));
-                    storageRef.child(userID).putBytes(imageByteData);
+                    storageReference.child(userID).putBytes(imageByteData);
                     listener.onSuccess();
                 } else {
                     listener.onFail(task.getException().getMessage());
@@ -171,7 +175,7 @@ public class ModelFirebase {
 
     public void updateUser(boolean wasImageUpdated, String fullName, byte[] imageByteData, final Listener listener) {
         if (wasImageUpdated)
-            storageRef.child(getCurrentUserID()).putBytes(imageByteData);
+            storageReference.child(getCurrentUserID()).putBytes(imageByteData);
 
         usersReference.child(getCurrentUserID()).child(USER_FULL_NAME_FIELD_NAME).setValue(fullName).
                 addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -180,5 +184,52 @@ public class ModelFirebase {
                         listener.onSuccess();
                     }
                 });
+    }
+
+
+
+   /* public void saveImage(Bitmap imageBitmap, final SaveImageListener listener) {
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+
+        StorageReference imagesRef = storage.getReference().child("images").child(name);
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        imageBitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+        byte[] data = baos.toByteArray();
+
+        UploadTask uploadTask = imagesRef.putBytes(data);
+        uploadTask.addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(Exception exception) {
+                listener.onDone(null);
+            }
+        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                @SuppressWarnings("VisibleForTests") Uri downloadUrl = taskSnapshot.getDownloadUrl();
+                listener.onDone(downloadUrl.toString());
+            }
+        });
+
+    }*/
+
+
+    public void getImage(String recipeID, final GetImageListener listener){
+        /*FirebaseStorage storage = FirebaseStorage.getInstance();
+        StorageReference httpsReference = storage.getReferenceFromUrl(url);*/
+
+        final long ONE_MEGABYTE = 1024 * 1024;
+        storageReference.child(recipeID).getBytes(3 * ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+            @Override
+            public void onSuccess(byte[] bytes) {
+                Bitmap image = BitmapFactory.decodeByteArray(bytes,0,bytes.length);
+                listener.onDone(image);
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(Exception exception) {
+                listener.onDone(null);
+            }
+        });
     }
 }

@@ -15,6 +15,7 @@ import android.widget.TextView;
 
 import com.example.cookit.FeedActivity;
 import com.example.cookit.ImageHelper;
+import com.example.cookit.Model.GetImageListener;
 import com.example.cookit.Model.Model;
 import com.example.cookit.R;
 import com.example.cookit.Recipe;
@@ -90,25 +91,22 @@ public class RecipeCardAdapter extends RecyclerView.Adapter<RecipeCardAdapter.Vi
 
         Bitmap food;
 
-        CustomImageView imageView = holder.itemView.findViewById(R.id.recipePicture);
+        final CustomImageView recipeImageView = holder.itemView.findViewById(R.id.recipePicture);
 
-        if (position == 0) {
-            food = BitmapFactory.decodeResource(holder.itemView.getContext().getResources(), R.drawable.ham);
-        }
-        else {
-            food = BitmapFactory.decodeResource(holder.itemView.getContext().getResources(), R.drawable.a4590);
-        }
+        Model.getInstance().getImage(recipe.getId(), new GetImageListener() {
+            @Override
+            public void onDone(Bitmap imageBitmap) {
+                if (imageBitmap != null) {
+                    recipeImageView.setImageBitmap(imageBitmap);
+                }
+                else{
+                    recipeImageView.setImageBitmap(
+                            BitmapFactory.decodeResource(holder.itemView.getContext().getResources(), R.drawable.ham));
+                }
+            }
+        }, holder.itemView.getContext());
 
-        // Shrinking the photo so the scroll will be more fluent.
-        float scale = food.getWidth() / 500;
-        if (scale > 1) {
-            int width = (int) Math.round(food.getWidth() * (float)(1 / scale));
-            int height = (int) Math.round(food.getHeight() * (float)(1 / scale));
-            food = Bitmap.createScaledBitmap(food, width, height, false);
-        }
-
-        imageView.setImageBitmap(food);
-        imageView.setOnClickListener(new View.OnClickListener() {
+        recipeImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 ((FeedActivity)holder.itemView.getContext()).viewRecipeDetails(view);
@@ -119,8 +117,8 @@ public class RecipeCardAdapter extends RecyclerView.Adapter<RecipeCardAdapter.Vi
         Bitmap omerProfilePicture = BitmapFactory.decodeResource(holder.itemView.getContext().getResources(),R.drawable.omer);
 
         // Extracting dark vibrant color from food picture and coloring the food name.
-        Palette pal = Palette.from(food).generate();
-        holder.foodName.setTextColor(pal.getDarkVibrantColor(0x00000000));
+       // Palette pal = Palette.from(food).generate();
+        //holder.foodName.setTextColor(pal.getDarkVibrantColor(0x00000000));
 
         omerProfilePicture = ImageHelper.getRoundedCornerBitmap(omerProfilePicture, omerProfilePicture.getHeight()/2);
         ownerProfilePicture.setImageBitmap(omerProfilePicture);
