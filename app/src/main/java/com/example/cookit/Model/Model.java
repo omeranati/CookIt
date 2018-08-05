@@ -9,7 +9,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.List;
-
+import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -21,6 +21,7 @@ public class Model {
     private static Model instance = new Model();
     private ModelFirebase modelFirebase;
     private RecipesLiveData recipesLiveData = new RecipesLiveData();
+
     private Model() {
         modelFirebase = new ModelFirebase();
     }
@@ -71,10 +72,9 @@ public class Model {
             }
         });
     }
-
-    public void cancelGetAllRecipes() {
-        modelFirebase.cancelGetAllRecipes();
-    }
+  //  public void cancelGetAllRecipes() {
+  //      modelFirebase.cancelGetAllRecipes();
+   // }
 
     public void addRecipe(Recipe r, byte[] imageByteData) {modelFirebase.addRecipe(r, imageByteData);}
 
@@ -101,12 +101,14 @@ public class Model {
                 public void onComplete(List<Recipe> data) {
                     setValue(data);
 
-                    modelFirebase.getAllRecipes(new GetAllRecipesListener() {
+                    modelFirebase.getAllRecipes(new FirebaseChildEventListener() {
                         @Override
-                        public void onSuccess(List<Recipe> recipeslist) {
-                            setValue(recipeslist);
+                        public void onChildAdded(Recipe r) {
+                            List<Recipe> data = getValue();
+                            data.add(r);
+                            setValue(data);
 
-                            RecipeAsyncDao.insertAll(recipeslist, new RecipeAsyncDaoListener<Boolean>() {
+                            RecipeAsyncDao.insert(r, new RecipeAsyncDaoListener<Boolean>() {
                                 @Override
                                 public void onComplete(Boolean data) {
 

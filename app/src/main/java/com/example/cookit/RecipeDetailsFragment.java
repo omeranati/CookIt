@@ -23,6 +23,9 @@ import android.widget.TextView;
 
 import com.example.cookit.Adapters.SimpleFragmentPagerAdapter;
 import com.example.cookit.Model.Model;
+import com.example.cookit.Model.AppLocalDb;
+import com.example.cookit.Model.RecipeAsyncDao;
+import com.example.cookit.Model.RecipeAsyncDaoListener;
 
 import com.example.cookit.Adapters.DetailsIngredientsAdapter;
 import com.example.cookit.Adapters.DetailsPreparatoinAdapter;

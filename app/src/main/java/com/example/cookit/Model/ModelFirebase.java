@@ -3,10 +3,13 @@ package com.example.cookit.Model;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.support.annotation.NonNull;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.example.cookit.Ingredient;
 import com.example.cookit.Recipe;
+import com.google.firebase.database.ChildEventListener;
 import com.example.cookit.User;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -26,9 +29,9 @@ import com.google.firebase.storage.StorageReference;
 import java.util.ArrayList;
 
 public class ModelFirebase {
+    DatabaseReference recipesReference;
     private final String USER_FULL_NAME_FIELD_NAME = "fullName";
     private ValueEventListener recipeEventListener;
-    private DatabaseReference recipesReference;
     private DatabaseReference usersReference;
     private StorageReference storageReference;
     private FirebaseAuth authInstance;
@@ -56,27 +59,44 @@ public class ModelFirebase {
         });
     }
 
-    public void getAllRecipes(final GetAllRecipesListener listener) {
-        recipeEventListener = recipesReference.addValueEventListener(new ValueEventListener() {
-            @Override public void onDataChange(DataSnapshot dataSnapshot) {
-                Log.d("TAG","onDataChange" );
-                ArrayList<Recipe> recipeList = new ArrayList<>();
+//    public void getAllRecipes(final GetAllRecipesListener listener) {
+//        recipeEventListener = recipesReference.addValueEventListener(new ValueEventListener() {
+//            @Override public void onDataChange(DataSnapshot dataSnapshot) {
+//                Log.d("TAG","onDataChange" );
+//                ArrayList<Recipe> recipeList = new ArrayList<>();
+    public void getAllRecipes(final FirebaseChildEventListener listener) {
 
-                for (DataSnapshot recipeSnapshot: dataSnapshot.getChildren()) {
-                    recipeList.add(getRecipeFromDataSnapshot(recipeSnapshot));
-                }
-
-                listener.onSuccess(recipeList);
+        recipesReference.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                listener.onChildAdded(getRecipeFromDataSnapshot(dataSnapshot));
             }
 
             @Override
-            public void onCancelled(DatabaseError databaseError) { }
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
         });
     }
 
-    public void cancelGetAllRecipes() {
-        recipesReference.removeEventListener(recipeEventListener);
-    }
+   // public void cancelGetAllRecipes() {
+    //    recipesReference.removeEventListener(eventListener);
+    //}
 
     public void addRecipe(Recipe r, byte[] imageByteData) {
         String recipeGeneratedKey;

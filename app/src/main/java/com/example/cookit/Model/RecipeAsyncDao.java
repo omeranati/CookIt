@@ -27,6 +27,25 @@ public class RecipeAsyncDao {
         task.execute();
     }
 
+    static public void insert(final Recipe recipe, final RecipeAsyncDaoListener<Boolean> listener) {
+        class InsertAsyncTask extends AsyncTask<Recipe, String, Boolean> {
+            @Override
+            protected Boolean doInBackground(Recipe... recipes) {
+                AppLocalDb.db.recipeDao().insert(recipes[0]);
+                return true;
+            }
+
+            @Override
+            protected void onPostExecute(Boolean success) {
+                super.onPostExecute(success);
+                listener.onComplete(success);
+            }
+        }
+
+        InsertAsyncTask task = new InsertAsyncTask();
+        task.execute(recipe);
+    }
+
     static void insertAll(final List<Recipe> recipes, final RecipeAsyncDaoListener<Boolean> listener) {
         class InsertAllAsyncTask extends AsyncTask<List<Recipe>, String, Boolean> {
             @Override
