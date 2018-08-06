@@ -2,6 +2,7 @@ package com.example.cookit;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Vibrator;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.DialogFragment;
@@ -62,6 +63,7 @@ public class RecipeDetailsFragment extends DialogFragment {
         // Inflate the layout for this fragment
         final View view = inflater.inflate(R.layout.fragment_recipe_details, container, false);
 
+        ((Toolbar)view.findViewById(R.id.recipe_details_toolbar)).setTitle("");
         Bundle b = getArguments();
         recipe = b.getParcelable("recipe");
 
@@ -102,7 +104,7 @@ public class RecipeDetailsFragment extends DialogFragment {
         Utils.putPicture(recipe.getId(), getContext(), new RecipeAsyncDaoListener<Bitmap>() {
             @Override
             public void onComplete(Bitmap data) {
-                Utils.displayPicture(recipePicture,data,1);
+                Utils.displayPicture(recipePicture, data, 1);
             }
         });
 

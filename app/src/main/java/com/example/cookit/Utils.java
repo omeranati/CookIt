@@ -16,6 +16,16 @@ import java.io.ByteArrayOutputStream;
 
 public class Utils {
 
+    static public void addBitmapToMemoryCache(String key, Bitmap bitmap) {
+        if (getBitmapFromMemCache(key) == null) {
+            FeedActivity.mMemoryCache.put(key, bitmap);
+        }
+    }
+
+    static public Bitmap getBitmapFromMemCache(String key) {
+        return FeedActivity.mMemoryCache.get(key);
+    }
+
     static public void displayPicture(final ImageView recipeImageView, final Bitmap imageBitmap, final double scale) {
 
         class DisplayPictureAsyncTask extends AsyncTask<String, String, Bitmap> {
@@ -38,25 +48,32 @@ public class Utils {
         task.execute();
     }
     static public void putPicture(final String imageName, final Context context, final RecipeAsyncDaoListener<Bitmap> listener) {
-        class PutPictureAsyncTask extends AsyncTask<String, String, Recipe> {
-            @Override
-            protected Recipe doInBackground(String... strings) {
-                Model.getInstance().getImage(imageName, new GetImageListener() {
-                    @Override
-                    public void onDone(Bitmap imageBitmap) {
-                        if (imageBitmap != null) {
+        Bitmap bitmap = getBitmapFromMemCache(imageName);
 
-                            listener.onComplete(imageBitmap);
+        if (bitmap == null) {
+            class PutPictureAsyncTask extends AsyncTask<String, String, Recipe> {
+                @Override
+                protected Recipe doInBackground(String... strings) {
+                    Model.getInstance().getImage(imageName, new GetImageListener() {
+                        @Override
+                        public void onDone(Bitmap imageBitmap) {
+                            if (imageBitmap != null) {
+                                addBitmapToMemoryCache(imageName,imageBitmap);
+                                listener.onComplete(imageBitmap);
+                            }
                         }
-                    }
-                }, context);
+                    }, context);
 
-                return null;
+                    return null;
+                }
             }
-        }
 
-        PutPictureAsyncTask task = new PutPictureAsyncTask();
-        task.execute();
+            PutPictureAsyncTask task = new PutPictureAsyncTask();
+            task.execute();
+        }
+        else {
+            listener.onComplete(bitmap);
+        }
     }
 
     public static byte[] getDataFromImageView(ImageView imageView) {

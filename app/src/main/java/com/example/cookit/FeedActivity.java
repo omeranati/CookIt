@@ -10,6 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.graphics.Palette;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.util.LruCache;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -42,6 +43,8 @@ public class FeedActivity extends AppCompatActivity {
     public static Model     modelInstance;
     public static String    UID;
     private String   feedUID = null;
+    public static LruCache<String, Bitmap> mMemoryCache;
+
     @Override
     public void onBackPressed() {
         if (feedUID == null) {
@@ -57,6 +60,23 @@ public class FeedActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         modelInstance = Model.getInstance();
         UID = getIntent().getExtras().get("UID").toString();
+
+        // Get max available VM memory, exceeding this amount will throw an
+        // OutOfMemory exception. Stored in kilobytes as LruCache takes an
+        // int in its constructor.
+        final int maxMemory = (int) (Runtime.getRuntime().maxMemory() / 1024);
+
+        // Use 1/8th of the available memory for this memory cache.
+        final int cacheSize = maxMemory * 3 / 4;
+
+        mMemoryCache = new LruCache<String, Bitmap>(cacheSize) {
+            @Override
+            protected int sizeOf(String key, Bitmap bitmap) {
+                // The cache size will be measured in kilobytes rather than
+                // number of items.
+                return bitmap.getByteCount() / 1024;
+            }
+        };
 
         // Observing the recipes - adding new ones and removing deleted ones.
         modelInstance.getAllUsers().observe(this, new Observer<List<User>>() {
