@@ -17,7 +17,6 @@ import android.widget.EditText;
 
 import com.example.cookit.Model.Listener;
 import com.example.cookit.Model.Model;
-import com.example.cookit.Model.UserListener;
 
 import java.io.File;
 import java.io.IOException;

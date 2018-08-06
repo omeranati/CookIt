@@ -1,6 +1,6 @@
 package com.example.cookit.Model;
 
-public interface UserListener {
+public interface WithFailMessageListener {
     public void onSuccess();
     public void onFail(String failMessage);
 }
