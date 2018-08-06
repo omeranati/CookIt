@@ -4,9 +4,11 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
+import android.os.Bundle;
 import android.os.Vibrator;
 import android.support.v7.graphics.Palette;
 import android.support.v7.widget.RecyclerView;
+import android.util.LruCache;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,6 +26,7 @@ import com.example.cookit.R;
 import com.example.cookit.Recipe;
 import com.example.cookit.CustomImageView;
 import com.example.cookit.User;
+import com.example.cookit.Utils;
 
 import java.util.ArrayList;
 import java.util.Hashtable;
@@ -33,9 +36,27 @@ public class RecipeCardAdapter extends RecyclerView.Adapter<RecipeCardAdapter.Vi
 
     public Hashtable<String,Recipe> recipes = new Hashtable<>();
     public List<String> recipeIds = new ArrayList<>();
+    private LruCache<String, Bitmap> mMemoryCache;
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        // Get max available VM memory, exceeding this amount will throw an
+        // OutOfMemory exception. Stored in kilobytes as LruCache takes an
+        // int in its constructor.
+        final int maxMemory = (int) (Runtime.getRuntime().maxMemory() / 1024);
+
+        // Use 1/8th of the available memory for this memory cache.
+        final int cacheSize = maxMemory * 3 / 4;
+
+        mMemoryCache = new LruCache<String, Bitmap>(cacheSize) {
+            @Override
+            protected int sizeOf(String key, Bitmap bitmap) {
+                // The cache size will be measured in kilobytes rather than
+                // number of items.
+                return bitmap.getByteCount() / 1024;
+            }
+        };
+
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_recipe_card, parent, false);
         RecipeCardAdapter.ViewHolder vh = new RecipeCardAdapter.ViewHolder(v);
         return vh;
@@ -43,6 +64,8 @@ public class RecipeCardAdapter extends RecyclerView.Adapter<RecipeCardAdapter.Vi
 
     @Override
     public void onBindViewHolder(final RecipeCardAdapter.ViewHolder holder, int position) {
+        final CustomImageView recipeImageView = holder.itemView.findViewById(R.id.recipePicture);
+        recipeImageView.setImageBitmap(null);
         final Recipe recipe = recipes.get(recipeIds.get(position));
 
         Button deleteButton = ((Button)holder.itemView.findViewById(R.id.delete));
@@ -92,33 +115,21 @@ public class RecipeCardAdapter extends RecyclerView.Adapter<RecipeCardAdapter.Vi
                 return true;
             }
         });
-
-        Bitmap food;
-
-        final CustomImageView recipeImageView = holder.itemView.findViewById(R.id.recipePicture);
-
-        /*Model.getInstance().getImage(recipe.getId(), new GetImageListener() {
-            @Override
-            public void onDone(Bitmap imageBitmap) {
-                if (imageBitmap != null) {
-
-                    /*imageBitmap = Bitmap.createScaledBitmap(imageBitmap,(int)(imageBitmap.getWidth()*0.4),(int)(imageBitmap.getHeight()*0.4),false);
-                    recipeImageView.setImageBitmap(imageBitmap);
-                    putPicture(recipeImageView,imageBitmap);
+        final Bitmap bitmap = getBitmapFromMemCache(recipe.getId());
+        if(bitmap == null) {
+            putPicture(recipe.getId(), holder.itemView.getContext(), new RecipeAsyncDaoListener<Bitmap>() {
+                @Override
+                public void onComplete(Bitmap data) {
+                    if (data != null) {
+                        addBitmapToMemoryCache(recipe.getId(), data);
+                    }
+                    displayPicture(recipeImageView, data, 1);
                 }
-                else{
-                    recipeImageView.setImageBitmap(
-                            BitmapFactory.decodeResource(holder.itemView.getContext().getResources(), R.drawable.ham));
-                }
-            }
-        }, holder.itemView.getContext());*/
-
-        putPicture(recipe.getId(), holder.itemView.getContext(), new RecipeAsyncDaoListener<Bitmap>() {
-            @Override
-            public void onComplete(Bitmap data) {
-                displayPicture(recipeImageView,data,1);
-            }
-        });
+            });
+        }
+        else {
+            displayPicture(recipeImageView, bitmap, 1);
+        }
 
         recipeImageView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -129,12 +140,12 @@ public class RecipeCardAdapter extends RecyclerView.Adapter<RecipeCardAdapter.Vi
 
         final ImageView ownerProfilePicture = holder.itemView.findViewById(R.id.ownerProfilePicture);
 
-        putPicture(recipe.getUploaderUID(), holder.itemView.getContext(), new RecipeAsyncDaoListener<Bitmap>() {
+       /* putPicture(recipe.getUploaderUID(), holder.itemView.getContext(), new RecipeAsyncDaoListener<Bitmap>() {
             @Override
             public void onComplete(Bitmap data) {
                 displayPicture(ownerProfilePicture, data,0.1);
             }
-        });
+        });*/
        // Bitmap omerProfilePicture = BitmapFactory.decodeResource(holder.itemView.getContext().getResources(),R.drawable.omer);
 
         /*Model.getInstance().getImage(recipe.getUploaderUID(), new GetImageListener() {
@@ -162,6 +173,32 @@ public class RecipeCardAdapter extends RecyclerView.Adapter<RecipeCardAdapter.Vi
     @Override
     public int getItemCount() {
         return recipes.size();
+    }
+
+
+
+    class ViewHolder extends RecyclerView.ViewHolder {
+
+        public ImageView owner, food;
+        public TextView ownerName, foodName;
+
+        public ViewHolder(View itemView) {
+            super(itemView);
+            owner = (ImageView) itemView.findViewById(R.id.ownerProfilePicture);
+            food = (ImageView) itemView.findViewById(R.id.recipePicture);
+            ownerName = (TextView) itemView.findViewById(R.id.ownerName);
+            foodName = (TextView) itemView.findViewById(R.id.recipeName);
+        }
+    }
+
+    public void addBitmapToMemoryCache(String key, Bitmap bitmap) {
+        if (getBitmapFromMemCache(key) == null) {
+            mMemoryCache.put(key, bitmap);
+        }
+    }
+
+    public Bitmap getBitmapFromMemCache(String key) {
+        return mMemoryCache.get(key);
     }
 
     static public void displayPicture(final ImageView recipeImageView, final Bitmap imageBitmap, final double scale) {
@@ -205,19 +242,5 @@ public class RecipeCardAdapter extends RecyclerView.Adapter<RecipeCardAdapter.Vi
 
         PutPictureAsyncTask task = new PutPictureAsyncTask();
         task.execute();
-    }
-
-    class ViewHolder extends RecyclerView.ViewHolder {
-
-        public ImageView owner, food;
-        public TextView ownerName, foodName;
-
-        public ViewHolder(View itemView) {
-            super(itemView);
-            owner = (ImageView) itemView.findViewById(R.id.ownerProfilePicture);
-            food = (ImageView) itemView.findViewById(R.id.recipePicture);
-            ownerName = (TextView) itemView.findViewById(R.id.ownerName);
-            foodName = (TextView) itemView.findViewById(R.id.recipeName);
-        }
     }
 }

@@ -15,8 +15,10 @@ public class CustomImageView extends ImageView {
     @Override
     public void setImageBitmap(Bitmap bm) {
         super.setImageBitmap(bm);
-        this.bitmapWidth = bm.getWidth();
-        this.bitmapHeight = bm.getHeight();
+        if (bm != null) {
+            this.bitmapWidth = bm.getWidth();
+            this.bitmapHeight = bm.getHeight();
+        }
     }
 
     public int getBitmapWidth() {

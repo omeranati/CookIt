@@ -97,8 +97,14 @@ public class RecipeDetailsFragment extends DialogFragment {
         ownerProfilePicture.setImageBitmap(omerProfilePicture);*/
 
         // Displaying food picture.
-        ImageView RecipePicture = view.findViewById(R.id.recipePicture);
-        Bitmap chickenBitmap = BitmapFactory.decodeResource(getContext().getResources(),R.drawable.ham);
+        final ImageView recipePicture = view.findViewById(R.id.recipePicture);
+
+        Utils.putPicture(recipe.getId(), getContext(), new RecipeAsyncDaoListener<Bitmap>() {
+            @Override
+            public void onComplete(Bitmap data) {
+                Utils.displayPicture(recipePicture,data,1);
+            }
+        });
 
         // Extracting main colors from food picture and coloring the background and the food's name
         /*Palette p = Palette.from(chickenBitmap).generate();
@@ -106,8 +112,8 @@ public class RecipeDetailsFragment extends DialogFragment {
         ((TextView)view.findViewById(R.id.recipeName)).setTextColor(p.getDarkVibrantColor(0x00000000));
         */
 
-        RecipePicture.setClickable(false);
-        RecipePicture.setOnLongClickListener(new View.OnLongClickListener() {
+        recipePicture.setClickable(false);
+        recipePicture.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
 
@@ -121,8 +127,6 @@ public class RecipeDetailsFragment extends DialogFragment {
                 return true;
             }
         });
-
-        RecipePicture.setImageBitmap(chickenBitmap);
 
         return view;
     }

@@ -24,11 +24,11 @@
     <com.example.cookit.CustomImageView
         android:id="@+id/recipePicture"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="200dp"
         android:clickable="true"
         android:foreground="?android:attr/selectableItemBackground"
         android:longClickable="true"
-        android:src="@drawable/ham"
+        android:src="@color/cardview_light_background"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
