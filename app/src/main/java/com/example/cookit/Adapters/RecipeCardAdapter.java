@@ -3,6 +3,7 @@ package com.example.cookit.Adapters;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
 import android.os.Vibrator;
 import android.support.v7.graphics.Palette;
 import android.support.v7.widget.RecyclerView;
@@ -15,11 +16,14 @@ import android.widget.TextView;
 
 import com.example.cookit.FeedActivity;
 import com.example.cookit.ImageHelper;
+import com.example.cookit.Model.AppLocalDb;
 import com.example.cookit.Model.GetImageListener;
 import com.example.cookit.Model.Model;
+import com.example.cookit.Model.RecipeAsyncDaoListener;
 import com.example.cookit.R;
 import com.example.cookit.Recipe;
 import com.example.cookit.CustomImageView;
+import com.example.cookit.User;
 
 import java.util.ArrayList;
 import java.util.Hashtable;
@@ -93,18 +97,28 @@ public class RecipeCardAdapter extends RecyclerView.Adapter<RecipeCardAdapter.Vi
 
         final CustomImageView recipeImageView = holder.itemView.findViewById(R.id.recipePicture);
 
-        Model.getInstance().getImage(recipe.getId(), new GetImageListener() {
+        /*Model.getInstance().getImage(recipe.getId(), new GetImageListener() {
             @Override
             public void onDone(Bitmap imageBitmap) {
                 if (imageBitmap != null) {
+
+                    /*imageBitmap = Bitmap.createScaledBitmap(imageBitmap,(int)(imageBitmap.getWidth()*0.4),(int)(imageBitmap.getHeight()*0.4),false);
                     recipeImageView.setImageBitmap(imageBitmap);
+                    putPicture(recipeImageView,imageBitmap);
                 }
                 else{
                     recipeImageView.setImageBitmap(
                             BitmapFactory.decodeResource(holder.itemView.getContext().getResources(), R.drawable.ham));
                 }
             }
-        }, holder.itemView.getContext());
+        }, holder.itemView.getContext());*/
+
+        putPicture(recipe.getId(), holder.itemView.getContext(), new RecipeAsyncDaoListener<Bitmap>() {
+            @Override
+            public void onComplete(Bitmap data) {
+                displayPicture(recipeImageView,data,1);
+            }
+        });
 
         recipeImageView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -114,12 +128,20 @@ public class RecipeCardAdapter extends RecyclerView.Adapter<RecipeCardAdapter.Vi
         });
 
         final ImageView ownerProfilePicture = holder.itemView.findViewById(R.id.ownerProfilePicture);
+
+        putPicture(recipe.getUploaderUID(), holder.itemView.getContext(), new RecipeAsyncDaoListener<Bitmap>() {
+            @Override
+            public void onComplete(Bitmap data) {
+                displayPicture(ownerProfilePicture, data,0.1);
+            }
+        });
        // Bitmap omerProfilePicture = BitmapFactory.decodeResource(holder.itemView.getContext().getResources(),R.drawable.omer);
 
-        Model.getInstance().getImage(recipe.getUploaderUID(), new GetImageListener() {
+        /*Model.getInstance().getImage(recipe.getUploaderUID(), new GetImageListener() {
             @Override
             public void onDone(Bitmap imageBitmap) {
                 if (imageBitmap != null) {
+                /*    imageBitmap = Bitmap.createScaledBitmap(imageBitmap,(int)(imageBitmap.getWidth()*0.1),(int)(imageBitmap.getHeight()*0.1),false);
                     imageBitmap = ImageHelper.getRoundedCornerBitmap(imageBitmap, imageBitmap.getWidth()/2);
                     ownerProfilePicture.setImageBitmap(imageBitmap);
                 }
@@ -127,7 +149,7 @@ public class RecipeCardAdapter extends RecyclerView.Adapter<RecipeCardAdapter.Vi
 
                 }
             }
-        }, holder.itemView.getContext());
+        }, holder.itemView.getContext());*/
 
         // Extracting dark vibrant color from food picture and coloring the food name.
        // Palette pal = Palette.from(food).generate();
@@ -140,6 +162,49 @@ public class RecipeCardAdapter extends RecyclerView.Adapter<RecipeCardAdapter.Vi
     @Override
     public int getItemCount() {
         return recipes.size();
+    }
+
+    static public void displayPicture(final ImageView recipeImageView, final Bitmap imageBitmap, final double scale) {
+
+        class DisplayPictureAsyncTask extends AsyncTask<String, String, Bitmap> {
+            @Override
+            protected Bitmap doInBackground(String... strings) {
+                Bitmap newImageBitmap = imageBitmap;
+                if (scale < 1) {
+                    newImageBitmap = Bitmap.createScaledBitmap(imageBitmap, (int) (imageBitmap.getWidth() * scale), (int) (imageBitmap.getHeight() * scale), false);
+                }
+                return newImageBitmap;
+            }
+
+            @Override
+            protected void onPostExecute(Bitmap result) {
+                recipeImageView.setImageBitmap(result);
+            }
+        }
+
+        DisplayPictureAsyncTask task = new DisplayPictureAsyncTask();
+        task.execute();
+    }
+    static public void putPicture(final String imageName, final Context context, final RecipeAsyncDaoListener<Bitmap> listener) {
+        class PutPictureAsyncTask extends AsyncTask<String, String, Recipe> {
+            @Override
+            protected Recipe doInBackground(String... strings) {
+                Model.getInstance().getImage(imageName, new GetImageListener() {
+                    @Override
+                    public void onDone(Bitmap imageBitmap) {
+                        if (imageBitmap != null) {
+
+                            listener.onComplete(imageBitmap);
+                        }
+                    }
+                }, context);
+
+                return null;
+            }
+        }
+
+        PutPictureAsyncTask task = new PutPictureAsyncTask();
+        task.execute();
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {

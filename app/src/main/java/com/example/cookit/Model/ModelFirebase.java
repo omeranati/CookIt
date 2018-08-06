@@ -283,7 +283,7 @@ public class ModelFirebase {
         StorageReference httpsReference = storage.getReferenceFromUrl(url);*/
 
         final long ONE_MEGABYTE = 1024 * 1024;
-        storageReference.child(recipeID).getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+        storageReference.child(recipeID).getBytes(3 * ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
             @Override
             public void onSuccess(byte[] bytes) {
                 Bitmap image = BitmapFactory.decodeByteArray(bytes,0,bytes.length);
