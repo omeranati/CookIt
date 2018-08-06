@@ -186,11 +186,13 @@ public class FeedActivity extends AppCompatActivity {
                             case R.id.menu_item_edit_profile:
                                 final Intent editProfileIntent = new Intent(getBaseContext(), EditProfileActivity.class);
                                 startActivity(editProfileIntent);
+                                break;
                             case R.id.menu_item_my_recipes:
                                 final Intent myRecipesIntent = new Intent(getBaseContext(), FeedActivity.class);
                                 myRecipesIntent.putExtra("feedUID", Model.getInstance().getCurrentUserID());
                                 myRecipesIntent.putExtra("UID", UID);
                                 startActivity(myRecipesIntent);
+                                break;
                         }
                         return false;
                     }

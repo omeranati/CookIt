@@ -122,10 +122,6 @@ public class ModelFirebase {
         });
     }
 
-   // public void cancelGetAllRecipes() {
-    //    recipesReference.removeEventListener(eventListener);
-    //}
-
     public void addRecipe(Recipe r, byte[] imageByteData, final WithFailMessageListener listener) {
         String recipeGeneratedKey;
 
@@ -190,6 +186,7 @@ public class ModelFirebase {
 
     public void deleteRecipe(Recipe recipe, final Listener listener){
         recipesReference.child(recipe.getId()).removeValue();
+        storageReference.child(recipe.getId()).delete();
         listener.onSuccess();
     }
 

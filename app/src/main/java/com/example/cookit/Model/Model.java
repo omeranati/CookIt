@@ -1,5 +1,6 @@
 package com.example.cookit.Model;
 import com.example.cookit.CookIt;
+import com.example.cookit.FeedActivity;
 import com.example.cookit.Recipe;
 import com.example.cookit.Utils;
 import com.example.cookit.User;
@@ -131,6 +132,7 @@ public class Model {
                                 @Override
                                 public void onSuccess() {
                                     removeRecipe(r);
+                                    removeRecipeImageFile(r, CookIt.getContext());
                                 }
 
                                 @Override
@@ -209,7 +211,6 @@ public class Model {
     public void getImage(final String recipeID, final GetImageListener listener , final Context context){
         final Bitmap image = loadImageFromFile(recipeID, context);
 
-        // The image is not yet saved on the device
         if (image == null) {
             modelFirebase.getImage(recipeID, new GetImageListener() {
                 @Override
@@ -218,9 +219,7 @@ public class Model {
                         listener.onDone(null);
                     }
                     else {
-                        //2.  save the image localy
                         saveImageToFile(imageBitmap, recipeID, context);
-                        //3. return the image using the listener
                         listener.onDone(imageBitmap);
                     }
                 }
@@ -233,14 +232,9 @@ public class Model {
 
     private void saveImageToFile(Bitmap imageBitmap, String imageFileName, Context context){
         if (imageBitmap == null) return;
+
         try {
-            File directory = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-
-            if (!directory.exists()) {
-                directory.mkdir();
-            }
-
-            File imageFile = new File(directory,imageFileName);
+            File imageFile = getImageFileObject(imageFileName, context);
             imageFile.createNewFile();
 
             OutputStream out = new FileOutputStream(imageFile);
@@ -252,5 +246,21 @@ public class Model {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private void removeRecipeImageFile(Recipe recipe, Context context) {
+        File file = getImageFileObject(recipe.getId(), context);
+        if (file.exists())
+            file.delete();
+    }
+
+    private File getImageFileObject(String imageFileName, Context context) {
+        File directory = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+
+        if (!directory.exists()) {
+            directory.mkdir();
+        }
+
+        return new File(directory,imageFileName);
     }
 }
