@@ -2,6 +2,8 @@ package com.example.cookit;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -104,6 +106,14 @@ public class EditProfileActivity extends AppCompatActivity {
                     Uri outputFileUri = Uri.fromFile(new File(photoPath));
                     imageView.setImageURI(outputFileUri);
                     wasImageUpdated = true;
+
+                    try {
+                        Bitmap newBitmap = Utils.rotateImageIfNeeded(((BitmapDrawable)imageView.getDrawable()).getBitmap(), photoPath);
+                        imageView.setImageBitmap(newBitmap);
+                    } catch (IOException e) {
+                        Utils.showErrorAlert(R.string.image_rotate_error_message, this);
+                        wasImageUpdated = false;
+                    }
                 }
                 break;
             case GALLERY_DIALOG_INDEX:
@@ -114,9 +124,11 @@ public class EditProfileActivity extends AppCompatActivity {
                 }
                 break;
         }
-        imageData = Utils.getDataFromImageView(imageView);
-        imageView.requestLayout();
-        imageView.invalidate();
+        if (wasImageUpdated) {
+            imageData = Utils.getDataFromImageView(imageView);
+            imageView.requestLayout();
+            imageView.invalidate();
+        }
     }
 
     private void startCameraActivity() {

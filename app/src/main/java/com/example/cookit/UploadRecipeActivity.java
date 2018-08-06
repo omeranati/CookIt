@@ -4,6 +4,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -76,6 +77,7 @@ public class UploadRecipeActivity extends AppCompatActivity {
             case R.id.action_send:
                 if (validateInput()) {
                     setProgressBarVisibility(View.VISIBLE);
+                    findViewById(R.id.action_send).setEnabled(false);
                     Model.getInstance().addRecipe(inputRecipe, imageData, new WithFailMessageListener() {
                         @Override
                         public void onSuccess() {
@@ -85,6 +87,7 @@ public class UploadRecipeActivity extends AppCompatActivity {
                         @Override
                         public void onFail(String message) {
                             setProgressBarVisibility(View.INVISIBLE);
+                            findViewById(R.id.action_send).setEnabled(true);
                             Utils.showDynamicErrorAlert(message, UploadRecipeActivity.this);
                         }
                     });
@@ -127,6 +130,14 @@ public class UploadRecipeActivity extends AppCompatActivity {
                     Uri outputFileUri = Uri.fromFile(new File(photoPath));
                     imageView.setImageURI(outputFileUri);
                     wasPhotoUploaded = true;
+
+                    try {
+                        Bitmap newBitmap = Utils.rotateImageIfNeeded(((BitmapDrawable)imageView.getDrawable()).getBitmap(), photoPath);
+                        imageView.setImageBitmap(newBitmap);
+                    } catch (IOException e) {
+                        Utils.showErrorAlert(R.string.image_rotate_error_message, this);
+                        wasPhotoUploaded = false;
+                    }
                 }
                 break;
             case GALLERY_DIALOG_INDEX:
@@ -137,9 +148,11 @@ public class UploadRecipeActivity extends AppCompatActivity {
                 }
                 break;
         }
-        imageData = Utils.getDataFromImageView(imageView);
-        imageView.requestLayout();
-        imageView.invalidate();
+        if (wasPhotoUploaded) {
+            imageData = Utils.getDataFromImageView(imageView);
+            imageView.requestLayout();
+            imageView.invalidate();
+        }
     }
 
     public void addNewIngredient(View view) {

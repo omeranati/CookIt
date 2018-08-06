@@ -22,6 +22,7 @@
     <string name="empty_email_error_message">Please enter your email.</string>
     <string name="empty_name_error_message">Please enter your name.</string>
     <string name="empty_password_error_message">Please enter your password.</string>
+    <string name="image_rotate_error_message">Error while rotating image.</string>
     <string name="email">Email</string>
     <string name="password">Password</string>
     <string name="full_name">Full Name</string>
