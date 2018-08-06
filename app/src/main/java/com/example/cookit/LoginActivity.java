@@ -26,6 +26,7 @@ public class LoginActivity extends AppCompatActivity {
         if (Model.getInstance().getCurrentUserID() != null){
             Intent intent= new Intent(getBaseContext(), FeedActivity.class);
             intent.putExtra("UID", modelInstance.getCurrentUserID());
+            intent.putExtra("feedUID", modelInstance.getCurrentUserID());
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK  |Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
         }
@@ -39,6 +40,7 @@ public class LoginActivity extends AppCompatActivity {
         if (Model.getInstance().getCurrentUserID() != null){
             Intent intent= new Intent(getBaseContext(), FeedActivity.class);
             intent.putExtra("UID", modelInstance.getCurrentUserID());
+            intent.putExtra("feedUID", modelInstance.getCurrentUserID());
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK  |Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
         }
@@ -68,6 +70,7 @@ public class LoginActivity extends AppCompatActivity {
                         Intent intent= new Intent(getBaseContext(), FeedActivity.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK  |Intent.FLAG_ACTIVITY_NEW_TASK);
                         intent.putExtra("UID", modelInstance.getCurrentUserID());
+                        intent.putExtra("feedUID", modelInstance.getCurrentUserID());
                         ((EditText) findViewById(R.id.emailAddress)).setText("");
                         ((EditText) findViewById(R.id.password)).setText("");
                         startActivity(intent);
