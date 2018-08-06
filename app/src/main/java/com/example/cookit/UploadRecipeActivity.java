@@ -23,7 +23,9 @@ import android.widget.ImageView;
 
 import com.example.cookit.Adapters.UploadIngredientAdapter;
 import com.example.cookit.Adapters.UploadPreparationAdapter;
+import com.example.cookit.Model.Listener;
 import com.example.cookit.Model.Model;
+import com.example.cookit.Model.WithFailMessageListener;
 
 import java.io.File;
 import java.io.IOException;
@@ -54,6 +56,7 @@ public class UploadRecipeActivity extends AppCompatActivity {
         initIngredientsRecyclerView();
         initPreparationRecyclerView();
 
+        setProgressBarVisibility(View.INVISIBLE);
 
         fillDataInCaseOfRecipeEdit();
 
@@ -72,8 +75,20 @@ public class UploadRecipeActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.action_send:
                 if (validateInput()) {
-                    Model.getInstance().addRecipe(inputRecipe, imageData);
-                    finish();
+                    setProgressBarVisibility(View.VISIBLE);
+                    Model.getInstance().addRecipe(inputRecipe, imageData, new WithFailMessageListener() {
+                        @Override
+                        public void onSuccess() {
+                            finish();
+                        }
+
+                        @Override
+                        public void onFail(String message) {
+                            setProgressBarVisibility(View.INVISIBLE);
+                            Utils.showDynamicErrorAlert(message, UploadRecipeActivity.this);
+                        }
+                    });
+
                 }
                 break;
         }
@@ -272,5 +287,9 @@ public class UploadRecipeActivity extends AppCompatActivity {
 
             ((TextInputLayout)findViewById(R.id.nameTextView)).getEditText().setText(inputRecipe.getName());
         }
+    }
+
+    private void setProgressBarVisibility(int visibility) {
+        findViewById(R.id.progressBarRecipeUpload).setVisibility(visibility);
     }
 }

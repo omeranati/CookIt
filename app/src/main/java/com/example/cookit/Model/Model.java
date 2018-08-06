@@ -1,6 +1,8 @@
 package com.example.cookit.Model;
+import com.example.cookit.CookIt;
 import com.example.cookit.Recipe;
 import com.example.cookit.User;
+import com.example.cookit.Utils;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -66,15 +68,7 @@ public class Model {
 
                     @Override
                     public void onSuccess() {
-                        List<Recipe> allRecipes = recipesLiveData.getValue();
-                        for (Recipe r:allRecipes){
-                            if (r.getId().equals(recipe.getId())){
-                                allRecipes.remove(r);
-                                break;
-                            }
-                        }
-
-                        recipesLiveData.postValue(allRecipes);
+                        recipesLiveData.removeRecipe(recipe);
                     }
 
                     @Override
@@ -94,13 +88,13 @@ public class Model {
   //      modelFirebase.cancelGetAllRecipes();
    // }
 
-    public void addRecipe(Recipe r, byte[] imageByteData) {modelFirebase.addRecipe(r, imageByteData);}
+    public void addRecipe(Recipe r, byte[] imageByteData, WithFailMessageListener listener) {modelFirebase.addRecipe(r, imageByteData, listener);}
 
     public void updateUser(boolean wasImageUpdated, String fullName, byte[] imageByteData, Listener listener) {modelFirebase.updateUser(wasImageUpdated, fullName, imageByteData, listener);}
 
     public void signOut() { modelFirebase.signOut(); }
 
-    public void signUp(String email, String password, String fullName, byte[] imageData, final UserListener listener){modelFirebase.signUp(email,password,fullName,imageData, listener);}
+    public void signUp(String email, String password, String fullName, byte[] imageData, final WithFailMessageListener listener){modelFirebase.signUp(email,password,fullName,imageData, listener);}
 
     public void login(String email, String password, final Listener listener){modelFirebase.login(email,password,listener);}
 
@@ -133,9 +127,35 @@ public class Model {
                                 }
                             });
                         }
+
+                        @Override
+                        public void onChildRemoved(final Recipe r) {
+                            RecipeAsyncDao.deleteRecipeById(r.getId(), new Listener() {
+                                @Override
+                                public void onSuccess() {
+                                    removeRecipe(r);
+                                }
+
+                                @Override
+                                public void onFail() {
+                                    Utils.showDynamicErrorAlert("Failed removing the recipe from DB", CookIt.getContext());
+                                }
+                            });
+                        }
                     });
                 }
             });
+        }
+
+        public void removeRecipe(Recipe recipe) {
+            List<Recipe> allRecipes = getValue();
+            for (Recipe r:allRecipes){
+                if (r.getId().equals(recipe.getId())){
+                    allRecipes.remove(r);
+                    break;
+                }
+            }
+            postValue(allRecipes);
         }
     }
 
@@ -185,17 +205,9 @@ public class Model {
         catch (FileNotFoundException e) {
             e.printStackTrace();
         }
-        catch (IOException e) {
-            e.printStackTrace();
-        }
 
         return bitmap;
     }
-
-    /*public void saveImage(Bitmap imageBitmap, SaveImageListener listener) {
-        modelFirebase.saveImage(imageBitmap,listener);
-    }*/
-
 
     public void getImage(final String recipeID, final GetImageListener listener , final Context context){
         final Bitmap image = loadImageFromFile(recipeID, context);
@@ -222,7 +234,6 @@ public class Model {
         }
     }
 
-    // Store / Get from local mem
     private void saveImageToFile(Bitmap imageBitmap, String imageFileName, Context context){
         if (imageBitmap == null) return;
         try {
@@ -239,7 +250,6 @@ public class Model {
             imageBitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
             out.close();
 
-            //addPicureToGallery(imageFile);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
