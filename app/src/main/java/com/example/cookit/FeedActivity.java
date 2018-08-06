@@ -126,12 +126,14 @@ public class FeedActivity extends AppCompatActivity {
                         isRValid = false;
                     }
                 }
-                if (!recipeCardAdapter.recipes.containsKey(r.getId()) && isRValid) {
-                    recipeCardAdapter.recipeIds.add(0,r.getId());
-                    recipeCardAdapter.recipes.put(r.getId(),r);
-                    isChanged = true;
+                if (!recipeCardAdapter.recipes.containsKey(r.getId())) {
+                    if (isRValid) {
+                        recipeCardAdapter.recipeIds.add(0, r.getId());
+                        recipeCardAdapter.recipes.put(r.getId(), r);
+                        isChanged = true;
+                    }
                 }
-                if ((r.hashCode() != ((Recipe)recipeCardAdapter.recipes.get(r.getId())).hashCode()) && isRValid) {
+                else if ((r.hashCode() != ((Recipe)recipeCardAdapter.recipes.get(r.getId())).hashCode()) && isRValid) {
                     recipeCardAdapter.recipeIds.set(recipeCardAdapter.recipeIds.indexOf((Object)r.getId()),r.getId());
                     recipeCardAdapter.recipes.put(r.getId(),r);
                     isChanged = true;
