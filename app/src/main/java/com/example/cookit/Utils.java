@@ -2,7 +2,6 @@ package com.example.cookit;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.AsyncTask;
 import android.support.v7.app.AlertDialog;
@@ -53,10 +52,14 @@ public class Utils {
         DisplayPictureAsyncTask task = new DisplayPictureAsyncTask();
         task.execute();
     }
-    static public void putPicture(final String imageName, final Context context, final RecipeAsyncDaoListener<Bitmap> listener) {
+
+    static public void putPicture(final String imageName, final Context context, final ProgressBar pb, final RecipeAsyncDaoListener<Bitmap> listener) {
         Bitmap bitmap = getBitmapFromMemCache(imageName);
 
         if (bitmap == null) {
+            if (pb != null){
+                pb.setVisibility(View.VISIBLE);
+            }
             class PutPictureAsyncTask extends AsyncTask<String, String, Recipe> {
                 @Override
                 protected Recipe doInBackground(String... strings) {
@@ -80,6 +83,47 @@ public class Utils {
         else {
             listener.onComplete(bitmap);
         }
+    }
+
+    static public void cropCenterAndCreateCircle(final Bitmap bitmap, final RecipeAsyncDaoListener<Bitmap> listener) {
+
+        class CropCenterAndCreateCircleAsyncTask extends AsyncTask<String, String, Bitmap> {
+            @Override
+            protected Bitmap doInBackground(String... strings) {
+                Bitmap newBitmap = bitmap;
+
+                if (newBitmap != null) {
+                    if (newBitmap.getWidth() >= newBitmap.getHeight()) {
+
+                        newBitmap = Bitmap.createBitmap(
+                                newBitmap,
+                                newBitmap.getWidth() / 2 - newBitmap.getHeight() / 2,
+                                0,
+                                newBitmap.getHeight(),
+                                newBitmap.getHeight()
+                        );
+
+                    } else {
+
+                        newBitmap = Bitmap.createBitmap(
+                                newBitmap,
+                                0,
+                                newBitmap.getHeight() / 2 - newBitmap.getWidth() / 2,
+                                newBitmap.getWidth(),
+                                newBitmap.getWidth()
+                        );
+                    }
+
+                    newBitmap = ImageHelper.getRoundedCornerBitmap(newBitmap, newBitmap.getWidth() / 2);
+                    listener.onComplete(newBitmap);
+                }
+
+                return newBitmap;
+            }
+        }
+
+        CropCenterAndCreateCircleAsyncTask task = new CropCenterAndCreateCircleAsyncTask();
+        task.execute();
     }
 
     public static byte[] getDataFromImageView(ImageView imageView) {

@@ -2,12 +2,10 @@ package com.example.cookit;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.drawable.Drawable;
 import android.os.Vibrator;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.DialogFragment;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
@@ -24,19 +22,16 @@ import android.widget.TextView;
 
 import com.example.cookit.Adapters.SimpleFragmentPagerAdapter;
 import com.example.cookit.Model.Model;
-import com.example.cookit.Model.AppLocalDb;
-import com.example.cookit.Model.RecipeAsyncDao;
-import com.example.cookit.Model.RecipeAsyncDaoListener;
 
 import com.example.cookit.Adapters.DetailsIngredientsAdapter;
 import com.example.cookit.Adapters.DetailsPreparatoinAdapter;
+import com.example.cookit.Model.RecipeAsyncDaoListener;
 
 
 public class RecipeDetailsFragment extends DialogFragment {
 
     private Recipe recipe;
-    private DetailsPreparatoinAdapter preparationDetailsAdapter;
-    private DetailsIngredientsAdapter ingredientsDetailsAdapter;
+    private SimpleFragmentPagerAdapter ingredientsAndPrepAd;
 
     public static RecipeDetailsFragment newInstance() {
         RecipeDetailsFragment fragment = new RecipeDetailsFragment();
@@ -73,11 +68,6 @@ public class RecipeDetailsFragment extends DialogFragment {
             ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
         }
 
-        // Owner name
-        /*TextView ownerName = view.findViewById(R.id.ownerName);
-        ownerName.setText(recipe.getUploaderName());*/
-
-
         ((TextView)view.findViewById(R.id.recipeNameText)).setText(recipe.getName());
 
         TabLayout tabLayout = (TabLayout) view.findViewById(R.id.tabLayout);
@@ -86,9 +76,9 @@ public class RecipeDetailsFragment extends DialogFragment {
         final ViewPager viewPager = (ViewPager) view.findViewById(R.id.viewPager);
         viewPager.setNestedScrollingEnabled(true);
         FragmentManager fm = getActivity().getSupportFragmentManager();
-        SimpleFragmentPagerAdapter adapter =
+        ingredientsAndPrepAd =
                 new SimpleFragmentPagerAdapter(getContext(), getActivity().getSupportFragmentManager(),recipe);
-        viewPager.setAdapter(adapter);
+        viewPager.setAdapter(ingredientsAndPrepAd);
 
         tabLayout.setupWithViewPager(viewPager);
 
@@ -101,7 +91,7 @@ public class RecipeDetailsFragment extends DialogFragment {
         // Displaying food picture.
         final ImageView recipePicture = view.findViewById(R.id.recipePicture);
 
-        Utils.putPicture(recipe.getId(), getContext(), new RecipeAsyncDaoListener<Bitmap>() {
+        Utils.putPicture(recipe.getId(), getContext(), null, new RecipeAsyncDaoListener<Bitmap>() {
             @Override
             public void onComplete(Bitmap data) {
                 Utils.displayPicture(recipePicture, data, 1,null);
@@ -140,6 +130,15 @@ public class RecipeDetailsFragment extends DialogFragment {
     }
 
     @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (data != null && data.hasExtra("recipe")) {
+            TabLayout tabLayout = (TabLayout) getActivity().findViewById(R.id.tabLayout);
+            recipe = (Recipe)((Bundle)data.getExtras().getParcelable("recipe")).get("recipe");
+            ingredientsAndPrepAd.updateRecipe(recipe);
+        }
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
 
@@ -148,7 +147,7 @@ public class RecipeDetailsFragment extends DialogFragment {
                 Bundle b = new Bundle();
                 b.putParcelable("recipeToEdit", recipe);
                 intent.putExtra("recipeToEdit", b);
-                startActivity(intent);
+                startActivityForResult(intent,1);
 
                 return true;
             }

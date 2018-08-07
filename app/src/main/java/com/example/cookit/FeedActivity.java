@@ -7,11 +7,8 @@ import android.os.AsyncTask;
 import android.support.annotation.Nullable;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.graphics.Palette;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.util.LruCache;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
@@ -245,7 +242,7 @@ public class FeedActivity extends AppCompatActivity {
             //Palette pal = Palette.from(feedView.getDrawingCache()).generate();
             //mainColor = pal.getVibrantColor(0xffffffff);
 
-           /* blurBitmap(new RecipeAsyncDaoListener<Bitmap>() {
+           /* blurBitmap(new GenericListener<Bitmap>() {
                 @Override
                 public void onComplete(Bitmap data) {
                     blurredImage = data;

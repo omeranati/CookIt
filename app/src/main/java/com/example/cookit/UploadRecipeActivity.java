@@ -79,6 +79,11 @@ public class UploadRecipeActivity extends AppCompatActivity {
                     Model.getInstance().addRecipe(inputRecipe, imageData, new WithFailMessageListener() {
                         @Override
                         public void onSuccess() {
+                            Intent data = new Intent();
+                            Bundle b = new Bundle();
+                            b.putParcelable("recipe", inputRecipe);
+                            data.putExtra("recipe",b);
+                            setResult(1,data);
                             finish();
                         }
 

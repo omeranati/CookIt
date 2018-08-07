@@ -10,6 +10,8 @@ import android.view.ViewGroup;
 
 import com.example.cookit.Adapters.DetailsPreparatoinAdapter;
 
+import java.util.ArrayList;
+
 public class PreparationListFragment extends Fragment {
 
     private DetailsPreparatoinAdapter preparationDetailsAdapter;
@@ -33,6 +35,13 @@ public class PreparationListFragment extends Fragment {
         final View view = inflater.inflate(R.layout.fragment_preparation_list, container, false);
         fillIngredientsAndPreparation(view);
         return view;
+    }
+
+    public void updateRecipe(Recipe recipe){
+        this.recipe = recipe;
+        preparationDetailsAdapter.prepareStages = new ArrayList<>();
+        fillPreparationRecyclerView();
+        preparationDetailsAdapter.notifyDataSetChanged();
     }
 
     private void initPreparationRecyclerView(View view) {

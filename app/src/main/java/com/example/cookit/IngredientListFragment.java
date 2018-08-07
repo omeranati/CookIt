@@ -10,6 +10,8 @@ import android.view.ViewGroup;
 
 import com.example.cookit.Adapters.DetailsIngredientsAdapter;
 
+import java.util.ArrayList;
+
 public class IngredientListFragment extends Fragment {
 
     private DetailsIngredientsAdapter ingredientsDetailsAdapter;
@@ -35,6 +37,14 @@ public class IngredientListFragment extends Fragment {
         view.findViewById(R.id.ingredientsDetailsRecyclerView).setVerticalScrollBarEnabled(true);
         view.findViewById(R.id.ingredientsDetailsRecyclerView).setNestedScrollingEnabled(true);
         return view;
+    }
+
+    public void updateRecipe(Recipe recipe){
+        this.recipe = recipe;
+        ingredientsDetailsAdapter.quantities = new ArrayList<>();
+        ingredientsDetailsAdapter.descriptions = new ArrayList<>();
+        fillIngredientsRecyclerView();
+        ingredientsDetailsAdapter.notifyDataSetChanged();
     }
 
     private void initIngredientsRecyclerView(View view) {

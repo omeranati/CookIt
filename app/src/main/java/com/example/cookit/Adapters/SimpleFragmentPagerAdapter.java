@@ -15,7 +15,7 @@ import java.util.ArrayList;
 public class SimpleFragmentPagerAdapter extends FragmentPagerAdapter {
 
     private Context mContext;
-    private final ArrayList<Fragment> mFragmentList = new ArrayList<>();
+    private ArrayList<Fragment> mFragmentList = new ArrayList<>();
     public SimpleFragmentPagerAdapter(Context context, FragmentManager fm, Recipe recipe) {
         super(fm);
         mContext = context;
@@ -27,6 +27,11 @@ public class SimpleFragmentPagerAdapter extends FragmentPagerAdapter {
         preparationFragment.setArguments(b);
         mFragmentList.add(ingredientFragment);
         mFragmentList.add(preparationFragment);
+    }
+
+    public void updateRecipe(Recipe recipe) {
+        ((IngredientListFragment)mFragmentList.get(0)).updateRecipe(recipe);
+        ((PreparationListFragment)mFragmentList.get(1)).updateRecipe(recipe);
     }
 
     // This determines the fragment for each tab

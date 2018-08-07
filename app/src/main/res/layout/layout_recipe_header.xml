@@ -9,19 +9,17 @@
 
 
     <TextView
-        android:id="@+id/ownerName"
+        android:id="@+id/recipeName"
         android:layout_width="wrap_content"
-        android:layout_height="23dp"
+        android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="16dp"
-        android:text="ownerName"
-        android:clickable="true"
-        android:foreground="?android:attr/selectableItemBackground"
+        android:text="recipeName"
         android:textColor="#000000"
         android:textSize="15sp"
         android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/ownerName"
         app:layout_constraintStart_toEndOf="@+id/ownerProfilePicture"
-        app:layout_constraintBottom_toTopOf="@+id/recipeName"
         app:layout_constraintTop_toTopOf="parent"
         tools:capitalize="characters" />
 
@@ -29,10 +27,10 @@
         android:id="@+id/ownerProfilePicture"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:clickable="true"
-        android:foreground="?android:attr/selectableItemBackground"
         android:layout_marginStart="8dp"
         android:layout_marginTop="16dp"
+        android:clickable="true"
+        android:scaleType="centerCrop"
         android:src="@color/cardview_light_background"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -59,42 +57,19 @@
         app:layout_constraintGuide_percent="0.04" />
 
     <TextView
-        android:id="@+id/recipeName"
+        android:id="@+id/ownerName"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
         android:layout_marginStart="8dp"
-        android:text="recipeName"
-        android:textColor="#000000"
-        android:textSize="15sp"
-        android:textStyle="bold"
+        android:text="ownerName"
+        android:clickable="true"
+        android:foreground="?android:attr/selectableItemBackground"
+        android:textColor="#757575"
+        android:textSize="13sp"
         app:layout_constraintBottom_toTopOf="@+id/recipePicture"
         app:layout_constraintStart_toEndOf="@+id/ownerProfilePicture"
-        app:layout_constraintTop_toBottomOf="@+id/ownerName" />
-
-    <Button
-        android:id="@+id/delete"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginTop="8dp"
-        android:onClick="onDelete"
-        android:text="Delete"
-        app:layout_constraintBottom_toTopOf="@+id/recipePicture"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <Button
-        android:id="@+id/edit"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:layout_marginTop="8dp"
-        android:onClick="onEdit"
-        android:text="Edit"
-        app:layout_constraintEnd_toStartOf="@+id/delete"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/rec" />
 
 
 </android.support.constraint.ConstraintLayout>
