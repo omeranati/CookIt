@@ -31,12 +31,11 @@
             android:orientation="vertical">
 
             <com.example.cookit.CustomImageView
-                android:id="@+id/editUserImageButton"
+                android:id="@+id/editUserImage"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginTop="32dp"
-                android:onClick="editPhoto"
                 android:scaleType="fitXY"
                 android:src="@drawable/add_photo"
                 app:layout_constraintEnd_toEndOf="parent"

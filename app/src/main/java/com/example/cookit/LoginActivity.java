@@ -9,6 +9,7 @@ import android.widget.ProgressBar;
 
 import com.example.cookit.Model.Listener;
 import com.example.cookit.Model.Model;
+import com.example.cookit.Model.WithFailMessageListener;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -59,10 +60,9 @@ public class LoginActivity extends AppCompatActivity {
         ((ProgressBar)findViewById(R.id.progressBar)).setVisibility(View.VISIBLE);
         final String emailAddress = ((EditText) findViewById(R.id.emailAddress)).getText().toString();
         modelInstance.login(
-                //emailAddress,
-                //((EditText) findViewById(R.id.password)).getText().toString(),
-                "omer4554@gmail.com", "Lala123",
-                new Listener() {
+                emailAddress,
+                ((EditText) findViewById(R.id.password)).getText().toString(),
+                new WithFailMessageListener() {
                     @Override
                     public void onSuccess() {
                         Intent intent= new Intent(getBaseContext(), FeedActivity.class);
@@ -74,8 +74,9 @@ public class LoginActivity extends AppCompatActivity {
                     }
 
                     @Override
-                    public void onFail() {
-
+                    public void onFail(String errorMessage) {
+                        Utils.showDynamicErrorAlert(errorMessage, LoginActivity.this);
+                        ((ProgressBar)findViewById(R.id.progressBar)).setVisibility(View.INVISIBLE);
                     }
                 });
     }

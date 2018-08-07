@@ -2,14 +2,13 @@ package com.example.cookit;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.drawable.Drawable;
 import android.os.Vibrator;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.DialogFragment;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
@@ -23,10 +22,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.cookit.Adapters.SimpleFragmentPagerAdapter;
+import com.example.cookit.Model.GenericListener;
 import com.example.cookit.Model.Model;
-import com.example.cookit.Model.AppLocalDb;
-import com.example.cookit.Model.RecipeAsyncDao;
-import com.example.cookit.Model.RecipeAsyncDaoListener;
 
 import com.example.cookit.Adapters.DetailsIngredientsAdapter;
 import com.example.cookit.Adapters.DetailsPreparatoinAdapter;
@@ -35,8 +32,6 @@ import com.example.cookit.Adapters.DetailsPreparatoinAdapter;
 public class RecipeDetailsFragment extends DialogFragment {
 
     private Recipe recipe;
-    private DetailsPreparatoinAdapter preparationDetailsAdapter;
-    private DetailsIngredientsAdapter ingredientsDetailsAdapter;
 
     public static RecipeDetailsFragment newInstance() {
         RecipeDetailsFragment fragment = new RecipeDetailsFragment();
@@ -64,6 +59,8 @@ public class RecipeDetailsFragment extends DialogFragment {
         final View view = inflater.inflate(R.layout.fragment_recipe_details, container, false);
 
         ((Toolbar)view.findViewById(R.id.recipe_details_toolbar)).setTitle("");
+        ((Toolbar)view.findViewById(R.id.recipe_details_toolbar)).setOverflowIcon(
+                ContextCompat.getDrawable(CookIt.getContext(), R.drawable.three_dots_icon));
         Bundle b = getArguments();
         recipe = b.getParcelable("recipe");
 
@@ -72,11 +69,6 @@ public class RecipeDetailsFragment extends DialogFragment {
             Toolbar toolbar = view.findViewById(R.id.recipe_details_toolbar);
             ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
         }
-
-        // Owner name
-        /*TextView ownerName = view.findViewById(R.id.ownerName);
-        ownerName.setText(recipe.getUploaderName());*/
-
 
         ((TextView)view.findViewById(R.id.recipeNameText)).setText(recipe.getName());
 
@@ -92,27 +84,15 @@ public class RecipeDetailsFragment extends DialogFragment {
 
         tabLayout.setupWithViewPager(viewPager);
 
-        // Displaying profile picture.
-        /*ImageView ownerProfilePicture = view.findViewById(R.id.ownerProfilePicture);
-        Bitmap omerProfilePicture = BitmapFactory.decodeResource(getContext().getResources(),R.drawable.omer);
-        omerProfilePicture = ImageHelper.getRoundedCornerBitmap(omerProfilePicture,omerProfilePicture.getHeight()/2);
-        ownerProfilePicture.setImageBitmap(omerProfilePicture);*/
-
         // Displaying food picture.
         final ImageView recipePicture = view.findViewById(R.id.recipePicture);
 
-        Utils.putPicture(recipe.getId(), getContext(), new RecipeAsyncDaoListener<Bitmap>() {
+        Utils.putPicture(recipe.getId(), getContext(), new GenericListener<Bitmap>() {
             @Override
             public void onComplete(Bitmap data) {
                 Utils.displayPicture(recipePicture, data, 1,null);
             }
         });
-
-        // Extracting main colors from food picture and coloring the background and the food's name
-        /*Palette p = Palette.from(chickenBitmap).generate();
-        view.findViewById(R.id.recipeDetailsLayout).setBackgroundColor(p.getLightVibrantColor(0xffffffff));
-        ((TextView)view.findViewById(R.id.recipeName)).setTextColor(p.getDarkVibrantColor(0x00000000));
-        */
 
         recipePicture.setClickable(false);
         recipePicture.setOnLongClickListener(new View.OnLongClickListener() {

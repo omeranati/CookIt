@@ -114,9 +114,12 @@ public class SignUpActivity extends AppCompatActivity {
                 break;
             case GALLERY_DIALOG_INDEX:
                 if(resultCode == RESULT_OK){
-                    Uri selectedImage = imageReturnedIntent.getData();
-                    imageView.setImageURI(selectedImage);
-                    wasPhotoUploaded = true;
+                    try {
+                        imageView.setImageBitmap(MediaStore.Images.Media.getBitmap(this.getContentResolver(), imageReturnedIntent.getData()));
+                        wasPhotoUploaded = true;
+                    } catch (IOException e) {
+                        Utils.showDynamicErrorAlert(e.getMessage(), this);
+                    }
                 }
                 break;
         }

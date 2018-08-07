@@ -1,5 +1,5 @@
 package com.example.cookit.Model;
 
-public interface RecipeAsyncDaoListener<T> {
+public interface GenericListener<T> {
     void onComplete(T data);
 }

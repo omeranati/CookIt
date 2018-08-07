@@ -16,7 +16,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageView;
 
+import com.example.cookit.Model.GenericListener;
 import com.example.cookit.Model.Listener;
 import com.example.cookit.Model.Model;
 
@@ -24,12 +26,6 @@ import java.io.File;
 import java.io.IOException;
 
 public class EditProfileActivity extends AppCompatActivity {
-
-    private static final int CAMERA_DIALOG_INDEX = 0;
-    private static final int GALLERY_DIALOG_INDEX = 1;
-    private String photoPath;
-    byte[] imageData;
-    boolean wasImageUpdated = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,6 +37,13 @@ public class EditProfileActivity extends AppCompatActivity {
         toolbar.setTitleTextColor(0xFFFFFFFF);
 
         ((EditText)findViewById(R.id.fullNameEditText)).setText(FeedActivity.appUser.getFullName());
+
+        Utils.putPicture(FeedActivity.appUser.getUserID(), this, new GenericListener<Bitmap>() {
+            @Override
+            public void onComplete(Bitmap data) {
+                ((ImageView)findViewById(R.id.editUserImage)).setImageBitmap(data);
+            }
+        });
     }
 
     @Override
@@ -53,9 +56,7 @@ public class EditProfileActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_send:
-                Model.getInstance().updateUser(wasImageUpdated,
-                                               ((EditText)findViewById(R.id.fullNameEditText)).getText().toString(),
-                                               imageData,
+                Model.getInstance().updateUser(((EditText)findViewById(R.id.fullNameEditText)).getText().toString(),
                                                new Listener() {
 
                                                    @Override
@@ -73,94 +74,5 @@ public class EditProfileActivity extends AppCompatActivity {
         }
 
         return false;
-    }
-
-    public void editPhoto(View view) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Photo Source")
-                .setItems(R.array.photo_inputs, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        switch (which) {
-                            case CAMERA_DIALOG_INDEX:
-                                startCameraActivity();
-                                break;
-                            case GALLERY_DIALOG_INDEX:
-                                Intent pickPhoto = new Intent(Intent.ACTION_PICK,
-                                        android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                                startActivityForResult(pickPhoto , GALLERY_DIALOG_INDEX);
-                                break;
-                        }
-                    }
-                });
-        AlertDialog dialog = builder.create();
-        dialog.show();
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent imageReturnedIntent) {
-        super.onActivityResult(requestCode, resultCode, imageReturnedIntent);
-        CustomImageView imageView = findViewById(R.id.editUserImageButton);
-        switch(requestCode) {
-            case CAMERA_DIALOG_INDEX:
-                if(resultCode == RESULT_OK){
-                    Uri outputFileUri = Uri.fromFile(new File(photoPath));
-                    imageView.setImageURI(outputFileUri);
-                    wasImageUpdated = true;
-
-                    try {
-                        Bitmap newBitmap = Utils.rotateImageIfNeeded(((BitmapDrawable)imageView.getDrawable()).getBitmap(), photoPath);
-                        imageView.setImageBitmap(newBitmap);
-                    } catch (IOException e) {
-                        Utils.showErrorAlert(R.string.image_rotate_error_message, this);
-                        wasImageUpdated = false;
-                    }
-                }
-                break;
-            case GALLERY_DIALOG_INDEX:
-                if(resultCode == RESULT_OK){
-                    Uri selectedImage = imageReturnedIntent.getData();
-                    imageView.setImageURI(selectedImage);
-                    wasImageUpdated = true;
-                }
-                break;
-        }
-        if (wasImageUpdated) {
-            imageData = Utils.getDataFromImageView(imageView);
-            imageView.requestLayout();
-            imageView.invalidate();
-        }
-    }
-
-    private void startCameraActivity() {
-        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-            // Create the File where the photo should go
-            File photoFile = null;
-            try {
-                photoFile = createImageFile();
-            } catch (IOException ex) {
-                Utils.showErrorAlert(R.string.cant_create_photo_file_error, this);
-            }
-            // Continue only if the File was successfully created
-            if (photoFile != null) {
-                Uri photoURI = FileProvider.getUriForFile(this,
-                        "com.example.cookit.fileProvider",
-                        photoFile);
-                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
-                startActivityForResult(takePictureIntent, CAMERA_DIALOG_INDEX);
-            }
-        }
-    }
-
-    private File createImageFile() throws IOException {
-        File image = File.createTempFile(
-                "NewUser",  /* prefix */
-                ".jpg",         /* suffix */
-                getExternalFilesDir(Environment.DIRECTORY_PICTURES)      /* directory */
-        );
-
-        // Save a file: path for use with ACTION_VIEW intents
-        photoPath = image.getAbsolutePath();
-        return image;
     }
 }

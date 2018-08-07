@@ -1,39 +1,26 @@
 package com.example.cookit.Adapters;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.ColorSpace;
-import android.os.AsyncTask;
-import android.os.Bundle;
 import android.os.Vibrator;
-import android.support.v7.graphics.Palette;
 import android.support.v7.widget.RecyclerView;
-import android.util.LruCache;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.example.cookit.FeedActivity;
-import com.example.cookit.ImageHelper;
-import com.example.cookit.Model.AppLocalDb;
-import com.example.cookit.Model.GetImageListener;
 import com.example.cookit.Model.Model;
-import com.example.cookit.Model.RecipeAsyncDaoListener;
+import com.example.cookit.Model.GenericListener;
 import com.example.cookit.R;
 import com.example.cookit.Recipe;
 import com.example.cookit.CustomImageView;
 import com.example.cookit.User;
 import com.example.cookit.Utils;
-
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.Hashtable;
@@ -84,7 +71,8 @@ public class RecipeCardAdapter extends RecyclerView.Adapter<RecipeCardAdapter.Vi
             }
         });
 
-        holder.ownerName.setText(recipe.getUploaderName());
+
+        holder.ownerName.setText(findOwnerName(recipe));
         holder.ownerName.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -114,7 +102,7 @@ public class RecipeCardAdapter extends RecyclerView.Adapter<RecipeCardAdapter.Vi
         });
 
         holder.itemView.findViewById(R.id.cardLayourProgressBar).setVisibility(View.VISIBLE);
-        Utils.putPicture(recipe.getId(), holder.itemView.getContext(), new RecipeAsyncDaoListener<Bitmap>() {
+        Utils.putPicture(recipe.getId(), holder.itemView.getContext(), new GenericListener<Bitmap>() {
             @Override
             public void onComplete(Bitmap data) {
                 Utils.displayPicture(recipeImageView, data, 1, (ProgressBar)holder.itemView.findViewById(R.id.cardLayourProgressBar));
@@ -131,7 +119,7 @@ public class RecipeCardAdapter extends RecyclerView.Adapter<RecipeCardAdapter.Vi
 
         final ImageView ownerProfilePicture = holder.itemView.findViewById(R.id.ownerProfilePicture);
 
-       Utils.putPicture(recipe.getUploaderUID(), holder.itemView.getContext(), new RecipeAsyncDaoListener<Bitmap>() {
+       Utils.putPicture(recipe.getUploaderUID(), holder.itemView.getContext(), new GenericListener<Bitmap>() {
             @Override
             public void onComplete(Bitmap data) {
                 Utils.displayPicture(ownerProfilePicture, data,0.1,null);
@@ -147,28 +135,17 @@ public class RecipeCardAdapter extends RecyclerView.Adapter<RecipeCardAdapter.Vi
                holder.itemView.getContext().startActivity(intent);
            }
        });
-       // Bitmap omerProfilePicture = BitmapFactory.decodeResource(holder.itemView.getContext().getResources(),R.drawable.omer);
+    }
 
-        /*Model.getInstance().getImage(recipe.getUploaderUID(), new GetImageListener() {
-            @Override
-            public void onDone(Bitmap imageBitmap) {
-                if (imageBitmap != null) {
-                /*    imageBitmap = Bitmap.createScaledBitmap(imageBitmap,(int)(imageBitmap.getWidth()*0.1),(int)(imageBitmap.getHeight()*0.1),false);
-                    imageBitmap = ImageHelper.getRoundedCornerBitmap(imageBitmap, imageBitmap.getWidth()/2);
-                    ownerProfilePicture.setImageBitmap(imageBitmap);
-                }
-                else{
-
-                }
+    private String findOwnerName(Recipe recipe) {
+        String ownerName="";
+        for (User currUser: FeedActivity.usersLiveData.getValue()) {
+            if (currUser.getUserID().equals(recipe.getUploaderUID())) {
+                ownerName = currUser.getFullName();
+                break;
             }
-        }, holder.itemView.getContext());*/
-
-        // Extracting dark vibrant color from food picture and coloring the food name.
-       // Palette pal = Palette.from(food).generate();
-        //holder.foodName.setTextColor(pal.getDarkVibrantColor(0x00000000));
-
-       // omerProfilePicture = ImageHelper.getRoundedCornerBitmap(omerProfilePicture, omerProfilePicture.getHeight()/2);
-       // ownerProfilePicture.setImageBitmap(omerProfilePicture);
+        }
+        return ownerName;
     }
 
     @Override
@@ -191,49 +168,4 @@ public class RecipeCardAdapter extends RecyclerView.Adapter<RecipeCardAdapter.Vi
             foodName = (TextView) itemView.findViewById(R.id.recipeName);
         }
     }
-
-
-/*
-    static public void displayPicture(final ImageView recipeImageView, final Bitmap imageBitmap, final double scale) {
-
-        class DisplayPictureAsyncTask extends AsyncTask<String, String, Bitmap> {
-            @Override
-            protected Bitmap doInBackground(String... strings) {
-                Bitmap newImageBitmap = imageBitmap;
-                if (scale < 1) {
-                    newImageBitmap = Bitmap.createScaledBitmap(imageBitmap, (int) (imageBitmap.getWidth() * scale), (int) (imageBitmap.getHeight() * scale), false);
-                }
-                return newImageBitmap;
-            }
-
-            @Override
-            protected void onPostExecute(Bitmap result) {
-                recipeImageView.setImageBitmap(result);
-            }
-        }
-
-        DisplayPictureAsyncTask task = new DisplayPictureAsyncTask();
-        task.execute();
-    }
-    static public void putPicture(final String imageName, final Context context, final RecipeAsyncDaoListener<Bitmap> listener) {
-        class PutPictureAsyncTask extends AsyncTask<String, String, Recipe> {
-            @Override
-            protected Recipe doInBackground(String... strings) {
-                Model.getInstance().getImage(imageName, new GetImageListener() {
-                    @Override
-                    public void onDone(Bitmap imageBitmap) {
-                        if (imageBitmap != null) {
-
-                            listener.onComplete(imageBitmap);
-                        }
-                    }
-                }, context);
-
-                return null;
-            }
-        }
-
-        PutPictureAsyncTask task = new PutPictureAsyncTask();
-        task.execute();
-    }*/
 }

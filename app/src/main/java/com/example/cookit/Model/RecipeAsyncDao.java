@@ -9,7 +9,7 @@ import java.util.List;
 
 public class RecipeAsyncDao {
 
-    static public void getAll(final RecipeAsyncDaoListener<List<Recipe>> listener) {
+    static public void getAll(final GenericListener<List<Recipe>> listener) {
 
         class GetAllAsyncTask extends AsyncTask<String, String, List<Recipe>> {
             @Override
@@ -29,7 +29,7 @@ public class RecipeAsyncDao {
         task.execute();
     }
 
-    static public void getAllUsers(final RecipeAsyncDaoListener<List<User>> listener) {
+    static public void getAllUsers(final GenericListener<List<User>> listener) {
 
         class GetAllAsyncTask extends AsyncTask<String, String, List<User>> {
             @Override
@@ -50,7 +50,7 @@ public class RecipeAsyncDao {
     }
 
 
-    static public void insert(final Recipe recipe, final RecipeAsyncDaoListener<Boolean> listener) {
+    static public void insert(final Recipe recipe, final GenericListener<Boolean> listener) {
         class InsertAsyncTask extends AsyncTask<Recipe, String, Boolean> {
             @Override
             protected Boolean doInBackground(Recipe... recipes) {
@@ -69,7 +69,7 @@ public class RecipeAsyncDao {
         task.execute(recipe);
     }
 
-    static public void insertUser(final User user, final RecipeAsyncDaoListener<Boolean> listener) {
+    static public void insertUser(final User user, final GenericListener<Boolean> listener) {
         class InsertAsyncTask extends AsyncTask<User, String, Boolean> {
             @Override
             protected Boolean doInBackground(User... users) {
@@ -88,7 +88,7 @@ public class RecipeAsyncDao {
         task.execute(user);
     }
 
-    static void insertAll(final List<Recipe> recipes, final RecipeAsyncDaoListener<Boolean> listener) {
+    static void insertAll(final List<Recipe> recipes, final GenericListener<Boolean> listener) {
         class InsertAllAsyncTask extends AsyncTask<List<Recipe>, String, Boolean> {
             @Override
             protected Boolean doInBackground(List<Recipe>... recipes) {
@@ -131,7 +131,7 @@ public class RecipeAsyncDao {
         task.execute();
     }
 
-    static public void getUserByUID(final String UID, final RecipeAsyncDaoListener<User> listener) {
+    static public void getUserByUID(final String UID, final GenericListener<User> listener) {
 
         class getUserByUIDAsyncTask extends AsyncTask<String, String, User> {
             @Override

@@ -26,7 +26,6 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class ModelFirebase {
     DatabaseReference recipesReference;
@@ -89,7 +88,7 @@ public class ModelFirebase {
         });
     }
 
-    public void getAllUsers(final RecipeAsyncDaoListener<User> listener){
+    public void getAllUsers(final GenericListener<User> listener){
         usersReference.addChildEventListener(new ChildEventListener() {
 
             @Override
@@ -121,7 +120,7 @@ public class ModelFirebase {
         });
     }
 
-    public void addRecipe(final Recipe r, byte[] imageByteData, final WithFailMessageListener listener) {
+    public void addRecipe(boolean uploadImage, final Recipe r, byte[] imageByteData, final WithFailMessageListener listener) {
         final String recipeGeneratedKey;
 
         if (r.getId().equals(Recipe.NO_UID)) {
@@ -133,17 +132,27 @@ public class ModelFirebase {
             recipeGeneratedKey = r.getId();
         }
 
-        storageReference.child(recipeGeneratedKey).putBytes(imageByteData).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
-                if (task.isSuccessful()) {
-                    listener.onSuccess();
-                    recipesReference.child(recipeGeneratedKey).setValue(r);
+        if (uploadImage) {
+            storageReference.child(recipeGeneratedKey).putBytes(imageByteData).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
+                    if (task.isSuccessful()) {
+                        listener.onSuccess();
+                        recipesReference.child(recipeGeneratedKey).setValue(r);
+                    } else
+                        listener.onFail(task.getException().getMessage().toString());
                 }
-                else
-                    listener.onFail(task.getException().getMessage().toString());
-            }
-        });
+            });
+        }
+        else {
+            recipesReference.child(recipeGeneratedKey).setValue(r).addOnCompleteListener(new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull Task<Void> task) {
+                    listener.onSuccess();
+                }
+            });
+
+        }
     }
 
     public void addUser(User newUser) {
@@ -155,7 +164,6 @@ public class ModelFirebase {
         recipe.setId(recipeSnapshot.getKey());
         recipe.setName(recipeSnapshot.child("name").getValue().toString());
         recipe.setUploaderUID(recipeSnapshot.child("uploaderUID").getValue().toString());
-        recipe.setUploaderName(recipeSnapshot.child("uploaderName").getValue().toString());
         ArrayList<Ingredient> ingredients = new ArrayList<>();
         ArrayList<String> preparation = new ArrayList<>();
 
@@ -208,14 +216,14 @@ public class ModelFirebase {
 
     }
 
-    public void login(String email, String password, final Listener listener) {
+    public void login(String email, String password, final WithFailMessageListener listener) {
         authInstance.signInWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if (task.isSuccessful()) {
                     listener.onSuccess();
                 } else {
-                    listener.onFail();
+                    listener.onFail(task.getException().getMessage().toString());
                 }
             }
         });
@@ -234,51 +242,16 @@ public class ModelFirebase {
         authInstance.signOut();
     }
 
-    public void updateUser(boolean wasImageUpdated, String fullName, byte[] imageByteData, final Listener listener) {
-        if (wasImageUpdated)
-            storageReference.child(getCurrentUserID()).putBytes(imageByteData);
-
-        usersReference.child(getCurrentUserID()).child(USER_FULL_NAME_FIELD_NAME).setValue(fullName).
-                addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        listener.onSuccess();
-                    }
-                });
-    }
-
-
-
-   /* public void saveImage(Bitmap imageBitmap, final SaveImageListener listener) {
-        FirebaseStorage storage = FirebaseStorage.getInstance();
-
-        StorageReference imagesRef = storage.getReference().child("images").child(name);
-
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        imageBitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-        byte[] data = baos.toByteArray();
-
-        UploadTask uploadTask = imagesRef.putBytes(data);
-        uploadTask.addOnFailureListener(new OnFailureListener() {
+    public void updateUser(String fullName, final Listener listener) {
+        usersReference.child(getCurrentUserID()).child(USER_FULL_NAME_FIELD_NAME).setValue(fullName).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
-            public void onFailure(Exception exception) {
-                listener.onDone(null);
-            }
-        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-            @Override
-            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                @SuppressWarnings("VisibleForTests") Uri downloadUrl = taskSnapshot.getDownloadUrl();
-                listener.onDone(downloadUrl.toString());
+            public void onComplete(@NonNull Task<Void> task) {
+                listener.onSuccess();
             }
         });
-
-    }*/
-
+    }
 
     public void getImage(String recipeID, final GetImageListener listener){
-        /*FirebaseStorage storage = FirebaseStorage.getInstance();
-        StorageReference httpsReference = storage.getReferenceFromUrl(url);*/
-
         final long ONE_MEGABYTE = 1024 * 1024;
         storageReference.child(recipeID).getBytes(3 * ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
             @Override

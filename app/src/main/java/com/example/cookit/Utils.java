@@ -3,7 +3,6 @@ package com.example.cookit;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
-import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.media.ExifInterface;
 import android.os.AsyncTask;
@@ -14,7 +13,7 @@ import android.widget.ProgressBar;
 
 import com.example.cookit.Model.GetImageListener;
 import com.example.cookit.Model.Model;
-import com.example.cookit.Model.RecipeAsyncDaoListener;
+import com.example.cookit.Model.GenericListener;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -56,7 +55,8 @@ public class Utils {
         DisplayPictureAsyncTask task = new DisplayPictureAsyncTask();
         task.execute();
     }
-    static public void putPicture(final String imageName, final Context context, final RecipeAsyncDaoListener<Bitmap> listener) {
+
+    static public void putPicture(final String imageName, final Context context, final GenericListener<Bitmap> listener) {
         Bitmap bitmap = getBitmapFromMemCache(imageName);
 
         if (bitmap == null) {

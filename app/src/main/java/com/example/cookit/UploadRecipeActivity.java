@@ -24,9 +24,11 @@ import android.widget.ImageView;
 
 import com.example.cookit.Adapters.UploadIngredientAdapter;
 import com.example.cookit.Adapters.UploadPreparationAdapter;
+import com.example.cookit.Model.GenericListener;
 import com.example.cookit.Model.Listener;
 import com.example.cookit.Model.Model;
 import com.example.cookit.Model.WithFailMessageListener;
+import com.google.android.gms.stats.internal.G;
 
 import java.io.File;
 import java.io.IOException;
@@ -36,6 +38,7 @@ public class UploadRecipeActivity extends AppCompatActivity {
     private static final int GALLERY_DIALOG_INDEX = 1;
     private UploadIngredientAdapter ingredientsAdapter;
     private UploadPreparationAdapter prepareStagesAdapter;
+    private boolean isNewRecipe = true;
     private Recipe inputRecipe;
     private boolean wasPhotoUploaded = false;
     private byte[] imageData;
@@ -59,10 +62,10 @@ public class UploadRecipeActivity extends AppCompatActivity {
 
         setProgressBarVisibility(View.INVISIBLE);
 
-        fillDataInCaseOfRecipeEdit();
-
         Bitmap uploadImageBitmap = BitmapFactory.decodeResource(this.getResources(),R.drawable.add_photo);
         ((ImageView)findViewById(R.id.uploadRecipeImageButton)).setImageBitmap(uploadImageBitmap);
+
+        fillDataInCaseOfRecipeEdit();
     }
 
     @Override
@@ -78,7 +81,7 @@ public class UploadRecipeActivity extends AppCompatActivity {
                 if (validateInput()) {
                     setProgressBarVisibility(View.VISIBLE);
                     findViewById(R.id.action_send).setEnabled(false);
-                    Model.getInstance().addRecipe(inputRecipe, imageData, new WithFailMessageListener() {
+                    Model.getInstance().addRecipe(isNewRecipe, inputRecipe, imageData, new WithFailMessageListener() {
                         @Override
                         public void onSuccess() {
                             finish();
@@ -142,9 +145,12 @@ public class UploadRecipeActivity extends AppCompatActivity {
                 break;
             case GALLERY_DIALOG_INDEX:
                 if(resultCode == RESULT_OK){
-                    Uri selectedImage = imageReturnedIntent.getData();
-                    imageView.setImageURI(selectedImage);
-                    wasPhotoUploaded = true;
+                    try {
+                        imageView.setImageBitmap(MediaStore.Images.Media.getBitmap(this.getContentResolver(), imageReturnedIntent.getData()));
+                        wasPhotoUploaded = true;
+                    } catch (IOException e) {
+                        Utils.showDynamicErrorAlert(e.getMessage(), this);
+                    }
                 }
                 break;
         }
@@ -200,7 +206,7 @@ public class UploadRecipeActivity extends AppCompatActivity {
             return false;
         }
 
-        if (!wasPhotoUploaded) {
+        if (!wasPhotoUploaded && isNewRecipe) {
             Utils.showErrorAlert(R.string.no_photo_error_message, this);
             return false;
         }
@@ -218,7 +224,6 @@ public class UploadRecipeActivity extends AppCompatActivity {
         getInputIngredients();
         getInputPreparation();
 
-        inputRecipe.setUploaderName(FeedActivity.appUser.getFullName());
         inputRecipe.setUploaderUID(FeedActivity.appUser.getUserID());
     }
 
@@ -277,6 +282,8 @@ public class UploadRecipeActivity extends AppCompatActivity {
 
     private void fillDataInCaseOfRecipeEdit() {
         if (getIntent().hasExtra("recipeToEdit")){
+            isNewRecipe = false;
+
             Bundle recipeBundle = this.getIntent().getExtras().getBundle("recipeToEdit");
             inputRecipe = recipeBundle.getParcelable("recipeToEdit");
             editedRecipeID = inputRecipe.getId();
@@ -299,6 +306,14 @@ public class UploadRecipeActivity extends AppCompatActivity {
             prepareStagesAdapter.notifyDataSetChanged();
 
             ((TextInputLayout)findViewById(R.id.nameTextView)).getEditText().setText(inputRecipe.getName());
+
+            Utils.putPicture(inputRecipe.getId(), this, new GenericListener<Bitmap>() {
+                @Override
+                public void onComplete(Bitmap data) {
+                    ((ImageView)findViewById(R.id.uploadRecipeImageButton)).setImageBitmap(data);
+                    ((ImageView)findViewById(R.id.uploadRecipeImageButton)).setEnabled(false);
+                }
+            });
         }
     }
 
