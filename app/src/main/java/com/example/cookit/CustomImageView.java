@@ -1,12 +1,10 @@
 package com.example.cookit;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.util.AttributeSet;
-import android.widget.ImageView;
 
-public class CustomImageView extends ImageView {
+public class CustomImageView extends android.support.v7.widget.AppCompatImageView {
 
     private int bitmapWidth;
     private int bitmapHeight;

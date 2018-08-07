@@ -22,17 +22,35 @@
         android:focusableInTouchMode="true"
         app:title="Upload"/>
 
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ProgressBar
+            android:id="@+id/progressBarRecipeUpload"
+            style="?android:attr/progressBarStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:elevation="10dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.371" />
+
     <android.support.v4.widget.NestedScrollView
         android:id="@+id/scrollLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layout_constraintTop_toBottomOf="@+id/my_toolbar">
+        app:layout_constraintTop_toBottomOf="parent">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/linearScroll"
             android:focusable="true"
+            android:elevation="5dp"
             android:focusableInTouchMode="true"
             android:focusedByDefault="true"
             android:orientation="vertical">
@@ -145,18 +163,8 @@
                 android:onClick="addNewPrepareStage"
                 app:srcCompat="@drawable/black_circle_plus"/>
 
-            <ProgressBar
-                android:id="@+id/progressBarRecipeUpload"
-                style="?android:attr/progressBarStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.371" />
-
         </LinearLayout>
         </LinearLayout>
     </android.support.v4.widget.NestedScrollView>
+    </RelativeLayout>
 </LinearLayout>

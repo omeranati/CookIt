@@ -16,7 +16,7 @@ import android.widget.TextView;
 import com.example.cookit.FeedActivity;
 import com.example.cookit.ImageHelper;
 import com.example.cookit.Model.Model;
-import com.example.cookit.Model.RecipeAsyncDaoListener;
+import com.example.cookit.Model.GenericListener;
 import com.example.cookit.R;
 import com.example.cookit.Recipe;
 import com.example.cookit.CustomImageView;
@@ -49,6 +49,30 @@ public class RecipeCardAdapter extends RecyclerView.Adapter<RecipeCardAdapter.Vi
         }
 
         holder.foodName.setTag(recipe.getId());
+
+        Button deleteButton = ((Button)holder.itemView.findViewById(R.id.delete));
+
+        // Showing the delete button if the post is mine.
+        if (recipe.getUploaderUID().equals(Model.getInstance().getCurrentUserID()))
+        {
+            deleteButton.setVisibility(View.VISIBLE);
+        }
+        // Hiding it if it is not mine.
+        else
+        {
+            deleteButton.setVisibility(View.INVISIBLE);
+        }
+
+        // Waiting dor the click.
+        deleteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Model.getInstance().deleteRecipe(recipe);
+            }
+        });
+
+
+        holder.ownerName.setText(findOwnerName(recipe));
         holder.ownerName.setText(recipe.getUploaderName());
 
         holder.ownerName.setOnClickListener(new View.OnClickListener() {
@@ -79,6 +103,8 @@ public class RecipeCardAdapter extends RecyclerView.Adapter<RecipeCardAdapter.Vi
             }
         });
 
+        holder.itemView.findViewById(R.id.cardLayourProgressBar).setVisibility(View.VISIBLE);
+        Utils.putPicture(recipe.getId(), holder.itemView.getContext(), new GenericListener<Bitmap>() {
         Utils.putPicture(recipe.getId(), holder.itemView.getContext(), (ProgressBar)holder.itemView.findViewById(R.id.cardLayourProgressBar),new RecipeAsyncDaoListener<Bitmap>() {
             @Override
             public void onComplete(Bitmap data) {
@@ -97,6 +123,7 @@ public class RecipeCardAdapter extends RecyclerView.Adapter<RecipeCardAdapter.Vi
         final ImageView ownerProfilePicture = holder.itemView.findViewById(R.id.ownerProfilePicture);
         ownerProfilePicture.setDrawingCacheEnabled(true);
 
+       Utils.putPicture(recipe.getUploaderUID(), holder.itemView.getContext(), new GenericListener<Bitmap>() {
        Utils.putPicture(recipe.getUploaderUID(), holder.itemView.getContext(), null, new RecipeAsyncDaoListener<Bitmap>() {
             @Override
             public void onComplete(Bitmap data) {
@@ -120,30 +147,17 @@ public class RecipeCardAdapter extends RecyclerView.Adapter<RecipeCardAdapter.Vi
                holder.itemView.getContext().startActivity(intent);
            }
        });
+    }
 
-
-       // Bitmap omerProfilePicture = BitmapFactory.decodeResource(holder.itemView.getContext().getResources(),R.drawable.omer);
-
-        /*Model.getInstance().getImage(recipe.getUploaderUID(), new GetImageListener() {
-            @Override
-            public void onDone(Bitmap imageBitmap) {
-                if (imageBitmap != null) {
-                /*    imageBitmap = Bitmap.createScaledBitmap(imageBitmap,(int)(imageBitmap.getWidth()*0.1),(int)(imageBitmap.getHeight()*0.1),false);
-                    imageBitmap = ImageHelper.getRoundedCornerBitmap(imageBitmap, imageBitmap.getWidth()/2);
-                    ownerProfilePicture.setImageBitmap(imageBitmap);
-                }
-                else{
-
-                }
+    private String findOwnerName(Recipe recipe) {
+        String ownerName="";
+        for (User currUser: FeedActivity.usersLiveData.getValue()) {
+            if (currUser.getUserID().equals(recipe.getUploaderUID())) {
+                ownerName = currUser.getFullName();
+                break;
             }
-        }, holder.itemView.getContext());*/
-
-        // Extracting dark vibrant color from food picture and coloring the food name.
-        // Palette pal = Palette.from(food).generate();
-        // holder.foodName.setTextColor(pal.getDarkVibrantColor(0x00000000));
-
-        // omerProfilePicture = ImageHelper.getRoundedCornerBitmap(omerProfilePicture, omerProfilePicture.getHeight()/2);
-        // ownerProfilePicture.setImageBitmap(omerProfilePicture);
+        }
+        return ownerName;
     }
 
     @Override

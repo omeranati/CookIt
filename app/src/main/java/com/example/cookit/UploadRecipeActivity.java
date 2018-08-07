@@ -4,6 +4,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -23,9 +24,11 @@ import android.widget.ImageView;
 
 import com.example.cookit.Adapters.UploadIngredientAdapter;
 import com.example.cookit.Adapters.UploadPreparationAdapter;
+import com.example.cookit.Model.GenericListener;
 import com.example.cookit.Model.Listener;
 import com.example.cookit.Model.Model;
 import com.example.cookit.Model.WithFailMessageListener;
+import com.google.android.gms.stats.internal.G;
 
 import java.io.File;
 import java.io.IOException;
@@ -35,6 +38,7 @@ public class UploadRecipeActivity extends AppCompatActivity {
     private static final int GALLERY_DIALOG_INDEX = 1;
     private UploadIngredientAdapter ingredientsAdapter;
     private UploadPreparationAdapter prepareStagesAdapter;
+    private boolean isNewRecipe = true;
     private Recipe inputRecipe;
     private boolean wasPhotoUploaded = false;
     private byte[] imageData;
@@ -58,10 +62,10 @@ public class UploadRecipeActivity extends AppCompatActivity {
 
         setProgressBarVisibility(View.INVISIBLE);
 
-        fillDataInCaseOfRecipeEdit();
-
         Bitmap uploadImageBitmap = BitmapFactory.decodeResource(this.getResources(),R.drawable.add_photo);
         ((ImageView)findViewById(R.id.uploadRecipeImageButton)).setImageBitmap(uploadImageBitmap);
+
+        fillDataInCaseOfRecipeEdit();
     }
 
     @Override
@@ -76,7 +80,8 @@ public class UploadRecipeActivity extends AppCompatActivity {
             case R.id.action_send:
                 if (validateInput()) {
                     setProgressBarVisibility(View.VISIBLE);
-                    Model.getInstance().addRecipe(inputRecipe, imageData, new WithFailMessageListener() {
+                    findViewById(R.id.action_send).setEnabled(false);
+                    Model.getInstance().addRecipe(isNewRecipe, inputRecipe, imageData, new WithFailMessageListener() {
                         @Override
                         public void onSuccess() {
                             Intent data = new Intent();
@@ -90,6 +95,7 @@ public class UploadRecipeActivity extends AppCompatActivity {
                         @Override
                         public void onFail(String message) {
                             setProgressBarVisibility(View.INVISIBLE);
+                            findViewById(R.id.action_send).setEnabled(true);
                             Utils.showDynamicErrorAlert(message, UploadRecipeActivity.this);
                         }
                     });
@@ -132,19 +138,32 @@ public class UploadRecipeActivity extends AppCompatActivity {
                     Uri outputFileUri = Uri.fromFile(new File(photoPath));
                     imageView.setImageURI(outputFileUri);
                     wasPhotoUploaded = true;
+
+                    try {
+                        Bitmap newBitmap = Utils.rotateImageIfNeeded(((BitmapDrawable)imageView.getDrawable()).getBitmap(), photoPath);
+                        imageView.setImageBitmap(newBitmap);
+                    } catch (IOException e) {
+                        Utils.showErrorAlert(R.string.image_rotate_error_message, this);
+                        wasPhotoUploaded = false;
+                    }
                 }
                 break;
             case GALLERY_DIALOG_INDEX:
                 if(resultCode == RESULT_OK){
-                    Uri selectedImage = imageReturnedIntent.getData();
-                    imageView.setImageURI(selectedImage);
-                    wasPhotoUploaded = true;
+                    try {
+                        imageView.setImageBitmap(MediaStore.Images.Media.getBitmap(this.getContentResolver(), imageReturnedIntent.getData()));
+                        wasPhotoUploaded = true;
+                    } catch (IOException e) {
+                        Utils.showDynamicErrorAlert(e.getMessage(), this);
+                    }
                 }
                 break;
         }
-        imageData = Utils.getDataFromImageView(imageView);
-        imageView.requestLayout();
-        imageView.invalidate();
+        if (wasPhotoUploaded) {
+            imageData = Utils.getDataFromImageView(imageView);
+            imageView.requestLayout();
+            imageView.invalidate();
+        }
     }
 
     public void addNewIngredient(View view) {
@@ -192,7 +211,7 @@ public class UploadRecipeActivity extends AppCompatActivity {
             return false;
         }
 
-        if (!wasPhotoUploaded) {
+        if (!wasPhotoUploaded && isNewRecipe) {
             Utils.showErrorAlert(R.string.no_photo_error_message, this);
             return false;
         }
@@ -210,7 +229,6 @@ public class UploadRecipeActivity extends AppCompatActivity {
         getInputIngredients();
         getInputPreparation();
 
-        inputRecipe.setUploaderName(FeedActivity.appUser.getFullName());
         inputRecipe.setUploaderUID(FeedActivity.appUser.getUserID());
     }
 
@@ -269,6 +287,8 @@ public class UploadRecipeActivity extends AppCompatActivity {
 
     private void fillDataInCaseOfRecipeEdit() {
         if (getIntent().hasExtra("recipeToEdit")){
+            isNewRecipe = false;
+
             Bundle recipeBundle = this.getIntent().getExtras().getBundle("recipeToEdit");
             inputRecipe = recipeBundle.getParcelable("recipeToEdit");
             editedRecipeID = inputRecipe.getId();
@@ -291,6 +311,14 @@ public class UploadRecipeActivity extends AppCompatActivity {
             prepareStagesAdapter.notifyDataSetChanged();
 
             ((TextInputLayout)findViewById(R.id.nameTextView)).getEditText().setText(inputRecipe.getName());
+
+            Utils.putPicture(inputRecipe.getId(), this, new GenericListener<Bitmap>() {
+                @Override
+                public void onComplete(Bitmap data) {
+                    ((ImageView)findViewById(R.id.uploadRecipeImageButton)).setImageBitmap(data);
+                    ((ImageView)findViewById(R.id.uploadRecipeImageButton)).setEnabled(false);
+                }
+            });
         }
     }
 

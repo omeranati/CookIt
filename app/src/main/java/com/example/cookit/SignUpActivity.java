@@ -2,6 +2,8 @@ package com.example.cookit;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -100,19 +102,32 @@ public class SignUpActivity extends AppCompatActivity {
                     Uri outputFileUri = Uri.fromFile(new File(photoPath));
                     imageView.setImageURI(outputFileUri);
                     wasPhotoUploaded = true;
+
+                    try {
+                        Bitmap newBitmap = Utils.rotateImageIfNeeded(((BitmapDrawable)imageView.getDrawable()).getBitmap(), photoPath);
+                        imageView.setImageBitmap(newBitmap);
+                    } catch (IOException e) {
+                        Utils.showErrorAlert(R.string.image_rotate_error_message, this);
+                        wasPhotoUploaded = false;
+                    }
                 }
                 break;
             case GALLERY_DIALOG_INDEX:
                 if(resultCode == RESULT_OK){
-                    Uri selectedImage = imageReturnedIntent.getData();
-                    imageView.setImageURI(selectedImage);
-                    wasPhotoUploaded = true;
+                    try {
+                        imageView.setImageBitmap(MediaStore.Images.Media.getBitmap(this.getContentResolver(), imageReturnedIntent.getData()));
+                        wasPhotoUploaded = true;
+                    } catch (IOException e) {
+                        Utils.showDynamicErrorAlert(e.getMessage(), this);
+                    }
                 }
                 break;
         }
-        imageData = Utils.getDataFromImageView(imageView);
-        //imageView.requestLayout();
-        //imageView.invalidate();
+        if (wasPhotoUploaded) {
+            imageData = Utils.getDataFromImageView(imageView);
+            imageView.requestLayout();
+            imageView.invalidate();
+        }
     }
 
     private void startCameraActivity() {

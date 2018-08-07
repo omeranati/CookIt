@@ -16,7 +16,6 @@ public class Recipe implements Parcelable {
     private String id;
     private String name;
     private String uploaderUID;
-    private String uploaderName;
     private ArrayList<Ingredient> ingredients;
     private ArrayList<String> preparation;
 
@@ -35,7 +34,6 @@ public class Recipe implements Parcelable {
         this.id = NO_UID;
         this.name = name;
         this.uploaderUID = uploader.getUserID();
-        this.uploaderName = uploader.getFullName();
         this.ingredients = ingredients;
         this.preparation = preparation;
     }
@@ -48,7 +46,6 @@ public class Recipe implements Parcelable {
         this.id = data.get(0);
         this.name = data.get(1);
         this.uploaderUID = data.get(2);
-        this.uploaderName = data.get(3);
 
         int ingredientsLength = p.readInt();
 
@@ -78,14 +75,6 @@ public class Recipe implements Parcelable {
 
     public void setUploaderUID(String uploaderUID) {
         this.uploaderUID = uploaderUID;
-    }
-
-    public String getUploaderName() {
-        return uploaderName;
-    }
-
-    public void setUploaderName(String uploaderName) {
-        this.uploaderName = uploaderName;
     }
 
     public String getName() {
@@ -122,8 +111,7 @@ public class Recipe implements Parcelable {
         parcel.writeStringArray(new String []{
             this.id,
             this.name,
-            this.uploaderUID,
-            this.uploaderName});
+            this.uploaderUID});
 
         parcel.writeInt(this.ingredients.size());
 

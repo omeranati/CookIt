@@ -17,7 +17,6 @@
         android:theme="@style/Theme.AppCompat.Light"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
         app:title="CookIt"
-        app:navigationIcon="@drawable/round_menu_24"
         tools:titleTextColor="@android:color/background_light">
     </android.support.v7.widget.Toolbar>
 
