@@ -20,6 +20,7 @@ import com.example.cookit.Model.GenericListener;
 import com.example.cookit.R;
 import com.example.cookit.Recipe;
 import com.example.cookit.CustomImageView;
+import com.example.cookit.User;
 import com.example.cookit.Utils;
 
 import java.util.ArrayList;
@@ -49,31 +50,7 @@ public class RecipeCardAdapter extends RecyclerView.Adapter<RecipeCardAdapter.Vi
         }
 
         holder.foodName.setTag(recipe.getId());
-
-        Button deleteButton = ((Button)holder.itemView.findViewById(R.id.delete));
-
-        // Showing the delete button if the post is mine.
-        if (recipe.getUploaderUID().equals(Model.getInstance().getCurrentUserID()))
-        {
-            deleteButton.setVisibility(View.VISIBLE);
-        }
-        // Hiding it if it is not mine.
-        else
-        {
-            deleteButton.setVisibility(View.INVISIBLE);
-        }
-
-        // Waiting dor the click.
-        deleteButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Model.getInstance().deleteRecipe(recipe);
-            }
-        });
-
-
         holder.ownerName.setText(findOwnerName(recipe));
-        holder.ownerName.setText(recipe.getUploaderName());
 
         holder.ownerName.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -103,9 +80,7 @@ public class RecipeCardAdapter extends RecyclerView.Adapter<RecipeCardAdapter.Vi
             }
         });
 
-        holder.itemView.findViewById(R.id.cardLayourProgressBar).setVisibility(View.VISIBLE);
-        Utils.putPicture(recipe.getId(), holder.itemView.getContext(), new GenericListener<Bitmap>() {
-        Utils.putPicture(recipe.getId(), holder.itemView.getContext(), (ProgressBar)holder.itemView.findViewById(R.id.cardLayourProgressBar),new RecipeAsyncDaoListener<Bitmap>() {
+        Utils.putPicture(recipe.getId(), holder.itemView.getContext(), (ProgressBar)holder.itemView.findViewById(R.id.cardLayourProgressBar),new GenericListener<Bitmap>() {
             @Override
             public void onComplete(Bitmap data) {
                 Utils.displayPicture(recipeImageView, data, 1, (ProgressBar)holder.itemView.findViewById(R.id.cardLayourProgressBar));
@@ -123,11 +98,10 @@ public class RecipeCardAdapter extends RecyclerView.Adapter<RecipeCardAdapter.Vi
         final ImageView ownerProfilePicture = holder.itemView.findViewById(R.id.ownerProfilePicture);
         ownerProfilePicture.setDrawingCacheEnabled(true);
 
-       Utils.putPicture(recipe.getUploaderUID(), holder.itemView.getContext(), new GenericListener<Bitmap>() {
-       Utils.putPicture(recipe.getUploaderUID(), holder.itemView.getContext(), null, new RecipeAsyncDaoListener<Bitmap>() {
+       Utils.putPicture(recipe.getUploaderUID(), holder.itemView.getContext(), null, new GenericListener<Bitmap>() {
             @Override
             public void onComplete(Bitmap data) {
-                Utils.cropCenterAndCreateCircle(data,new RecipeAsyncDaoListener<Bitmap>(){
+                Utils.cropCenterAndCreateCircle(data,new GenericListener<Bitmap>(){
                     @Override
                     public void onComplete(Bitmap data) {
                         Utils.displayPicture(ownerProfilePicture, data,0.1,null);

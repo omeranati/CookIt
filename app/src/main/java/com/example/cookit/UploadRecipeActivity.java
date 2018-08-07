@@ -312,7 +312,7 @@ public class UploadRecipeActivity extends AppCompatActivity {
 
             ((TextInputLayout)findViewById(R.id.nameTextView)).getEditText().setText(inputRecipe.getName());
 
-            Utils.putPicture(inputRecipe.getId(), this, new GenericListener<Bitmap>() {
+            Utils.putPicture(inputRecipe.getId(), this,null, new GenericListener<Bitmap>() {
                 @Override
                 public void onComplete(Bitmap data) {
                     ((ImageView)findViewById(R.id.uploadRecipeImageButton)).setImageBitmap(data);

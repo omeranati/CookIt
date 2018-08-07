@@ -38,7 +38,7 @@ public class EditProfileActivity extends AppCompatActivity {
 
         ((EditText)findViewById(R.id.fullNameEditText)).setText(FeedActivity.appUser.getFullName());
 
-        Utils.putPicture(FeedActivity.appUser.getUserID(), this, new GenericListener<Bitmap>() {
+        Utils.putPicture(FeedActivity.appUser.getUserID(), this,null, new GenericListener<Bitmap>() {
             @Override
             public void onComplete(Bitmap data) {
                 ((ImageView)findViewById(R.id.editUserImage)).setImageBitmap(data);

@@ -56,7 +56,7 @@ public class Utils {
         task.execute();
     }
 
-    static public void putPicture(final String imageName, final Context context, final ProgressBar pb, final RecipeAsyncDaoListener<Bitmap> listener) {
+    static public void putPicture(final String imageName, final Context context, final ProgressBar pb, final GenericListener<Bitmap> listener) {
         Bitmap bitmap = getBitmapFromMemCache(imageName);
 
         if (bitmap == null) {
@@ -88,7 +88,7 @@ public class Utils {
         }
     }
 
-    static public void cropCenterAndCreateCircle(final Bitmap bitmap, final RecipeAsyncDaoListener<Bitmap> listener) {
+    static public void cropCenterAndCreateCircle(final Bitmap bitmap, final GenericListener<Bitmap> listener) {
 
         class CropCenterAndCreateCircleAsyncTask extends AsyncTask<String, String, Bitmap> {
             @Override

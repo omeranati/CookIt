@@ -10,7 +10,7 @@ import com.example.cookit.CookIt;
 import com.example.cookit.Recipe;
 import com.example.cookit.User;
 
-@Database(entities = {Recipe.class, User.class}, version = 11)
+@Database(entities = {Recipe.class, User.class}, version = 12)
 @TypeConverters({Converters.class})
 abstract class AppLocalDbRepository extends RoomDatabase {
     public abstract RecipeDao recipeDao();

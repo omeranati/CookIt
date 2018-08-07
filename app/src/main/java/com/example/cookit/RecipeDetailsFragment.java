@@ -88,8 +88,7 @@ public class RecipeDetailsFragment extends DialogFragment {
         // Displaying food picture.
         final ImageView recipePicture = view.findViewById(R.id.recipePicture);
 
-        Utils.putPicture(recipe.getId(), getContext(), new GenericListener<Bitmap>() {
-        Utils.putPicture(recipe.getId(), getContext(), null, new RecipeAsyncDaoListener<Bitmap>() {
+        Utils.putPicture(recipe.getId(), getContext(), null, new GenericListener<Bitmap>() {
             @Override
             public void onComplete(Bitmap data) {
                 Utils.displayPicture(recipePicture, data, 1,null);
@@ -126,6 +125,7 @@ public class RecipeDetailsFragment extends DialogFragment {
         if (data != null && data.hasExtra("recipe")) {
             TabLayout tabLayout = (TabLayout) getActivity().findViewById(R.id.tabLayout);
             recipe = (Recipe)((Bundle)data.getExtras().getParcelable("recipe")).get("recipe");
+            ((TextView) getActivity().findViewById(R.id.recipeNameText)).setText(recipe.getName());
             ingredientsAndPrepAd.updateRecipe(recipe);
         }
     }
