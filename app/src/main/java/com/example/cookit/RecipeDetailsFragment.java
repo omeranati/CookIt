@@ -104,7 +104,7 @@ public class RecipeDetailsFragment extends DialogFragment {
         Utils.putPicture(recipe.getId(), getContext(), new RecipeAsyncDaoListener<Bitmap>() {
             @Override
             public void onComplete(Bitmap data) {
-                Utils.displayPicture(recipePicture, data, 1);
+                Utils.displayPicture(recipePicture, data, 1,null);
             }
         });
 

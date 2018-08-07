@@ -18,6 +18,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.example.cookit.FeedActivity;
@@ -59,7 +60,7 @@ public class RecipeCardAdapter extends RecyclerView.Adapter<RecipeCardAdapter.Vi
         if (!recipe.getId().equals(((String)holder.foodName.getTag()))){
             recipeImageView.setImageBitmap(null);
         }
-        
+
         holder.foodName.setTag(recipe.getId());
 
         Button deleteButton = ((Button)holder.itemView.findViewById(R.id.delete));
@@ -112,10 +113,11 @@ public class RecipeCardAdapter extends RecyclerView.Adapter<RecipeCardAdapter.Vi
             }
         });
 
+        holder.itemView.findViewById(R.id.cardLayourProgressBar).setVisibility(View.VISIBLE);
         Utils.putPicture(recipe.getId(), holder.itemView.getContext(), new RecipeAsyncDaoListener<Bitmap>() {
             @Override
             public void onComplete(Bitmap data) {
-                Utils.displayPicture(recipeImageView, data, 1);
+                Utils.displayPicture(recipeImageView, data, 1, (ProgressBar)holder.itemView.findViewById(R.id.cardLayourProgressBar));
             }
         });
 
@@ -132,7 +134,7 @@ public class RecipeCardAdapter extends RecyclerView.Adapter<RecipeCardAdapter.Vi
        Utils.putPicture(recipe.getUploaderUID(), holder.itemView.getContext(), new RecipeAsyncDaoListener<Bitmap>() {
             @Override
             public void onComplete(Bitmap data) {
-                Utils.displayPicture(ownerProfilePicture, data,0.1);
+                Utils.displayPicture(ownerProfilePicture, data,0.1,null);
             }
         });
 

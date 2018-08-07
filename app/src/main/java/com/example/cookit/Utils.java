@@ -6,7 +6,9 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.AsyncTask;
 import android.support.v7.app.AlertDialog;
+import android.view.View;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 
 import com.example.cookit.Model.GetImageListener;
 import com.example.cookit.Model.Model;
@@ -26,7 +28,7 @@ public class Utils {
         return FeedActivity.mMemoryCache.get(key);
     }
 
-    static public void displayPicture(final ImageView recipeImageView, final Bitmap imageBitmap, final double scale) {
+    static public void displayPicture(final ImageView recipeImageView, final Bitmap imageBitmap, final double scale, final ProgressBar pb) {
 
         class DisplayPictureAsyncTask extends AsyncTask<String, String, Bitmap> {
             @Override
@@ -41,6 +43,10 @@ public class Utils {
             @Override
             protected void onPostExecute(Bitmap result) {
                 recipeImageView.setImageBitmap(result);
+
+                if (pb!=null) {
+                    pb.setVisibility(View.INVISIBLE);
+                }
             }
         }
 
