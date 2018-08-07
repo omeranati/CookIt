@@ -2,6 +2,7 @@ package com.example.cookit;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Vibrator;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.DialogFragment;
@@ -62,6 +63,7 @@ public class RecipeDetailsFragment extends DialogFragment {
         // Inflate the layout for this fragment
         final View view = inflater.inflate(R.layout.fragment_recipe_details, container, false);
 
+        ((Toolbar)view.findViewById(R.id.recipe_details_toolbar)).setTitle("");
         Bundle b = getArguments();
         recipe = b.getParcelable("recipe");
 
@@ -97,8 +99,14 @@ public class RecipeDetailsFragment extends DialogFragment {
         ownerProfilePicture.setImageBitmap(omerProfilePicture);*/
 
         // Displaying food picture.
-        ImageView RecipePicture = view.findViewById(R.id.recipePicture);
-        Bitmap chickenBitmap = BitmapFactory.decodeResource(getContext().getResources(),R.drawable.ham);
+        final ImageView recipePicture = view.findViewById(R.id.recipePicture);
+
+        Utils.putPicture(recipe.getId(), getContext(), new RecipeAsyncDaoListener<Bitmap>() {
+            @Override
+            public void onComplete(Bitmap data) {
+                Utils.displayPicture(recipePicture, data, 1,null);
+            }
+        });
 
         // Extracting main colors from food picture and coloring the background and the food's name
         /*Palette p = Palette.from(chickenBitmap).generate();
@@ -106,8 +114,8 @@ public class RecipeDetailsFragment extends DialogFragment {
         ((TextView)view.findViewById(R.id.recipeName)).setTextColor(p.getDarkVibrantColor(0x00000000));
         */
 
-        RecipePicture.setClickable(false);
-        RecipePicture.setOnLongClickListener(new View.OnLongClickListener() {
+        recipePicture.setClickable(false);
+        recipePicture.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
 
@@ -121,8 +129,6 @@ public class RecipeDetailsFragment extends DialogFragment {
                 return true;
             }
         });
-
-        RecipePicture.setImageBitmap(chickenBitmap);
 
         return view;
     }

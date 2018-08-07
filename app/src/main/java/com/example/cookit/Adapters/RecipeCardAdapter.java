@@ -1,17 +1,24 @@
 package com.example.cookit.Adapters;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.ColorSpace;
 import android.os.AsyncTask;
+import android.os.Bundle;
 import android.os.Vibrator;
 import android.support.v7.graphics.Palette;
 import android.support.v7.widget.RecyclerView;
+import android.util.LruCache;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.example.cookit.FeedActivity;
@@ -24,6 +31,9 @@ import com.example.cookit.R;
 import com.example.cookit.Recipe;
 import com.example.cookit.CustomImageView;
 import com.example.cookit.User;
+import com.example.cookit.Utils;
+
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.Hashtable;
@@ -34,6 +44,7 @@ public class RecipeCardAdapter extends RecyclerView.Adapter<RecipeCardAdapter.Vi
     public Hashtable<String,Recipe> recipes = new Hashtable<>();
     public List<String> recipeIds = new ArrayList<>();
 
+
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_recipe_card, parent, false);
@@ -43,7 +54,14 @@ public class RecipeCardAdapter extends RecyclerView.Adapter<RecipeCardAdapter.Vi
 
     @Override
     public void onBindViewHolder(final RecipeCardAdapter.ViewHolder holder, int position) {
+        final CustomImageView recipeImageView = holder.itemView.findViewById(R.id.recipePicture);
         final Recipe recipe = recipes.get(recipeIds.get(position));
+
+        if (!recipe.getId().equals(((String)holder.foodName.getTag()))){
+            recipeImageView.setImageBitmap(null);
+        }
+
+        holder.foodName.setTag(recipe.getId());
 
         Button deleteButton = ((Button)holder.itemView.findViewById(R.id.delete));
 
@@ -67,14 +85,16 @@ public class RecipeCardAdapter extends RecyclerView.Adapter<RecipeCardAdapter.Vi
         });
 
         holder.ownerName.setText(recipe.getUploaderName());
-
-        holder.foodName.setText(recipe.getName());
-        holder.foodName.setOnClickListener(new View.OnClickListener() {
+        holder.ownerName.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ((FeedActivity)holder.itemView.getContext()).viewRecipeDetails(view);
+                Intent intent = new Intent(holder.itemView.getContext(),FeedActivity.class);
+                intent.putExtra("UID", Model.getInstance().getCurrentUserID());
+                intent.putExtra("feedUID", recipe.getUploaderUID());
+                holder.itemView.getContext().startActivity(intent);
             }
         });
+        holder.foodName.setText(recipe.getName());
 
         holder.itemView.findViewById(R.id.recipeCardLayout).setTag(recipe);
         holder.itemView.setTag(recipe);
@@ -93,32 +113,14 @@ public class RecipeCardAdapter extends RecyclerView.Adapter<RecipeCardAdapter.Vi
             }
         });
 
-        Bitmap food;
-
-        final CustomImageView recipeImageView = holder.itemView.findViewById(R.id.recipePicture);
-
-        /*Model.getInstance().getImage(recipe.getId(), new GetImageListener() {
-            @Override
-            public void onDone(Bitmap imageBitmap) {
-                if (imageBitmap != null) {
-
-                    /*imageBitmap = Bitmap.createScaledBitmap(imageBitmap,(int)(imageBitmap.getWidth()*0.4),(int)(imageBitmap.getHeight()*0.4),false);
-                    recipeImageView.setImageBitmap(imageBitmap);
-                    putPicture(recipeImageView,imageBitmap);
-                }
-                else{
-                    recipeImageView.setImageBitmap(
-                            BitmapFactory.decodeResource(holder.itemView.getContext().getResources(), R.drawable.ham));
-                }
-            }
-        }, holder.itemView.getContext());*/
-
-        putPicture(recipe.getId(), holder.itemView.getContext(), new RecipeAsyncDaoListener<Bitmap>() {
+        holder.itemView.findViewById(R.id.cardLayourProgressBar).setVisibility(View.VISIBLE);
+        Utils.putPicture(recipe.getId(), holder.itemView.getContext(), new RecipeAsyncDaoListener<Bitmap>() {
             @Override
             public void onComplete(Bitmap data) {
-                displayPicture(recipeImageView,data,1);
+                Utils.displayPicture(recipeImageView, data, 1, (ProgressBar)holder.itemView.findViewById(R.id.cardLayourProgressBar));
             }
         });
+
 
         recipeImageView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -129,12 +131,22 @@ public class RecipeCardAdapter extends RecyclerView.Adapter<RecipeCardAdapter.Vi
 
         final ImageView ownerProfilePicture = holder.itemView.findViewById(R.id.ownerProfilePicture);
 
-        putPicture(recipe.getUploaderUID(), holder.itemView.getContext(), new RecipeAsyncDaoListener<Bitmap>() {
+       Utils.putPicture(recipe.getUploaderUID(), holder.itemView.getContext(), new RecipeAsyncDaoListener<Bitmap>() {
             @Override
             public void onComplete(Bitmap data) {
-                displayPicture(ownerProfilePicture, data,0.1);
+                Utils.displayPicture(ownerProfilePicture, data,0.1,null);
             }
         });
+
+       ownerProfilePicture.setOnClickListener(new View.OnClickListener() {
+           @Override
+           public void onClick(View view) {
+               Intent intent = new Intent(holder.itemView.getContext(),FeedActivity.class);
+               intent.putExtra("UID", Model.getInstance().getCurrentUserID());
+               intent.putExtra("feedUID", recipe.getUploaderUID());
+               holder.itemView.getContext().startActivity(intent);
+           }
+       });
        // Bitmap omerProfilePicture = BitmapFactory.decodeResource(holder.itemView.getContext().getResources(),R.drawable.omer);
 
         /*Model.getInstance().getImage(recipe.getUploaderUID(), new GetImageListener() {
@@ -164,6 +176,24 @@ public class RecipeCardAdapter extends RecyclerView.Adapter<RecipeCardAdapter.Vi
         return recipes.size();
     }
 
+
+
+    class ViewHolder extends RecyclerView.ViewHolder {
+
+        public ImageView owner, food;
+        public TextView ownerName, foodName;
+
+        public ViewHolder(View itemView) {
+            super(itemView);
+            owner = (ImageView) itemView.findViewById(R.id.ownerProfilePicture);
+            food = (ImageView) itemView.findViewById(R.id.recipePicture);
+            ownerName = (TextView) itemView.findViewById(R.id.ownerName);
+            foodName = (TextView) itemView.findViewById(R.id.recipeName);
+        }
+    }
+
+
+/*
     static public void displayPicture(final ImageView recipeImageView, final Bitmap imageBitmap, final double scale) {
 
         class DisplayPictureAsyncTask extends AsyncTask<String, String, Bitmap> {
@@ -205,19 +235,5 @@ public class RecipeCardAdapter extends RecyclerView.Adapter<RecipeCardAdapter.Vi
 
         PutPictureAsyncTask task = new PutPictureAsyncTask();
         task.execute();
-    }
-
-    class ViewHolder extends RecyclerView.ViewHolder {
-
-        public ImageView owner, food;
-        public TextView ownerName, foodName;
-
-        public ViewHolder(View itemView) {
-            super(itemView);
-            owner = (ImageView) itemView.findViewById(R.id.ownerProfilePicture);
-            food = (ImageView) itemView.findViewById(R.id.recipePicture);
-            ownerName = (TextView) itemView.findViewById(R.id.ownerName);
-            foodName = (TextView) itemView.findViewById(R.id.recipeName);
-        }
-    }
+    }*/
 }

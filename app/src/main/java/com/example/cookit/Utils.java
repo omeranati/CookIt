@@ -6,20 +6,91 @@ import android.graphics.Matrix;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.media.ExifInterface;
+import android.os.AsyncTask;
 import android.support.v7.app.AlertDialog;
+import android.view.View;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
+
+import com.example.cookit.Model.GetImageListener;
+import com.example.cookit.Model.Model;
+import com.example.cookit.Model.RecipeAsyncDaoListener;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 public class Utils {
 
+    static public void addBitmapToMemoryCache(String key, Bitmap bitmap) {
+        if (getBitmapFromMemCache(key) == null) {
+            FeedActivity.mMemoryCache.put(key, bitmap);
+        }
+    }
+
+    static public Bitmap getBitmapFromMemCache(String key) {
+        return FeedActivity.mMemoryCache.get(key);
+    }
+
+    static public void displayPicture(final ImageView recipeImageView, final Bitmap imageBitmap, final double scale, final ProgressBar pb) {
+
+        class DisplayPictureAsyncTask extends AsyncTask<String, String, Bitmap> {
+            @Override
+            protected Bitmap doInBackground(String... strings) {
+                Bitmap newImageBitmap = imageBitmap;
+                if (scale < 1) {
+                    newImageBitmap = Bitmap.createScaledBitmap(imageBitmap, (int) (imageBitmap.getWidth() * scale), (int) (imageBitmap.getHeight() * scale), false);
+                }
+                return newImageBitmap;
+            }
+
+            @Override
+            protected void onPostExecute(Bitmap result) {
+                recipeImageView.setImageBitmap(result);
+
+                if (pb!=null) {
+                    pb.setVisibility(View.INVISIBLE);
+                }
+            }
+        }
+
+        DisplayPictureAsyncTask task = new DisplayPictureAsyncTask();
+        task.execute();
+    }
+    static public void putPicture(final String imageName, final Context context, final RecipeAsyncDaoListener<Bitmap> listener) {
+        Bitmap bitmap = getBitmapFromMemCache(imageName);
+
+        if (bitmap == null) {
+            class PutPictureAsyncTask extends AsyncTask<String, String, Recipe> {
+                @Override
+                protected Recipe doInBackground(String... strings) {
+                    Model.getInstance().getImage(imageName, new GetImageListener() {
+                        @Override
+                        public void onDone(Bitmap imageBitmap) {
+                            if (imageBitmap != null) {
+                                addBitmapToMemoryCache(imageName,imageBitmap);
+                                listener.onComplete(imageBitmap);
+                            }
+                        }
+                    }, context);
+
+                    return null;
+                }
+            }
+
+            PutPictureAsyncTask task = new PutPictureAsyncTask();
+            task.execute();
+        }
+        else {
+            listener.onComplete(bitmap);
+        }
+    }
+
     public static byte[] getDataFromImageView(ImageView imageView) {
         imageView.buildDrawingCache();
         Bitmap bitmap = ((BitmapDrawable) imageView.getDrawable()).getBitmap();
-        bitmap = Bitmap.createScaledBitmap(bitmap,(int)(bitmap.getWidth()*0.4),(int)(bitmap.getHeight()*0.4),false);
+        bitmap = Bitmap.createScaledBitmap(bitmap,(int)(bitmap.getWidth()*0.2),(int)(bitmap.getHeight()*0.2),false);
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 90, baos);
         return (baos.toByteArray());
     }
 
