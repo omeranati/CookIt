@@ -5,6 +5,7 @@ import android.arch.persistence.room.Delete;
 import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.OnConflictStrategy;
 import android.arch.persistence.room.Query;
+import android.arch.persistence.room.Update;
 
 import com.example.cookit.Recipe;
 import com.example.cookit.User;
@@ -36,4 +37,7 @@ public interface RecipeDao {
 
     @Delete
     void delete(Recipe recipe);
+
+    @Update
+    void update(Recipe recipe);
 }

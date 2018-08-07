@@ -68,7 +68,7 @@ public class ModelFirebase {
 
             @Override
             public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
+                listener.OnChildChanged(getRecipeFromDataSnapshot(dataSnapshot));
             }
 
             @Override

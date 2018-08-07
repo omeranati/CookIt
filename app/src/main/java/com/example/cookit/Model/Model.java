@@ -141,6 +141,20 @@ public class Model {
                                 }
                             });
                         }
+
+                        @Override
+                        public void OnChildChanged(final Recipe r) {
+                            RecipeAsyncDao.updateRecipe(r, new Listener() {
+                                @Override
+                                public void onSuccess() {
+                                    updateRecipe(r);
+                                }
+
+                                @Override
+                                public void onFail() {
+                                }
+                            });
+                        }
                     });
                 }
             });
@@ -151,6 +165,18 @@ public class Model {
             for (Recipe r:allRecipes){
                 if (r.getId().equals(recipe.getId())){
                     allRecipes.remove(r);
+                    break;
+                }
+            }
+            postValue(allRecipes);
+        }
+
+        public void updateRecipe(Recipe recipe) {
+            List<Recipe> allRecipes = getValue();
+            for (Recipe r:allRecipes){
+                if (r.getId().equals(recipe.getId())){
+                    allRecipes.remove(r);
+                    allRecipes.add(recipe);
                     break;
                 }
             }
