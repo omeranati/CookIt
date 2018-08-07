@@ -31,7 +31,6 @@ import java.util.List;
 public class ModelFirebase {
     DatabaseReference recipesReference;
     private final String USER_FULL_NAME_FIELD_NAME = "fullName";
-    private ValueEventListener recipeEventListener;
     private DatabaseReference usersReference;
     private StorageReference storageReference;
     private FirebaseAuth authInstance;
@@ -122,8 +121,8 @@ public class ModelFirebase {
         });
     }
 
-    public void addRecipe(Recipe r, byte[] imageByteData, final WithFailMessageListener listener) {
-        String recipeGeneratedKey;
+    public void addRecipe(final Recipe r, byte[] imageByteData, final WithFailMessageListener listener) {
+        final String recipeGeneratedKey;
 
         if (r.getId().equals(Recipe.NO_UID)) {
             recipeGeneratedKey = recipesReference.push().getKey();
@@ -134,12 +133,13 @@ public class ModelFirebase {
             recipeGeneratedKey = r.getId();
         }
 
-        recipesReference.child(recipeGeneratedKey).setValue(r);
         storageReference.child(recipeGeneratedKey).putBytes(imageByteData).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
-                if (task.isSuccessful())
+                if (task.isSuccessful()) {
                     listener.onSuccess();
+                    recipesReference.child(recipeGeneratedKey).setValue(r);
+                }
                 else
                     listener.onFail(task.getException().getMessage().toString());
             }
