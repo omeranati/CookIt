@@ -182,12 +182,6 @@ public class UploadRecipeActivity extends AppCompatActivity {
         }
     }
 
-    private void requestPermissions() {
-        if (!(checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},3);
-        }
-    }
-
     public void addNewIngredient(View view) {
         ingredientsAdapter.quantities.add("");
         ingredientsAdapter.descriptions.add("");
@@ -346,5 +340,11 @@ public class UploadRecipeActivity extends AppCompatActivity {
 
     private void setProgressBarVisibility(int visibility) {
         findViewById(R.id.progressBarRecipeUpload).setVisibility(visibility);
+    }
+
+    private void requestPermissions() {
+        if (!(checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},3);
+        }
     }
 }

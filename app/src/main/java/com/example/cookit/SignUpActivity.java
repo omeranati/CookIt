@@ -1,12 +1,16 @@
 package com.example.cookit;
 
+import android.Manifest;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -50,6 +54,7 @@ public class SignUpActivity extends AppCompatActivity {
                                 startCameraActivity();
                                 break;
                             case GALLERY_DIALOG_INDEX:
+                                requestPermissions();
                                 Intent pickPhoto = new Intent(Intent.ACTION_PICK,
                                         android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                                 startActivityForResult(pickPhoto , GALLERY_DIALOG_INDEX);
@@ -116,7 +121,18 @@ public class SignUpActivity extends AppCompatActivity {
             case GALLERY_DIALOG_INDEX:
                 if(resultCode == RESULT_OK){
                     try {
-                        imageView.setImageBitmap(MediaStore.Images.Media.getBitmap(this.getContentResolver(), imageReturnedIntent.getData()));
+                        Uri imageUri = imageReturnedIntent.getData();
+
+                        // Get and resize profile image
+                        String[] filePathColumn = {MediaStore.Images.Media.DATA};
+                        Cursor cursor = getContentResolver().query(imageUri, filePathColumn, null, null, null);
+                        cursor.moveToFirst();
+
+                        int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+                        String picturePath = cursor.getString(columnIndex);
+                        cursor.close();
+
+                        imageView.setImageBitmap(Utils.rotateImageIfNeeded(MediaStore.Images.Media.getBitmap(this.getContentResolver(), imageUri), picturePath));
                         wasPhotoUploaded = true;
                     } catch (IOException e) {
                         Utils.showDynamicErrorAlert(e.getMessage(), this);
@@ -190,5 +206,11 @@ public class SignUpActivity extends AppCompatActivity {
         }
 
         return true;
+    }
+
+    private void requestPermissions() {
+        if (!(checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},3);
+        }
     }
 }
