@@ -32,6 +32,8 @@ public class EditProfileActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_profile);
 
+        Utils.setStatusbar(this);
+
         Toolbar toolbar = findViewById(R.id.profile_toolbar);
         setSupportActionBar(toolbar);
         toolbar.setTitleTextColor(0xFFFFFFFF);
