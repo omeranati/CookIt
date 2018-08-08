@@ -54,15 +54,5 @@ public class CustomImageView extends android.support.v7.widget.AppCompatImageVie
                 this.setMeasuredDimension(width, this.getBitmapHeight() * width / this.getBitmapWidth());
             }
         }
-        // If the picture is tall and thin, blocking it into the square
-        // thats has the screen's width as it's length and width.
-        /*if (this.getBitmapWidth() <= this.getBitmapHeight()) {
-            setMeasuredDimension(width, width);
-        }
-        // The picture is fat and short
-        else
-        {
-
-        }*/
     }
 }

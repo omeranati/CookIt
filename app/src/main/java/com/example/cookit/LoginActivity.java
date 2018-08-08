@@ -24,6 +24,8 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
         modelInstance = Model.getInstance();
 
+        Utils.setStatusbar(this);
+
         ((ProgressBar)findViewById(R.id.progressBar)).setVisibility(View.INVISIBLE);
 
         // The user is already logged in. Launching the feed activity.

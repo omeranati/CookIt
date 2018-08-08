@@ -20,10 +20,11 @@
         tools:titleTextColor="@android:color/background_light">
     </android.support.v7.widget.Toolbar>
 
-    <com.example.cookit.CustomImageView
+    <ImageView
         android:id="@+id/recipePicture"
         android:layout_width="0dp"
-        android:layout_height="200dp"
+        android:layout_height="250dp"
+        android:scaleType="centerCrop"
         android:clickable="true"
         android:foreground="?android:attr/selectableItemBackground"
         android:longClickable="true"

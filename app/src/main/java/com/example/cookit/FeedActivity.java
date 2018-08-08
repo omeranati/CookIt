@@ -33,7 +33,6 @@ public class FeedActivity extends AppCompatActivity {
     private RecipeCardAdapter recipeCardAdapter;
     private static boolean  viewingRecipeDetails = false;
     private static boolean  uploadingRecipe = false;
-    public static Bitmap    blurredImage;
     public static Bitmap    drawingCache;
     public static View      appView;
     public static View      feedView;
@@ -64,6 +63,8 @@ public class FeedActivity extends AppCompatActivity {
         // OutOfMemory exception. Stored in kilobytes as LruCache takes an
         // int in its constructor.
         final int maxMemory = (int) (Runtime.getRuntime().maxMemory() / 1024);
+
+        Utils.setStatusbar(this);
 
         // Use 1/8th of the available memory for this memory cache.
         final int cacheSize = maxMemory * 3 / 4;
@@ -132,7 +133,6 @@ public class FeedActivity extends AppCompatActivity {
         super.onResume();
         viewingRecipeDetails = false;
         uploadingRecipe = false;
-        appView.findViewById(R.id.uploadRecipeButton).setClickable(true);
         getUserFromServer();
     }
 
@@ -167,8 +167,8 @@ public class FeedActivity extends AppCompatActivity {
 
         // If not already uploading a recipe
         if(!uploadingRecipe) {
-            view.setClickable(false);
             uploadingRecipe = true;
+            viewingRecipeDetails = true;
 
             final Intent intent = new Intent(this, UploadRecipeActivity.class);
 
@@ -179,16 +179,6 @@ public class FeedActivity extends AppCompatActivity {
 
             feedView.destroyDrawingCache();
             feedView.buildDrawingCache();
-            //Palette pal = Palette.from(feedView.getDrawingCache()).generate();
-            //mainColor = pal.getVibrantColor(0xffffffff);
-
-           /* blurBitmap(new GenericListener<Bitmap>() {
-                @Override
-                public void onComplete(Bitmap data) {
-                    blurredImage = data;
-                    startActivity(intent);
-                }
-            });*/
             startActivity(intent);
         }
     }

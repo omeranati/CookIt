@@ -54,6 +54,8 @@ public class UploadRecipeActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        Utils.setStatusbar(this);
+
         setContentView(R.layout.activity_upload_recipe);
         ((NestedScrollView)findViewById(R.id.scrollLayout)).setNestedScrollingEnabled(false);
         findViewById(R.id.uploadRecipeImageButton).setDrawingCacheEnabled(true);

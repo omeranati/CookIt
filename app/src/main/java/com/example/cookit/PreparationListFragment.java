@@ -24,6 +24,8 @@ public class PreparationListFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        Utils.setStatusbar(getActivity());
+
         Bundle b = getArguments();
         recipe = b.getParcelable("recipe");
     }

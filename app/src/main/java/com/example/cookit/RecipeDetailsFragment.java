@@ -62,6 +62,7 @@ public class RecipeDetailsFragment extends DialogFragment {
         ((Toolbar)view.findViewById(R.id.recipe_details_toolbar)).setTitle("");
         ((Toolbar)view.findViewById(R.id.recipe_details_toolbar)).setOverflowIcon(
                 ContextCompat.getDrawable(CookIt.getContext(), R.drawable.baseline_more_vert_white_24));
+
         Bundle b = getArguments();
         recipe = b.getParcelable("recipe");
 
