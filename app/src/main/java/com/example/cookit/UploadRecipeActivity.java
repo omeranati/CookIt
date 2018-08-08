@@ -67,9 +67,6 @@ public class UploadRecipeActivity extends AppCompatActivity {
 
         setProgressBarVisibility(View.INVISIBLE);
 
-        Bitmap uploadImageBitmap = BitmapFactory.decodeResource(this.getResources(),R.drawable.add_photo);
-        ((ImageView)findViewById(R.id.uploadRecipeImageButton)).setImageBitmap(uploadImageBitmap);
-
         fillDataInCaseOfRecipeEdit();
     }
 
@@ -122,6 +119,7 @@ public class UploadRecipeActivity extends AppCompatActivity {
                                 startCameraActivity();
                                 break;
                             case GALLERY_DIALOG_INDEX:
+                                requestPermissions();
                                 Intent pickPhoto = new Intent(Intent.ACTION_PICK,
                                         MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                                 startActivityForResult(pickPhoto , GALLERY_DIALOG_INDEX);
@@ -166,9 +164,6 @@ public class UploadRecipeActivity extends AppCompatActivity {
                         int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
                         String picturePath = cursor.getString(columnIndex);
                         cursor.close();
-                        if (!(checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)) {
-                            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},3);
-                        }
 
                         imageView.setImageBitmap(Utils.rotateImageIfNeeded(MediaStore.Images.Media.getBitmap(this.getContentResolver(), imageUri), picturePath));
                         wasPhotoUploaded = true;
@@ -182,6 +177,12 @@ public class UploadRecipeActivity extends AppCompatActivity {
             imageData = Utils.getDataFromImageView(imageView);
             imageView.requestLayout();
             imageView.invalidate();
+        }
+    }
+
+    private void requestPermissions() {
+        if (!(checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},3);
         }
     }
 

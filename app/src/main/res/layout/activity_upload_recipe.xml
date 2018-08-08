@@ -65,7 +65,7 @@
                 android:background="@android:color/transparent"
                 android:onClick="addPhoto"
                 android:scaleType="fitXY"
-                android:src="@drawable/add_photo"
+                android:src="@drawable/baseline_add_photo_alternate_black_48"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -128,7 +128,7 @@
                 android:layout_height="wrap_content"
                 android:background="@android:color/transparent"
                 android:onClick="addNewIngredient"
-                app:srcCompat="@drawable/black_circle_plus" />
+                app:srcCompat="@drawable/sharp_add_circle_black_36" />
 
             <TextView
                 android:id="@+id/preparationTextView"
@@ -161,7 +161,7 @@
                 android:layout_height="wrap_content"
                 android:background="@android:color/transparent"
                 android:onClick="addNewPrepareStage"
-                app:srcCompat="@drawable/black_circle_plus"/>
+                app:srcCompat="@drawable/sharp_add_circle_black_36"/>
 
         </LinearLayout>
         </LinearLayout>

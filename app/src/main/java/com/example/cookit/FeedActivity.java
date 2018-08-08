@@ -93,7 +93,7 @@ public class FeedActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         toolbar.setTitleTextColor(0xFFFFFFFF);
         toolbar.setOverflowIcon(
-                ContextCompat.getDrawable(CookIt.getContext(), R.drawable.three_dots_icon));
+                ContextCompat.getDrawable(CookIt.getContext(), R.drawable.baseline_more_vert_white_24));
 
         if (getIntent().getExtras().get("feedUID") != null) {
             feedUID = getIntent().getExtras().get("feedUID").toString();

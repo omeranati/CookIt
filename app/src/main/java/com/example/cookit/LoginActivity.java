@@ -13,6 +13,9 @@ import com.example.cookit.Model.WithFailMessageListener;
 
 public class LoginActivity extends AppCompatActivity {
 
+    private String password;
+    private String email;
+
     Model modelInstance;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,28 +60,44 @@ public class LoginActivity extends AppCompatActivity {
 
 
     public void login(View view) {
-        ((ProgressBar)findViewById(R.id.progressBar)).setVisibility(View.VISIBLE);
-        final String emailAddress = ((EditText) findViewById(R.id.emailAddress)).getText().toString();
-        modelInstance.login(
-                emailAddress,
-                ((EditText) findViewById(R.id.password)).getText().toString(),
-                new WithFailMessageListener() {
-                    @Override
-                    public void onSuccess() {
-                        Intent intent= new Intent(getBaseContext(), FeedActivity.class);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK  |Intent.FLAG_ACTIVITY_NEW_TASK);
-                        intent.putExtra("UID", modelInstance.getCurrentUserID());
-                        ((EditText) findViewById(R.id.emailAddress)).setText("");
-                        ((EditText) findViewById(R.id.password)).setText("");
-                        startActivity(intent);
-                    }
+        if (validateInput()) {
+            ((ProgressBar) findViewById(R.id.progressBar)).setVisibility(View.VISIBLE);
+            modelInstance.login(
+                    email,
+                    password,
+                    new WithFailMessageListener() {
+                        @Override
+                        public void onSuccess() {
+                            Intent intent = new Intent(getBaseContext(), FeedActivity.class);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                            intent.putExtra("UID", modelInstance.getCurrentUserID());
+                            ((EditText) findViewById(R.id.emailAddress)).setText("");
+                            ((EditText) findViewById(R.id.password)).setText("");
+                            startActivity(intent);
+                        }
 
-                    @Override
-                    public void onFail(String errorMessage) {
-                        Utils.showDynamicErrorAlert(errorMessage, LoginActivity.this);
-                        ((ProgressBar)findViewById(R.id.progressBar)).setVisibility(View.INVISIBLE);
-                    }
-                });
+                        @Override
+                        public void onFail(String errorMessage) {
+                            Utils.showDynamicErrorAlert(errorMessage, LoginActivity.this);
+                            ((ProgressBar) findViewById(R.id.progressBar)).setVisibility(View.INVISIBLE);
+                        }
+                    });
+        }
+    }
+
+    private boolean validateInput() {
+        password = ((EditText) findViewById(R.id.password)).getText().toString();
+        email = ((EditText) findViewById(R.id.emailAddress)).getText().toString();
+
+        if (email.length() == 0) {
+            Utils.showErrorAlert(R.string.empty_email_error_message, this);
+            return false;
+        } else if (password.length() == 0) {
+            Utils.showErrorAlert(R.string.empty_password_error_message, this);
+            return false;
+        }
+
+        return true;
     }
 }
 
